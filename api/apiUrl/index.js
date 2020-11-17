@@ -208,6 +208,7 @@ module.exports = {
     edit: baseUrl + "/updateExam", //编辑考试
     findXk: baseUrl + "/selectXueke", //查询所有学科
     editXk: baseUrl + "/updateKsXueke", //修改考试学科
-    addXk: baseUrl + "/insertKsXueke" //添加考试学科
+    addXk: baseUrl + "/insertKsXueke", //添加考试学科
+    addDd: baseUrl + "/insertScoreRankChange" //添加等第转换
   }
 };

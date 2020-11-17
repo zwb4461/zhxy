@@ -22,7 +22,7 @@ const add = query => {
 const edit = query => {
   return request({
     url: Api.examManage.edit,
-    method: "post",
+    method: "post-json",
     data: query
   });
 };
@@ -56,6 +56,13 @@ const addXk = query => {
     data: query
   });
 };
+const addDd = query => {
+  return request({
+    url: Api.examManage.addDd,
+    method: "post-json",
+    data: query
+  });
+};
 
 export default {
   add,
@@ -64,5 +71,6 @@ export default {
   find,
   findXk,
   editXk,
-  addXk
+  addXk,
+  addDd
 };

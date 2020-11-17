@@ -8,8 +8,10 @@
         @click="addExam"
         >新增考试</el-button
       >
-      <el-button size="small" style="width: 218px">录入设置</el-button>
-      <el-button size="small" style="width: 218px">批量复制</el-button>
+      <el-button size="small" style="width: 108px" @click="lrsz"
+        >录入设置</el-button
+      >
+      <el-button size="small" style="width: 108px">批量复制</el-button>
     </div>
     <div class="contain">
       <div class="left">
@@ -79,6 +81,10 @@
               }}
             </template>
           </el-table-column>
+          <template v-for="(item, index) in tableColumns">
+            <el-table-column :key="index" :label="item.name" width="100">
+            </el-table-column>
+          </template>
         </el-table>
         <div class="addRow">
           <el-button
@@ -86,6 +92,12 @@
             style="width: 95%; margin-top: 10px"
             size="small"
             >+添加行</el-button
+          >
+          <el-button
+            @click="addColumn"
+            style="width: 95%; margin-top: 10px"
+            size="small"
+            >+添加列</el-button
           >
         </div>
       </div>
@@ -133,9 +145,9 @@
       width="30%"
       :before-close="closeLrfs"
     >
-      <el-radio v-model="llfsRadio" label="1">数值</el-radio>
-      <el-radio v-model="llfsRadio" label="2">等第</el-radio>
-      <div v-if="llfsRadio == '1'" style="margin-top: 15px">
+      <el-radio v-model="llfsRadio" label="0">数值</el-radio>
+      <el-radio v-model="llfsRadio" label="1">等第</el-radio>
+      <div v-if="llfsRadio == '0'" style="margin-top: 15px">
         <el-form ref="form2" label-width="80px">
           <el-form-item label="最低值:">
             <el-input
@@ -164,6 +176,54 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeLrfs">取 消</el-button>
         <el-button type="primary" @click="submitLrfs">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="录入设置"
+      :visible.sync="showLrsz"
+      width="30%"
+      :before-close="closeLrsz"
+    >
+      <el-form ref="form3" label-width="80px">
+        <el-form-item
+          :label="item.name + ':'"
+          v-for="(item, index) in lrszList"
+          :key="index"
+        >
+          <el-date-picker
+            @change="lrszChange(item)"
+            size="small"
+            v-model="item.date"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeLrsz">关闭</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="添加等第转换"
+      :visible.sync="showAddDDzh"
+      width="30%"
+      :before-close="closeAddDdzh"
+    >
+      <el-form ref="form4" label-width="80px">
+        <el-form-item label="名称:">
+          <el-input
+            size="small"
+            v-model="columnsName"
+            placeholder="请输入等第转换名"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeAddDdzh">取消</el-button>
+        <el-button @click="submitAddDdzh">添加</el-button>
       </span>
     </el-dialog>
   </div>
@@ -198,25 +258,66 @@ export default {
         label: "name",
       },
       treeData: [],
+      lrszList: [],
       //   新增考试dia
       showAddExam: false,
       //录入方式dia
       showLrfs: false,
+      //录入设置dia
+      showLrsz: false,
+      //添加等第转换-列dia
+      showAddDDzh: false,
       //录入方式单选绑定值
-      llfsRadio: "1",
+      llfsRadio: "0",
       maxScore: undefined, //最高值
       minScore: undefined, //最低值
       ksdw: "", //单位
       rowId: 0, //当前行id
+      tableColumns: [], //表格动态列
+      columnsName: "", //动态列名
     };
   },
   methods: {
+    //   提交等第转化--列
+    submitAddDdzh() {
+      let val = {
+        gradeId: this.gradeId,
+        ksId: this.ksId,
+        name: this.columnsName,
+      };
+      main
+        .addDd(val)
+        .then((res) => {
+          this.hxTabel();
+          this.showAddDDzh = false;
+          this.$message.success(res.data);
+          this.columnsName = "";
+        })
+        .catch((err) => {});
+    },
+    //关闭等地转换-列
+    closeAddDdzh() {
+      this.showAddDDzh = false;
+      this.columnsName = "";
+    },
+    // 录入设置
+    lrsz() {
+      this.showLrsz = true;
+    },
     //添加行
     addRow() {
       if (this.gradeId == 0) {
         this.$message.error("请选择年级!");
       } else {
         this.tableData.push({});
+      }
+    },
+    //添加列
+    addColumn() {
+      if (this.gradeId == 0) {
+        this.$message.error("请选择年级!");
+      } else {
+        this.showAddDDzh = true;
       }
     },
     //   单击单元格
@@ -262,6 +363,20 @@ export default {
           .catch((err) => {});
       }
     },
+    //  录入设置改变
+    lrszChange(item) {
+      let val = {
+        endTime: item.date[1],
+        startTime: item.date[0],
+        id: item.id,
+      };
+      main
+        .edit(val)
+        .then((res) => {
+          this.$message.success(res.data);
+        })
+        .catch((err) => {});
+    },
     //  考试时间改变
     kssjChange(scope) {
       let val = {
@@ -296,27 +411,32 @@ export default {
     },
     // 提交录入方式
     submitLrfs() {
-      let val = {
-        id: this.rowId,
-        gradeId: this.gradeId,
-        ksId: this.ksId,
-        maxScore: parseInt(this.maxScore),
-        minScore: parseInt(this.minScore),
-        ksdw: this.ksdw,
-      };
-      main
-        .editXk(val)
-        .then((res) => {
-          this.showLrfs = false;
-          this.$message.success(res.data);
-          this.maxScore = undefined;
-          this.minScore = undefined;
-          this.ksdw = "";
-          this.llfsRadio = "1";
-          this.hxTabel();
-        })
-        .catch((err) => {});
+      if (this.llfsRadio == "0") {
+        let val = {
+          id: this.rowId,
+          gradeId: this.gradeId,
+          ksId: this.ksId,
+          maxScore: parseInt(this.maxScore),
+          minScore: parseInt(this.minScore),
+          ksdw: this.ksdw,
+          lrfs: 0,
+        };
+        main
+          .editXk(val)
+          .then((res) => {
+            this.showLrfs = false;
+            this.$message.success(res.data);
+            this.maxScore = undefined;
+            this.minScore = undefined;
+            this.ksdw = "";
+            this.llfsRadio = "1";
+            this.hxTabel();
+          })
+          .catch((err) => {});
+      } else {
+      }
     },
+
     //获取所有学科
     getAllXk() {
       main
@@ -350,6 +470,16 @@ export default {
         .find(val)
         .then((res) => {
           this.treeData = res.data.list;
+          console.log("res.data.list", res.data.list);
+          let arr = [];
+          res.data.list.map((item) => {
+            arr.push({
+              name: item.name,
+              id: item.id,
+              date: [item.startTime, item.endTime],
+            });
+          });
+          this.lrszList = arr;
         })
         .catch((err) => {});
     },
@@ -367,6 +497,11 @@ export default {
         .find(val)
         .then((res) => {
           this.tableData = res.data.list[0].xuekes;
+          res.data.list[0].showNj.map((item) => {
+            if (item.id == this.gradeId) {
+              this.tableColumns = item.scoreRankChanges;
+            }
+          });
         })
         .catch((err) => {});
     },
@@ -382,6 +517,11 @@ export default {
         .find(val)
         .then((res) => {
           this.tableData = res.data.list[0].xuekes;
+          res.data.list[0].showNj.map((item) => {
+            if (item.id == this.gradeId) {
+              this.tableColumns = item.scoreRankChanges;
+            }
+          });
         })
         .catch((err) => {});
     },
@@ -393,6 +533,10 @@ export default {
     closeAddExam() {
       this.showAddExam = false;
       this.clearAddExam();
+    },
+    // 关闭录入设置dia
+    closeLrsz() {
+      this.showLrsz = false;
     },
     // 关闭录入方式dia
     closeLrfs() {
