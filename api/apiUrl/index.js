@@ -182,7 +182,10 @@ module.exports = {
   },
   //学期管理
   termManage: {
-    find: baseUrl + "/getSemester" //查询全部学期
+    find: baseUrl + "/getSemester", //查询全部学期
+    add: baseUrl + "/insertSemester", //添加全部学期
+    edit: baseUrl + "/updateSemester", //编辑全部学期
+    del: baseUrl + "/deleteSemester" //删除全部学期
   },
   //成绩类别
   addGradeClass: {

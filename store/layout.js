@@ -259,6 +259,17 @@ const getNewMenu = power => {
             title: "短信通道",
             affix: false
           }
+        },
+        {
+          key: "BasicSetting",
+          title: "基本设置",
+          //   hide: true,
+          //   power: "m-2-4",
+          //   alwaysShow: false,
+          meta: {
+            title: "基本设置"
+            // affix: false
+          }
         }
       ]
     },

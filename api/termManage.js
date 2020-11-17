@@ -9,7 +9,31 @@ const find = query => {
     data: query
   });
 };
+const del = query => {
+  return request({
+    url: Api.termManage.del,
+    method: "post",
+    data: query
+  });
+};
+const edit = query => {
+  return request({
+    url: Api.termManage.edit,
+    method: "post-json",
+    data: query
+  });
+};
+const add = query => {
+  return request({
+    url: Api.termManage.add,
+    method: "post-json",
+    data: query
+  });
+};
 
 export default {
-  find
+  find,
+  edit,
+  del,
+  add
 };
