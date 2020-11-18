@@ -83,6 +83,13 @@
           </el-table-column>
           <template v-for="(item, index) in tableColumns">
             <el-table-column :key="index" :label="item.name" width="100">
+              <!-- <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.xkdedi[index] ? scope.row.xkdedi[index].flag : ""
+                  }}
+                </div>
+              </template> -->
             </el-table-column>
           </template>
         </el-table>
@@ -172,7 +179,31 @@
           </el-form-item>
         </el-form>
       </div>
-      <div v-else style="margin-top: 15px"></div>
+      <div v-else style="margin-top: 15px">
+        <el-table
+          :data="cjlrfsTableData"
+          size="small"
+          border
+          style="width: 100%"
+        >
+          <el-table-column prop="bh" label="编码" width="80">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.bh"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="rank" label="等第名称" width="120">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.rank"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-button
+          size="small"
+          style="width: 100%; margin-top: 5px"
+          @click="addCjlrfsRow"
+          >+</el-button
+        >
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeLrfs">取 消</el-button>
         <el-button type="primary" @click="submitLrfs">确 定</el-button>
@@ -192,6 +223,7 @@
         >
           <el-date-picker
             @change="lrszChange(item)"
+            :clearable="false"
             size="small"
             v-model="item.date"
             type="daterange"
@@ -224,6 +256,101 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeAddDdzh">取消</el-button>
         <el-button @click="submitAddDdzh">添加</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="zhName"
+      :visible.sync="showDDzh"
+      width="30%"
+      :before-close="closeDdzh"
+    >
+      <el-radio-group v-model="needZh" @change="zhChang">
+        <el-radio label="无需转换">无需转换</el-radio>
+        <el-radio label="已设置">需要转换</el-radio>
+      </el-radio-group>
+      <div class="sjly" v-show="needZh == '已设置'">
+        <span>数据来源:</span>
+        <el-select
+          size="small"
+          @change="changSjly"
+          v-model="sjly"
+          placeholder="请选择数据来源"
+        >
+          <el-option
+            v-for="item in sjlyOpt"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+        <el-table
+          size="small"
+          :data="ddzhtableData"
+          border
+          style="width: 100%; margin-top: 10px"
+          v-if="lrfsRow == 0 && sjly == -1"
+        >
+          <el-table-column type="index" label="序" width="50">
+          </el-table-column>
+          <el-table-column prop="yscj" label="原始成绩" width="180">
+            <template slot-scope="scope">
+              <el-slider
+                v-model="scope.row.yscj"
+                input-size="small"
+                show-stops
+                range
+                :max="maxScoreRow"
+                :min="minScoreRow"
+              >
+              </el-slider>
+            </template>
+          </el-table-column>
+          <el-table-column prop="bh" label="编码" width="100">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.bh"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="zhhmc" label="转换后等第名称">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.zhhmc"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-button
+          v-if="lrfsRow == 0 && sjly == -1"
+          size="mini"
+          style="width: 100%"
+          @click="addDdRow"
+          >+</el-button
+        >
+        <!-- 等第 -->
+        <el-table
+          size="small"
+          :data="ddzhtableData1"
+          border
+          style="width: 100%; margin-top: 10px"
+          v-if="lrfsRow == 1"
+        >
+          <el-table-column type="index" label="序" width="50">
+          </el-table-column>
+          <el-table-column prop="yscj" label="原始成绩1" width="180">
+          </el-table-column>
+          <el-table-column prop="bm" label="编码" width="100">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.bm"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="zhhmc" label="转换后等第名称">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.zhhmc"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDdzh">取消</el-button>
+        <el-button @click="submitDdzh">确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -259,6 +386,7 @@ export default {
       },
       treeData: [],
       lrszList: [],
+      cjlrfsTableData: [], //录入方式表格
       //   新增考试dia
       showAddExam: false,
       //录入方式dia
@@ -267,17 +395,33 @@ export default {
       showLrsz: false,
       //添加等第转换-列dia
       showAddDDzh: false,
+      //等第转换-列dia
+      showDDzh: false,
       //录入方式单选绑定值
       llfsRadio: "0",
+      //是否需要转换绑定值
+      needZh: "无需转换",
       maxScore: undefined, //最高值
       minScore: undefined, //最低值
       ksdw: "", //单位
       rowId: 0, //当前行id
       tableColumns: [], //表格动态列
       columnsName: "", //动态列名
+      ddzhtableData: [], //设置等第转换表格
+      ddzhtableData1: [], //设置等第转换表格
+      zhName: "", //点击的列名
+      sjly: "", //数据来源
+      sjlyOpt: [{ name: "原始成绩", id: -1 }], //数据来源选项
+      lrfsRow: 0, //当前行的录入方式 ,0--分值，1--等第
+      maxScoreRow: 0,
+      minScoreRow: 0,
     };
   },
   methods: {
+    // 添加成绩录入方式行
+    addCjlrfsRow() {
+      this.cjlrfsTableData.push({ bm: "", ddmc: "" });
+    },
     //   提交等第转化--列
     submitAddDdzh() {
       let val = {
@@ -295,10 +439,88 @@ export default {
         })
         .catch((err) => {});
     },
-    //关闭等地转换-列
+    //关闭添加等地转换-列
     closeAddDdzh() {
       this.showAddDDzh = false;
       this.columnsName = "";
+    },
+    addDdRow() {
+      this.ddzhtableData.push({
+        yscj: [this.minScoreRow, this.maxScoreRow],
+        bm: "",
+        zhhmc: "",
+      });
+    },
+    //关闭等地转换dia
+    closeDdzh() {
+      this.showDDzh = false;
+      this.ddzhtableData = [];
+      this.ddzhtableData1 = [];
+    },
+    //提交等第转换
+    submitDdzh() {
+      //原始成绩--分值
+      if (this.lrfsRow == 0 && this.sjly == -1) {
+        let arr = [];
+        let typeName = "";
+        this.sjlyOpt.map((item) => {
+          if (item.id == this.sjly) {
+            typeName = item.name;
+          }
+        });
+        this.ddzhtableData.map((item) => {
+          arr.push({
+            bh: item.bh,
+            maxScore: item.yscj[1],
+            minScore: item.yscj[0],
+            typeName: typeName,
+            flag: "已设置",
+            name: this.zhName,
+            rank: item.zhhmc,
+            type: "1",
+          });
+        });
+        let val = {
+          id: this.rowId,
+          xkdedi: arr,
+        };
+        main
+          .editXk(val)
+          .then((res) => {
+            this.showDDzh = false;
+            this.$message.success(res.data);
+            this.hxTabel();
+          })
+          .catch((err) => {});
+      } else {
+        let arr = [];
+        let typeName = "";
+        this.sjlyOpt.map((item) => {
+          if (item.id == this.sjly) {
+            typeName = item.name;
+          }
+        });
+        this.ddzhtableData1.map((item) => {
+          arr.push({
+            bh: item.bm,
+            typeName: typeName,
+            flag: "已设置",
+            name: this.zhName,
+            rank: item.zhhmc,
+            beRank: item.yscj,
+            type: "1",
+          });
+        });
+        let val = {
+          id: this.rowId,
+          xkdedi: arr,
+        };
+        main.editXk(val).then((res) => {
+          this.showDDzh = false;
+          this.$message.success(res.data);
+          this.hxTabel();
+        });
+      }
     },
     // 录入设置
     lrsz() {
@@ -320,15 +542,106 @@ export default {
         this.showAddDDzh = true;
       }
     },
-    //   单击单元格
+    //   点击单元格
     clickCell(row, column, cell, event) {
+      this.rowId = row.id;
       if (column.label == "录入方式") {
         this.showLrfs = true;
-        this.rowId = row.id;
+
         this.maxScore = row.maxScore;
         this.minScore = row.minScore;
         this.ksdw = row.ksdw;
+        this.llfsRadio = row.lrfs ? row.lrfs.toString() : "0";
+        console.log("1212", this.llfsRadio);
       }
+      this.sjlyOpt = [{ name: "原始成绩", id: -1 }];
+      this.tableColumns.map((item) => {
+        if (column.label == item.name) {
+          this.showDDzh = true;
+          this.zhName = column.label; //点击的列名
+        }
+
+        this.sjlyOpt.push({ name: item.name, id: item.id });
+      });
+      console.log("row", row);
+      this.needZh = "无需转换"; //清空是否需要转换
+      this.sjly = ""; //原始数据下拉框
+      this.lrfsRow = row.lrfs; //获取点击的单元的录入方式0--数值，1--等第
+      this.maxScoreRow = row.maxScore;
+      this.minScoreRow = row.minScore;
+      if (row.lrfs == 1) {
+        this.cjlrfsTableData = row.showdedi;
+        console.log("this.cjlrfsTableData", this.cjlrfsTableData);
+        if (row.xkdedi[0] ? row.xkdedi[0].flag == "已设置" : false) {
+          this.ddzhtableData1 = [];
+          this.needZh = "已设置";
+          this.sjlyOpt.map((item) => {
+            if (item.name == row.xkdedi[0].typeName) {
+              this.sjly = item.id;
+            }
+          });
+          row.xkdedi.map((item) => {
+            this.ddzhtableData1.push({
+              yscj: item.beRank,
+              bm: item.bh,
+              zhhmc: item.rank,
+            });
+          });
+        }
+      } else if (row.lrfs == 0) {
+        if (row.xkdedi[0] ? row.xkdedi[0].flag == "已设置" : false) {
+          this.ddzhtableData = [];
+          this.needZh = "已设置";
+          this.sjlyOpt.map((item) => {
+            if (item.name == row.xkdedi[0].typeName) {
+              this.sjly = item.id;
+            }
+          });
+          row.xkdedi.map((item) => {
+            this.ddzhtableData.push({
+              yscj: [item.minScore, item.maxScore],
+              bh: item.bh,
+              zhhmc: item.rank,
+            });
+          });
+        }
+      }
+    },
+    // 是否需要转换
+    zhChang(val) {
+      console.log(val);
+    },
+    //改变数据来源
+    changSjly(val) {
+      console.log("val", val);
+      let name = "";
+      this.sjlyOpt.map((item) => {
+        if (item.id == val) {
+          name = item.name;
+        }
+      });
+      let obj = {
+        gradeId: this.gradeId,
+        ksId: this.ksId,
+        name: name,
+        xkksId: this.rowId,
+      };
+
+      main
+        .findDd(obj)
+        .then((res) => {
+          console.log("res", res.data);
+          let arr = [];
+          res.data.map((item) => {
+            if (item.rank) {
+              arr.push({
+                yscj: item.rank,
+              });
+            }
+          });
+          this.ddzhtableData1 = arr;
+        })
+        .catch((err) => {});
     },
     //   学科值改变
     xkChange(scope) {
@@ -429,11 +742,36 @@ export default {
             this.maxScore = undefined;
             this.minScore = undefined;
             this.ksdw = "";
-            this.llfsRadio = "1";
+            this.llfsRadio = "0";
             this.hxTabel();
           })
           .catch((err) => {});
       } else {
+        let arr = [];
+        this.cjlrfsTableData.map((item) => {
+          arr.push({
+            bh: item.bh,
+            name: "原始成绩",
+            rank: item.rank,
+            type: "-1",
+          });
+        });
+        let val = {
+          id: this.rowId,
+          lrfs: 1,
+          showdedi: arr,
+        };
+        // console.log("val", val);
+        main
+          .editXk(val)
+          .then((res) => {
+            this.showLrfs = false;
+            this.$message.success(res.data);
+            this.llfsRadio = "0";
+            this.cjlrfsTableData = [];
+            this.hxTabel();
+          })
+          .catch((err) => {});
       }
     },
 
@@ -502,6 +840,7 @@ export default {
               this.tableColumns = item.scoreRankChanges;
             }
           });
+          console.log("this.tableColumns", this.tableColumns);
         })
         .catch((err) => {});
     },
@@ -614,5 +953,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.sjly {
+  margin-top: 15px;
 }
 </style>

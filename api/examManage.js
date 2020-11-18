@@ -63,7 +63,13 @@ const addDd = query => {
     data: query
   });
 };
-
+const findDd = query => {
+  return request({
+    url: Api.examManage.findDd,
+    method: "post",
+    data: query
+  });
+};
 export default {
   add,
   edit,
@@ -72,5 +78,6 @@ export default {
   findXk,
   editXk,
   addXk,
-  addDd
+  addDd,
+  findDd
 };

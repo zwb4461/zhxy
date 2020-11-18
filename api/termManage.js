@@ -16,6 +16,7 @@ const del = query => {
     data: query
   });
 };
+
 const edit = query => {
   return request({
     url: Api.termManage.edit,
