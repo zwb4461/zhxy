@@ -70,6 +70,20 @@ const findDd = query => {
     data: query
   });
 };
+const findTeacher = query => {
+  return request({
+    url: Api.examManage.findTeacher,
+    method: "post",
+    data: query
+  });
+};
+const findsjly = query => {
+  return request({
+    url: Api.examManage.findsjly,
+    method: "post",
+    data: query
+  });
+};
 export default {
   add,
   edit,
@@ -79,5 +93,7 @@ export default {
   editXk,
   addXk,
   addDd,
-  findDd
+  findDd,
+  findTeacher,
+  findsjly
 };

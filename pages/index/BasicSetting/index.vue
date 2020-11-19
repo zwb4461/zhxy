@@ -48,8 +48,66 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="学科设置" name="second">学科设置</el-tab-pane>
-      <el-tab-pane label="成绩单位设置" name="third">成绩单位设置</el-tab-pane>
+      <el-tab-pane label="学科设置" name="second">
+        <div class="xksz_contain">
+          <p>学科设置</p>
+          <el-table :data="xksztableData" border style="width: 100%">
+            <el-table-column size="small" prop="bh" label="编码" width="100">
+              <template slot-scope="scope">
+                <el-input
+                  size="small"
+                  @change="bhChange(scope)"
+                  v-model="scope.row.bh"
+                  placeholder="请输入编码"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="学科名称" width="156">
+              <template slot-scope="scope">
+                <el-input
+                  size="small"
+                  @change="nameChange(scope)"
+                  v-model="scope.row.name"
+                  placeholder="请输入学科名称"
+                ></el-input>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-button size="small" style="width: 100%" @click="addXkszRow"
+            >+</el-button
+          >
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="成绩单位设置" name="third">
+        <div class="xksz_contain1">
+          <p>成绩单位设置</p>
+          <el-table :data="cjdwtableData" border style="width: 100%">
+            <el-table-column size="small" prop="bh" label="编码" width="100">
+              <template slot-scope="scope">
+                <el-input
+                  size="small"
+                  @change="cjbhChange(scope)"
+                  v-model="scope.row.bh"
+                  placeholder="请输入编码"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="单位" width="156">
+              <template slot-scope="scope">
+                <el-input
+                  size="small"
+                  @change="dwChange(scope)"
+                  v-model="scope.row.name"
+                  placeholder="请输入单位"
+                ></el-input>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-button size="small" style="width: 100%" @click="addcjdwRow"
+            >+</el-button
+          >
+        </div>
+      </el-tab-pane>
     </el-tabs>
     <my-drawer-vue
       title="学期设置"
@@ -614,6 +672,8 @@
 <script>
 import main from "~/api/termManage";
 import main1 from "~/api/personalCenter";
+import main2 from "~/api/xkhz";
+import main3 from "~/api/cjdw";
 import myDrawerVue from "~/components/common/myDrawer.vue";
 export default {
   computed: {
@@ -631,6 +691,7 @@ export default {
       formType: 0, //0--新增，1--编辑
       activeName: "first",
       gradeList: [],
+
       showAddClassDia: false,
       //添加学期字段
       form: {
@@ -725,9 +786,146 @@ export default {
       xtnj_fiveOpt: [{ label: "五年级", value: "五年级" }],
       xtnj_sixOpt: [{ label: "六年级", value: "六年级" }],
       xtdd_Opt: [],
+      //   学科设置
+      xksztableData: [],
+      //   成绩单位设置
+      cjdwtableData: [],
     };
   },
   methods: {
+    //   增加学科设置行
+    addXkszRow() {
+      this.xksztableData.push({});
+    },
+    addcjdwRow() {
+      this.cjdwtableData.push({});
+    },
+    //   成绩单位编码改变值
+    cjbhChange(scope) {
+      if (scope.row.id) {
+        let val = {
+          schoolId: this.schoolId,
+          id: scope.row.id,
+          bh: scope.row.bh,
+        };
+        main3
+          .edit(val)
+          .then((res) => {
+            this.getAllcjdw();
+          })
+          .catch((err) => {});
+      } else {
+        let val = {
+          schoolId: this.schoolId,
+          bh: scope.row.bh,
+        };
+        main3
+          .add(val)
+          .then((res) => {
+            this.getAllcjdw();
+          })
+          .catch((err) => {});
+      }
+    },
+    //   成绩单位改变值
+    dwChange(scope) {
+      if (scope.row.id) {
+        let val = {
+          schoolId: this.schoolId,
+          id: scope.row.id,
+          name: scope.row.name,
+        };
+        main3
+          .edit(val)
+          .then((res) => {
+            this.getAllcjdw();
+          })
+          .catch((err) => {});
+      } else {
+        let val = {
+          schoolId: this.schoolId,
+          name: scope.row.name,
+        };
+        main3
+          .add(val)
+          .then((res) => {
+            this.getAllcjdw();
+          })
+          .catch((err) => {});
+      }
+    },
+    //   编码改变值
+    bhChange(scope) {
+      if (scope.row.id) {
+        let val = {
+          schoolId: this.schoolId,
+          id: scope.row.id,
+          bh: scope.row.bh,
+        };
+        main2
+          .edit(val)
+          .then((res) => {
+            this.getAllXk();
+          })
+          .catch((err) => {});
+      } else {
+        let val = {
+          schoolId: this.schoolId,
+          bh: scope.row.bh,
+        };
+        main2
+          .add(val)
+          .then((res) => {
+            this.getAllXk();
+          })
+          .catch((err) => {});
+      }
+    },
+    //   学科名称改变值
+    nameChange(scope) {
+      if (scope.row.id) {
+        let val = {
+          schoolId: this.schoolId,
+          id: scope.row.id,
+          name: scope.row.name,
+        };
+        main2
+          .edit(val)
+          .then((res) => {
+            this.getAllXk();
+          })
+          .catch((err) => {});
+      } else {
+        let val = {
+          schoolId: this.schoolId,
+          name: scope.row.name,
+        };
+        main2
+          .add(val)
+          .then((res) => {
+            this.getAllXk();
+          })
+          .catch((err) => {});
+      }
+    },
+    // 获取所有成绩单位
+    getAllcjdw() {
+      main3
+        .find({ schoolId: this.schoolId })
+        .then((res) => {
+          this.cjdwtableData = res.data;
+        })
+        .catch((err) => {});
+    },
+    // 获取所有学科
+    getAllXk() {
+      main2
+        .find({ schoolId: this.schoolId })
+        .then((res) => {
+          this.xksztableData = res.data;
+        })
+        .catch((err) => {});
+    },
     //   获取所有年级
     getAllNj() {
       main1
@@ -1072,6 +1270,8 @@ export default {
     this.getAllTerm();
     // this.getTermList();
     this.getAllNj();
+    this.getAllXk();
+    this.getAllcjdw();
   },
 };
 </script>
@@ -1168,5 +1368,17 @@ export default {
   justify-content: space-around;
   align-items: center;
   margin-bottom: 15px;
+}
+.xksz_contain {
+  width: 300px;
+  min-height: 645px;
+  padding: 20px;
+  border: 1px solid #c8c8c8;
+}
+.xksz_contain1 {
+  width: 300px;
+  min-height: 645px;
+  padding: 20px;
+  border: 1px solid #c8c8c8;
 }
 </style>

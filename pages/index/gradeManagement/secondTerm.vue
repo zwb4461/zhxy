@@ -210,20 +210,11 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="单位:">
-            <el-select
+            <el-input
               size="small"
               style="width: 300px"
               v-model="ksdw"
-              placeholder="请选择单位"
-            >
-              <el-option
-                v-for="item in dwOpt"
-                :key="item.name"
-                :label="item.name"
-                :value="item.name"
-              >
-              </el-option>
-            </el-select>
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -332,7 +323,7 @@
           >
           </el-option>
         </el-select>
-        <div v-show="lrfsRow == 0 && sjly == -1">
+        <div v-show="lrfsRow == 0">
           <el-table
             size="small"
             :data="ddzhtableData"
@@ -371,7 +362,7 @@
         </div>
 
         <!-- 等第 -->
-        <div v-show="lrfsRow == 1 || (lrfsRow == 0 && sjly !== -1)">
+        <div v-show="lrfsRow == 1">
           <el-table
             size="small"
             :data="ddzhtableDataSecond"
@@ -406,7 +397,6 @@
 <script>
 import main from "~/api/examManage";
 import main1 from "~/api/termManage";
-import main2 from "~/api/cjdw";
 export default {
   props: ["djxq", "cjlbId"],
   computed: {
@@ -467,19 +457,9 @@ export default {
       lrqxRadio: "1", //录入权限单选框
       zdjs: [], //指定教师绑定值
       zdjsOpt: [], //指定教师选项
-      dwOpt: [], //成绩单位选项
     };
   },
   methods: {
-    //   获取所有单位
-    getDw() {
-      main2
-        .find({ schoolId: this.schoolId })
-        .then((res) => {
-          this.dwOpt = res.data;
-        })
-        .catch((err) => {});
-    },
     //   关闭录入权限dia
     closeLrqx() {
       this.showLrqx = false;
@@ -641,11 +621,11 @@ export default {
       this.ddzhtableDataSecond = [];
       this.ddzhtableData = [];
       this.rowId = row.id;
-      this.maxScore = row.maxScore;
-      this.minScore = row.minScore;
       if (column.label == "录入方式") {
         this.showLrfs = true;
 
+        this.maxScore = row.maxScore;
+        this.minScore = row.minScore;
         this.ksdw = row.ksdw;
         this.llfsRadio = row.lrfs ? row.lrfs.toString() : "0";
         console.log("1212", this.llfsRadio);
@@ -926,7 +906,7 @@ export default {
     getDynj() {
       let val = {
         schoolId: this.schoolId,
-        xueqiId: this.djxq,
+        xueqiId: 2,
       };
       main1
         .find(val)
@@ -939,7 +919,7 @@ export default {
     getTreeData() {
       let val = {
         cjlbId: this.cjlbId,
-        djxq: parseInt(this.djxq),
+        djxq: 2,
       };
       main
         .find(val)
@@ -964,7 +944,7 @@ export default {
       this.gradeId = data.id;
       let val = {
         cjlbId: this.cjlbId,
-        djxq: parseInt(this.djxq),
+        djxq: 2,
         ksId: Node.parent.data.id,
         gradeId: data.id,
       };
@@ -985,7 +965,7 @@ export default {
     hxTabel() {
       let val = {
         cjlbId: this.cjlbId,
-        djxq: parseInt(this.djxq),
+        djxq: 2,
         ksId: this.ksId,
         gradeId: this.gradeId,
       };
@@ -1040,7 +1020,7 @@ export default {
       });
       let val = {
         cjlbId: this.cjlbId,
-        djxq: this.djxq,
+        djxq: 2,
         name: this.form.name,
         showNj: showNj,
       };
@@ -1087,7 +1067,6 @@ export default {
     this.getDynj();
     this.getAllXk();
     this.findTeacher();
-    this.getDw();
   },
 };
 </script>

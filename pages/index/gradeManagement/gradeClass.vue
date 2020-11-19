@@ -4,7 +4,9 @@
       <el-tab-pane label="第一学期" name="1"
         ><firstTerm :cjlbId="cjlbId" :djxq="activeName"></firstTerm
       ></el-tab-pane>
-      <el-tab-pane label="第二学期" name="2">第二学期</el-tab-pane>
+      <el-tab-pane label="第二学期" name="2"
+        ><secondTerm :cjlbId="cjlbId"></secondTerm
+      ></el-tab-pane>
       <el-tab-pane label="成绩录入" name="3">
         <div class="condition">
           <el-select
@@ -148,10 +150,12 @@
 import main from "~/api/scoreEntry";
 import qmpy from "./components/qmpy";
 import firstTerm from "./firstTerm";
+import secondTerm from "./secondTerm";
 export default {
   components: {
     qmpy,
     firstTerm,
+    secondTerm,
   },
   props: {
     id: {

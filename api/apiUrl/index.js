@@ -213,6 +213,22 @@ module.exports = {
     editXk: baseUrl + "/updateKsXueke", //修改考试学科
     addXk: baseUrl + "/insertKsXueke", //添加考试学科
     addDd: baseUrl + "/insertScoreRankChange", //添加等第转换
-    findDd: baseUrl + "/selectScoreRankChange" //查看等第转换
+    findDd: baseUrl + "/selectScoreRankChange", //查看等第转换
+    findTeacher: baseUrl + "/getTeacherName", //获取所有老师
+    findsjly: baseUrl + "/seeSource"
+  },
+  //学科汇总
+  xkhz: {
+    add: baseUrl + "/insertXueke", //添加
+    find: baseUrl + "/selectXueke",
+    del: baseUrl + "/deleteXueke",
+    edit: baseUrl + "/updateXueke"
+  },
+  //成绩单位
+  cjdw: {
+    add: baseUrl + "/insertScoreUnit", //添加
+    find: baseUrl + "/selectScoreUnit",
+    del: baseUrl + "/deleteScoreUnit",
+    edit: baseUrl + "/updateScoreUnit"
   }
 };
