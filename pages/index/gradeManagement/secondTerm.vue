@@ -210,11 +210,20 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="单位:">
-            <el-input
+            <el-select
               size="small"
               style="width: 300px"
               v-model="ksdw"
-            ></el-input>
+              placeholder="请选择单位"
+            >
+              <el-option
+                v-for="item in dwOpt"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -323,7 +332,7 @@
           >
           </el-option>
         </el-select>
-        <div v-show="lrfsRow == 0">
+        <div v-show="lrfsRow == 0 && sjly == -1">
           <el-table
             size="small"
             :data="ddzhtableData"
@@ -362,7 +371,7 @@
         </div>
 
         <!-- 等第 -->
-        <div v-show="lrfsRow == 1">
+        <div v-show="lrfsRow == 1 || (lrfsRow == 0 && sjly !== -1)">
           <el-table
             size="small"
             :data="ddzhtableDataSecond"
@@ -397,6 +406,7 @@
 <script>
 import main from "~/api/examManage";
 import main1 from "~/api/termManage";
+import main2 from "~/api/cjdw";
 export default {
   props: ["djxq", "cjlbId"],
   computed: {
@@ -457,9 +467,19 @@ export default {
       lrqxRadio: "1", //录入权限单选框
       zdjs: [], //指定教师绑定值
       zdjsOpt: [], //指定教师选项
+      dwOpt: [], //成绩单位选项
     };
   },
   methods: {
+    //   获取所有单位
+    getDw() {
+      main2
+        .find({ schoolId: this.schoolId })
+        .then((res) => {
+          this.dwOpt = res.data;
+        })
+        .catch((err) => {});
+    },
     //   关闭录入权限dia
     closeLrqx() {
       this.showLrqx = false;
@@ -621,11 +641,11 @@ export default {
       this.ddzhtableDataSecond = [];
       this.ddzhtableData = [];
       this.rowId = row.id;
+      this.maxScore = row.maxScore;
+      this.minScore = row.minScore;
       if (column.label == "录入方式") {
         this.showLrfs = true;
 
-        this.maxScore = row.maxScore;
-        this.minScore = row.minScore;
         this.ksdw = row.ksdw;
         this.llfsRadio = row.lrfs ? row.lrfs.toString() : "0";
         console.log("1212", this.llfsRadio);
@@ -686,7 +706,6 @@ export default {
                 this.sjlyOpt.map((sonItem) => {
                   if (sonItem.name == subItem.typeName) {
                     this.sjly = sonItem.id;
-                    console.log("111111", this.sjly);
                   }
                 });
               });
@@ -697,11 +716,11 @@ export default {
         if (row.xkdedi[0] ? row.xkdedi[0].flag == "已设置" : false) {
           this.ddzhtableData = [];
           this.needZh = "已设置";
-          this.sjlyOpt.map((item) => {
-            if (item.name == row.xkdedi[0].typeName) {
-              this.sjly = item.id;
-            }
-          });
+          //   this.sjlyOpt.map((item) => {
+          //     if (item.name == row.xkdedi[0].typeName) {
+          //       this.sjly = item.id;
+          //     }
+          //   });
           //   row.xkdedi.map((item) => {
           //     this.ddzhtableData.push({
           //       yscj: [item.minScore, item.maxScore],
@@ -713,11 +732,24 @@ export default {
             if (Object.keys(item)[0] == column.label) {
               console.log("item", item);
               item[Object.keys(item)[0]].map((subItem) => {
-                this.ddzhtableData.push({
-                  yscj: [subItem.minScore, subItem.maxScore],
-                  bh: subItem.bh,
-                  zhhmc: subItem.rank,
+                this.sjlyOpt.map((sonItem) => {
+                  if (sonItem.name == subItem.typeName) {
+                    this.sjly = sonItem.id;
+                  }
                 });
+                if (this.sjly == -1) {
+                  this.ddzhtableData.push({
+                    yscj: [subItem.minScore, subItem.maxScore],
+                    bh: subItem.bh,
+                    zhhmc: subItem.rank,
+                  });
+                } else {
+                  this.ddzhtableDataSecond.push({
+                    yscj: subItem.beRank,
+                    bm: subItem.bh,
+                    zhhmc: subItem.rank,
+                  });
+                }
               });
             }
           });
@@ -1067,6 +1099,7 @@ export default {
     this.getDynj();
     this.getAllXk();
     this.findTeacher();
+    this.getDw();
   },
 };
 </script>

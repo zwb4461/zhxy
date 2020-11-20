@@ -706,7 +706,6 @@ export default {
                 this.sjlyOpt.map((sonItem) => {
                   if (sonItem.name == subItem.typeName) {
                     this.sjly = sonItem.id;
-                    console.log("111111", this.sjly);
                   }
                 });
               });
@@ -717,11 +716,11 @@ export default {
         if (row.xkdedi[0] ? row.xkdedi[0].flag == "已设置" : false) {
           this.ddzhtableData = [];
           this.needZh = "已设置";
-          this.sjlyOpt.map((item) => {
-            if (item.name == row.xkdedi[0].typeName) {
-              this.sjly = item.id;
-            }
-          });
+          //   this.sjlyOpt.map((item) => {
+          //     if (item.name == row.xkdedi[0].typeName) {
+          //       this.sjly = item.id;
+          //     }
+          //   });
           //   row.xkdedi.map((item) => {
           //     this.ddzhtableData.push({
           //       yscj: [item.minScore, item.maxScore],
@@ -733,11 +732,24 @@ export default {
             if (Object.keys(item)[0] == column.label) {
               console.log("item", item);
               item[Object.keys(item)[0]].map((subItem) => {
-                this.ddzhtableData.push({
-                  yscj: [subItem.minScore, subItem.maxScore],
-                  bh: subItem.bh,
-                  zhhmc: subItem.rank,
+                this.sjlyOpt.map((sonItem) => {
+                  if (sonItem.name == subItem.typeName) {
+                    this.sjly = sonItem.id;
+                  }
                 });
+                if (this.sjly == -1) {
+                  this.ddzhtableData.push({
+                    yscj: [subItem.minScore, subItem.maxScore],
+                    bh: subItem.bh,
+                    zhhmc: subItem.rank,
+                  });
+                } else {
+                  this.ddzhtableDataSecond.push({
+                    yscj: subItem.beRank,
+                    bm: subItem.bh,
+                    zhhmc: subItem.rank,
+                  });
+                }
               });
             }
           });
