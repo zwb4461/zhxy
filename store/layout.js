@@ -27,8 +27,8 @@ const getNewMenu = power => {
       key: "12",
       title: "个人中心",
       icon: "user",
-      hide: true,
-      power: "m-7",
+      //   hide: true,
+      //   power: "m-7",
       meta: {
         title: "个人中心"
       },
@@ -36,45 +36,61 @@ const getNewMenu = power => {
         {
           key: "personal-center/info",
           title: "我的信息",
-          hide: true,
-          power: "m-7-1",
-          alwaysShow: false,
+          //   hide: true,
+          //   power: "m-7-1",
+          //   alwaysShow: false,
           meta: {
-            title: "我的信息",
-            affix: false
+            title: "我的信息"
+            // affix: false
           }
         },
         {
           key: "personal-center/class",
           title: "我的班级",
-          hide: true,
-          power: "m-7-2",
-          alwaysShow: false,
+          //   hide: true,
+          //   power: "m-7-2",
+          //   alwaysShow: false,
           meta: {
-            title: "我的班级",
-            affix: false
-          }
+            title: "我的班级"
+            // affix: false
+          },
+          children: [
+            {
+              key: "studentStatus-index",
+              title: "学籍管理(班)",
+              meta: {
+                title: "学籍管理"
+              }
+            },
+            {
+              key: "gradeManagement1",
+              title: "成绩管理",
+              meta: {
+                title: "成绩管理"
+              }
+            }
+          ]
         },
         {
           key: "personal-center/schedule",
           title: "我的排课",
-          hide: true,
-          power: "m-7-3",
-          alwaysShow: false,
+          //   hide: true,
+          //   power: "m-7-3",
+          //   alwaysShow: false,
           meta: {
-            title: "我的排课",
-            affix: false
+            title: "我的排课"
+            // affix: false
           }
         },
         {
           key: "personal-center/community",
           title: "我的社团课",
-          hide: true,
-          power: "m-7-4",
-          alwaysShow: false,
+          //   hide: true,
+          //   power: "m-7-4",
+          //   alwaysShow: false,
           meta: {
-            title: "我的社团课",
-            affix: false
+            title: "我的社团课"
+            // affix: false
           }
         }
       ]
@@ -92,7 +108,7 @@ const getNewMenu = power => {
     {
       key: "10",
       title: "新生管理",
-      icon: "user-add",
+      icon: "smile",
       hide: true,
       power: "m-1",
       meta: {
@@ -127,7 +143,7 @@ const getNewMenu = power => {
     {
       key: "15",
       title: "成绩管理",
-      icon: "user-add",
+      icon: "file",
       //   hide: true,
       //   power: "m-15",
       meta: {
@@ -148,20 +164,20 @@ const getNewMenu = power => {
         }
       ]
     },
-    {
-      key: "studentStatus-index",
-      title: "学籍管理(班)",
-      icon: "user-add",
-      hide: true,
-      power: "m-4",
-      meta: {
-        title: "学籍管理"
-        // affix: true,
-      }
-    },
+    // {
+    //   key: "studentStatus-index",
+    //   title: "学籍管理(班)",
+    //   icon: "user-add",
+    //   hide: true,
+    //   power: "m-4",
+    //   meta: {
+    //     title: "学籍管理"
+    //     // affix: true,
+    //   }
+    // },
     {
       key: "studentStatus-copy",
-      title: "学籍管理(总)",
+      title: "学籍管理",
       icon: "user-add",
       hide: true,
       power: "m-4-4-4",
@@ -170,17 +186,17 @@ const getNewMenu = power => {
         // affix: true,
       }
     },
-    {
-      key: "supplementary",
-      title: "补充信息设置",
-      icon: "user-add",
-      hide: true,
-      power: "m-4-4",
-      meta: {
-        title: "补充信息"
-        // affix: true,
-      }
-    },
+    // {
+    //   key: "supplementary",
+    //   title: "补充信息设置",
+    //   icon: "zoom-in",
+    //   hide: true,
+    //   power: "m-4-4",
+    //   meta: {
+    //     title: "补充信息"
+    //     // affix: true,
+    //   }
+    // },
 
     //---------------------------------start教师管理----------------------------------------------
     {

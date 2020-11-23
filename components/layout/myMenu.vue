@@ -31,7 +31,7 @@ import SubMenu from "./mySubMenu";
 
 export default {
   components: {
-    "sub-menu": SubMenu
+    "sub-menu": SubMenu,
   },
   computed: {
     list() {
@@ -40,25 +40,25 @@ export default {
     meunItemStyle() {
       if (this.$store.state.layout.collapsed) {
         return {
-          paddingLeft: "0px"
+          paddingLeft: "0px",
         };
       } else {
         return {
-          paddingLeft: "6px"
+          paddingLeft: "6px",
         };
       }
-    }
+    },
   },
   data() {
     return {
-      selectKey: []
+      selectKey: [],
     };
   },
   watch: {
     $route() {
       // // console.log("this.$route-----------", this.$route);
       this.setSeleteKey();
-    }
+    },
   },
   methods: {
     setSeleteKey() {
@@ -72,11 +72,11 @@ export default {
     toRouter(info) {
       // // console.log(info);
       this.$router.push(`/${info.key}`);
-    }
+    },
   },
   created() {
     this.setSeleteKey();
-  }
+  },
 };
 </script>
 <style lang="scss"></style>

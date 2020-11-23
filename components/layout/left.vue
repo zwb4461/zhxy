@@ -13,7 +13,7 @@
         height: '100vh',
         position: 'fixed',
         left: 0,
-        transition: this.$store.state.layout.transition
+        transition: this.$store.state.layout.transition,
       }"
     >
       <Logo />
@@ -29,11 +29,11 @@ export default {
   name: "mainLeft",
   components: {
     Logo,
-    myMenu
+    myMenu,
   },
   data() {
     return {
-      collapsedWidth: 0
+      collapsedWidth: 10,
     };
   },
   computed: {
@@ -41,8 +41,8 @@ export default {
       get() {
         return this.$store.state.layout.collapsed;
       },
-      set() {}
-    }
+      set() {},
+    },
   },
   methods: {
     onCollapse(collapsed, type) {
@@ -64,8 +64,8 @@ export default {
       } else {
         this.$store.dispatch("layout/open");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -84,6 +84,7 @@ export default {
 /deep/ .ant-layout-sider-trigger,
 .ant-layout-sider {
   overflow-x: hidden !important;
+  overflow-y: hidden !important;
   background: #fafafa;
 }
 // /deep/.ant-menu-item{
@@ -92,7 +93,7 @@ export default {
 .menuText {
   text-align: center;
   position: relative;
-  width: 161px !important;
+  width: 150px !important;
   right: 10px;
 }
 

@@ -1,45 +1,29 @@
 <template>
   <div>
-    <a-tabs
-      v-if="false"
-      hideAdd
-      v-model="activeKey"
-      size="small"
-      @change="callback"
-      type="editable-card"
-      @edit="onEdit"
-    >
-      <a-tab-pane tab="学生类别" :key="-1" :closable="false">
-        <list-vue :addPans="addItem" />
-      </a-tab-pane>
-      <a-tab-pane
-        v-for="pane in panes"
-        :tab="pane.title"
-        :key="pane.key"
-        :closable="true"
-      >
-        <student-status :ref="`studentStatus${pane.key}`" />
-      </a-tab-pane>
+    <a-tabs hideAdd v-model="activeKey" size="small" type="editable-card">
+      <a-tab-pane key="1" tab="学籍管理"><student-status /></a-tab-pane>
+      <a-tab-pane key="2" tab="补充信息设置"><supplementary /></a-tab-pane>
     </a-tabs>
-    <student-status />
   </div>
 </template>
 
 <script>
 import listVue from "./components/_list.vue";
 import studentStatus from "./studentStatus/index.vue";
+import supplementary from "../supplementary/index.vue";
 
 export default {
   name: "index",
   components: {
     listVue, //列表
-    studentStatus //分班详情页面
+    studentStatus, //分班详情页面
+    supplementary,
   },
   data() {
     return {
-      activeKey: -1,
+      activeKey: "1",
       panes: [],
-      newTabIndex: 0
+      newTabIndex: 0,
     };
   },
   methods: {
@@ -67,12 +51,12 @@ export default {
     addItem({ studenttype, id }) {
       let _this = this;
       // console.log(studenttype);
-      let index = this.panes.findIndex(item => item.key == id);
+      let index = this.panes.findIndex((item) => item.key == id);
       // console.log(index);
       if (index === -1) {
         this.panes.push({
           title: studenttype,
-          key: id
+          key: id,
         });
       }
 
@@ -93,7 +77,7 @@ export default {
           lastIndex = i - 1;
         }
       });
-      const panes = this.panes.filter(pane => pane.key !== targetKey);
+      const panes = this.panes.filter((pane) => pane.key !== targetKey);
       if (panes.length && activeKey === targetKey) {
         if (lastIndex >= 0) {
           activeKey = panes[lastIndex].key;
@@ -110,8 +94,8 @@ export default {
         this.$pubSub.publish("getList");
       }
       // this.$store.dispatch("auth/setEnrollId", this.activeKey);
-    }
-  }
+    },
+  },
 };
 </script>
 

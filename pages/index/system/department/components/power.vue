@@ -31,7 +31,7 @@ import DD from "~/api/dingding";
 
 export default {
   props: {
-    reload: Function
+    reload: Function,
   },
   data() {
     return {
@@ -40,7 +40,7 @@ export default {
       //提交的表单数据
       form: {
         id: undefined,
-        jurisdiction: ""
+        jurisdiction: "",
       },
       powerTree: [
         {
@@ -57,8 +57,8 @@ export default {
                   children: [
                     { title: "添加", key: "p-1-t-add" },
                     { title: "修改", key: "p-1-t-edit" },
-                    { title: "删除", key: "p-1-t-del" }
-                  ]
+                    { title: "删除", key: "p-1-t-del" },
+                  ],
                 },
                 {
                   title: "计划新生",
@@ -67,8 +67,8 @@ export default {
                     { title: "添加", key: "p-1-l-add" },
                     { title: "修改", key: "p-1-l-edit" },
                     { title: "删除", key: "p-1-l-del" },
-                    { title: "上传", key: "p-1-l-upload" }
-                  ]
+                    { title: "上传", key: "p-1-l-upload" },
+                  ],
                 },
                 {
                   title: "报名新生",
@@ -76,8 +76,8 @@ export default {
                   children: [
                     { title: "添加", key: "p-1-r-add" },
                     { title: "修改", key: "p-1-r-edit" },
-                    { title: "删除", key: "p-1-r-del" }
-                  ]
+                    { title: "删除", key: "p-1-r-del" },
+                  ],
                 },
                 {
                   title: "表单设置",
@@ -85,8 +85,8 @@ export default {
                   children: [
                     { title: "添加", key: "p-1-f-add" },
                     { title: "修改", key: "p-1-f-edit" },
-                    { title: "删除", key: "p-1-f-del" }
-                  ]
+                    { title: "删除", key: "p-1-f-del" },
+                  ],
                 },
                 {
                   title: "审核评定设置",
@@ -95,7 +95,7 @@ export default {
                     // { title: "添加", key: "p-1-f-add" },
                     // { title: "修改", key: "p-1-f-edit" },
                     // { title: "删除", key: "p-1-f-del" }
-                  ]
+                  ],
                 },
                 {
                   title: "资料审核",
@@ -104,7 +104,7 @@ export default {
                     // { title: "添加", key: "p-1-f-add" },
                     // { title: "修改", key: "p-1-f-edit" },
                     // { title: "删除", key: "p-1-f-del" }
-                  ]
+                  ],
                 },
                 {
                   title: "新生评定",
@@ -113,7 +113,7 @@ export default {
                     // { title: "添加", key: "p-1-f-add" },
                     // { title: "修改", key: "p-1-f-edit" },
                     // { title: "删除", key: "p-1-f-del" }
-                  ]
+                  ],
                 },
 
                 {
@@ -123,32 +123,32 @@ export default {
                     // { title: "添加", key: "p-1-f-add" },
                     // { title: "修改", key: "p-1-f-edit" },
                     // { title: "删除", key: "p-1-f-del" }
-                  ]
-                }
-              ]
+                  ],
+                },
+              ],
             },
             {
               title: "智能分班",
               key: "m-1-2",
-              children: []
-            }
-          ]
+              children: [],
+            },
+          ],
         },
         {
           title: "学籍管理(班主任)",
-          key: "m-4"
+          key: "m-4",
         },
         {
           title: "学籍管理(总管理员)",
-          key: "m-4-4-4"
+          key: "m-4-4-4",
         },
         {
           title: "补充信息设置",
-          key: "m-4-4"
+          key: "m-4-4",
         },
         {
           title: "智能排课",
-          key: "m-6"
+          key: "m-6",
         },
         {
           title: "系统管理",
@@ -162,19 +162,19 @@ export default {
             {
               title: "组织架构",
               key: "m-2-2",
-              children: []
+              children: [],
             },
             {
               title: "类别管理",
               key: "m-2-3",
-              children: []
+              children: [],
             },
             {
               title: "短信通道",
               key: "m-2-4",
-              children: []
-            }
-          ]
+              children: [],
+            },
+          ],
         },
         {
           title: "教师管理",
@@ -182,9 +182,9 @@ export default {
           children: [
             {
               title: "基本信息",
-              key: "m-5-5"
-            }
-          ]
+              key: "m-5-5",
+            },
+          ],
         },
         {
           title: "日志管理",
@@ -193,53 +193,53 @@ export default {
             {
               title: "登录日志",
               key: "m-3-1",
-              children: []
+              children: [],
             },
             {
               title: "操作日志",
               key: "m-3-2",
-              children: []
-            }
-          ]
+              children: [],
+            },
+          ],
         },
         {
           title: "社团选课",
           key: "m-8",
-          children: []
+          children: [],
         },
-        {
-          title: "个人中心",
-          key: "m-7",
-          children: [
-            {
-              title: "我的信息",
-              key: "m-7-1",
-              children: []
-            },
-            {
-              title: "我的班级",
-              key: "m-7-2",
-              children: []
-            },
-            {
-              title: "我的排课",
-              key: "m-7-3",
-              children: []
-            },
-            {
-              title: "我的社团课",
-              key: "m-7-4",
-              children: []
-            }
-          ]
-        }
-      ]
+        // {
+        //   title: "个人中心",
+        //   key: "m-7",
+        //   children: [
+        //     {
+        //       title: "我的信息",
+        //       key: "m-7-1",
+        //       children: []
+        //     },
+        //     {
+        //       title: "我的班级",
+        //       key: "m-7-2",
+        //       children: []
+        //     },
+        //     {
+        //       title: "我的排课",
+        //       key: "m-7-3",
+        //       children: []
+        //     },
+        //     {
+        //       title: "我的社团课",
+        //       key: "m-7-4",
+        //       children: []
+        //     }
+        //   ]
+        // }
+      ],
     };
   },
   watch: {
     checkedKeys(nv) {
       // console.log(nv);
-    }
+    },
   },
   methods: {
     onSelectPower(selectedKeys, info) {
@@ -273,15 +273,15 @@ export default {
       formData.jurisdiction = this.checkedKeys.checked.join(",");
 
       DD.userPower(formData)
-        .then(res => {
+        .then((res) => {
           this.$message.success("该人员权限保存成功");
           this.reload();
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
