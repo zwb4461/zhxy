@@ -45,32 +45,33 @@ const getNewMenu = power => {
           }
         },
         {
-          key: "personal-center/class",
-          title: "我的班级",
-          //   hide: true,
-          //   power: "m-7-2",
-          //   alwaysShow: false,
+          key: "studentStatus-index",
+          title: "学籍管理",
           meta: {
-            title: "我的班级"
-            // affix: false
-          },
-          children: [
-            {
-              key: "studentStatus-index",
-              title: "学籍管理(班)",
-              meta: {
-                title: "学籍管理"
-              }
-            },
-            {
-              key: "gradeManagement1",
-              title: "成绩管理",
-              meta: {
-                title: "成绩管理"
-              }
-            }
-          ]
+            title: "学籍管理"
+          }
         },
+        {
+          key: "gradeManagement1",
+          title: "成绩管理",
+          meta: {
+            title: "成绩管理"
+          }
+        },
+        // {
+        //   key: "personal-center/class",
+        //   title: "我的班级",
+        //   //   hide: true,
+        //   //   power: "m-7-2",
+        //   //   alwaysShow: false,
+        //   meta: {
+        //     title: "我的班级"
+        //     // affix: false
+        //   },
+        //   children: [
+
+        //   ]
+        // },
         {
           key: "personal-center/schedule",
           title: "我的排课",
@@ -144,8 +145,8 @@ const getNewMenu = power => {
       key: "15",
       title: "成绩管理",
       icon: "file",
-      //   hide: true,
-      //   power: "m-15",
+      hide: true,
+      power: "m-18",
       meta: {
         title: "成绩管理"
         // affix: true,
@@ -154,8 +155,8 @@ const getNewMenu = power => {
         {
           key: "gradeManagement",
           title: "成绩管理",
-          //   hide: true,
-          //   power: "m-15-1",
+          hide: true,
+          power: "m-18-1",
           //   alwaysShow: true,
           meta: {
             title: "成绩管理"

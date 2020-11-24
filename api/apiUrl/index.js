@@ -159,7 +159,8 @@ module.exports = {
     seeSubject: baseUrl + "/seeSubject",
     seeClassHour1: baseUrl + "/seeClassHour1",
     intelligenceCourse: baseUrl + "/intelligenceCourse",
-    seeClassHour: baseUrl + "/seeClassHour"
+    seeClassHour: baseUrl + "/seeClassHour",
+    seeOwnerHour: baseUrl + "/seeOwnerHour"
   },
   personalCenter: {
     selectEleCou: baseUrl + "/selectEleCou",

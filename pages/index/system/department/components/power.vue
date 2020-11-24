@@ -44,6 +44,11 @@ export default {
       },
       powerTree: [
         {
+          title: "社团选课",
+          key: "m-8",
+          children: [],
+        },
+        {
           title: "新生管理",
           key: "m-1",
           children: [
@@ -135,17 +140,37 @@ export default {
           ],
         },
         {
-          title: "学籍管理(班主任)",
-          key: "m-4",
+          title: "成绩管理",
+          key: "m-18",
+          children: [
+            {
+              title: "成绩管理",
+              key: "m-18-1",
+            },
+          ],
         },
+        // {
+        //   title: "学籍管理(班主任)",
+        //   key: "m-4",
+        // },
         {
-          title: "学籍管理(总管理员)",
+          title: "学籍管理",
           key: "m-4-4-4",
         },
         {
-          title: "补充信息设置",
-          key: "m-4-4",
+          title: "教师管理",
+          key: "m-5",
+          children: [
+            {
+              title: "基本信息",
+              key: "m-5-5",
+            },
+          ],
         },
+        // {
+        //   title: "补充信息设置",
+        //   key: "m-4-4",
+        // },
         {
           title: "智能排课",
           key: "m-6",
@@ -176,16 +201,7 @@ export default {
             },
           ],
         },
-        {
-          title: "教师管理",
-          key: "m-5",
-          children: [
-            {
-              title: "基本信息",
-              key: "m-5-5",
-            },
-          ],
-        },
+
         {
           title: "日志管理",
           key: "m-3",
@@ -202,11 +218,7 @@ export default {
             },
           ],
         },
-        {
-          title: "社团选课",
-          key: "m-8",
-          children: [],
-        },
+
         // {
         //   title: "个人中心",
         //   key: "m-7",

@@ -37,15 +37,34 @@
                 >对应学期:{{ item.xueqiname }}</span
               >
             </div>
-            <div class="item_bottom_btn">
+            <div class="item_bottom_btn" v-show="item.isLock == 0">
               <img
                 src="../../../assets/img/del.svg"
                 style="cursor: pointer"
                 @click.stop="del(item)"
               />
-              <img src="../../../assets/img/lock.svg" style="cursor: pointer" />
+              <img
+                src="../../../assets/img/lock.svg"
+                @click.stop="lock(item)"
+                style="cursor: pointer"
+              />
               <img
                 src="../../../assets/img/edit.svg"
+                style="cursor: pointer"
+                @click.stop="edit(item)"
+              />
+            </div>
+            <div class="item_bottom_btn" v-show="item.isLock == 1">
+              <img
+                src="../../../assets/img/delOn.svg"
+                style="cursor: pointer"
+              />
+              <img
+                src="../../../assets/img/lockOn.svg"
+                style="cursor: pointer"
+              />
+              <img
+                src="../../../assets/img/editOn.svg"
                 style="cursor: pointer"
                 @click.stop="edit(item)"
               />
@@ -58,7 +77,7 @@
         :key="index"
         :label="item"
         :name="item"
-        ><gradeClass :id="id"></gradeClass
+        ><gradeClass :isLock="isLock" :id="id"></gradeClass
       ></el-tab-pane>
     </el-tabs>
     <!-- 添加成绩分类dia -->
@@ -70,7 +89,7 @@
       @onClose="formClose"
     >
       <template slot="contentInfo">
-        <addGradeClass ref="tableForm" />
+        <addGradeClass ref="tableForm" :isLock="isLock" />
       </template>
     </my-drawer-vue>
   </div>
@@ -96,6 +115,7 @@ export default {
   },
   data() {
     return {
+      isLock: 0,
       tabList: [], //tab列表
       gradeList: [], //成绩类别列表
       gradeClass: "cjfl", //选中的tab名
@@ -107,6 +127,7 @@ export default {
   methods: {
     //跳转特定类别tab
     toGradeClass(item) {
+      this.isLock = item.isLock;
       this.id = item.id;
       if (!this.tabList.includes(item.name)) {
         this.tabList.push(item.name);
@@ -138,6 +159,8 @@ export default {
     },
     // 编辑
     edit(item) {
+      this.isLock = item.isLock;
+      console.log("1111", this.isLock);
       this.showAddClassDia = true;
       this.formType = 2;
       this.id = item.id;
@@ -146,7 +169,25 @@ export default {
         this.$refs.tableForm.setForm(item);
       }, 100);
     },
-
+    lock(item) {
+      this.$confirm({
+        title: "确定需要锁定吗?",
+        content: "锁定后将不能修改，只可以查看了哦",
+        cancelText: "取消",
+        okText: "锁定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .edit({ id: item.id, isLock: 1 })
+            .then((res) => {
+              this.getGradeClass();
+              this.$message.success(res.data);
+            })
+            .catch((err) => {});
+        },
+      });
+    },
     // 删除
     del(item) {
       this.$confirm({
@@ -196,17 +237,22 @@ export default {
           xueqiId: this.$refs.tableForm.form.term,
           schoolId: this.schoolId,
         };
-        main
-          .edit(val)
-          .then((res) => {
-            this.$message.success(res.data);
-            this.showAddClassDia = false;
-            this.getGradeClass();
-          })
-          .catch((err) => {
-            this.$message.error(err);
-            this.showAddClassDia = false;
-          });
+        if (this.isLock == 0) {
+          main
+            .edit(val)
+            .then((res) => {
+              this.$message.success(res.data);
+              this.showAddClassDia = false;
+              this.getGradeClass();
+            })
+            .catch((err) => {
+              this.$message.error(err);
+              this.showAddClassDia = false;
+            });
+        } else {
+          this.showAddClassDia = false;
+          this.getGradeClass();
+        }
       }
     },
   },

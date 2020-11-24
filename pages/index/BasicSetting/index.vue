@@ -32,15 +32,34 @@
               }}</span>
               <span style="font-size: 16px; color: #c8c8c8"></span>
             </div>
-            <div class="item_bottom_btn">
+            <div class="item_bottom_btn" v-show="item.islock == 0">
               <img
                 src="../../../assets/img/del.svg"
                 style="cursor: pointer"
                 @click.stop="del(item)"
               />
-              <img src="../../../assets/img/lock.svg" style="cursor: pointer" />
+              <img
+                src="../../../assets/img/lock.svg"
+                style="cursor: pointer"
+                @click="lock(item)"
+              />
               <img
                 src="../../../assets/img/edit.svg"
+                style="cursor: pointer"
+                @click.stop="edit(item)"
+              />
+            </div>
+            <div class="item_bottom_btn" v-show="item.islock == 1">
+              <img
+                src="../../../assets/img/delOn.svg"
+                style="cursor: pointer"
+              />
+              <img
+                src="../../../assets/img/lockOn.svg"
+                style="cursor: pointer"
+              />
+              <img
+                src="../../../assets/img/editOn.svg"
                 style="cursor: pointer"
                 @click.stop="edit(item)"
               />
@@ -120,6 +139,7 @@
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="本学期年份:" label-width="100px">
             <el-select
+              :disabled="isLock == 1"
               size="small"
               class="inp wid"
               v-model="form.term"
@@ -137,6 +157,7 @@
           <el-divider content-position="center">第一学期</el-divider>
           <el-form-item label="学生报到时间:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.xsbdsj"
               value-format="yyyy-MM-dd HH-mm"
               size="small"
@@ -148,6 +169,7 @@
           </el-form-item>
           <el-form-item label="开学起止日期:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.kxqzrq"
               value-format="yyyy-MM-dd"
               size="small"
@@ -161,6 +183,7 @@
           </el-form-item>
           <el-form-item label="工作起止日期:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.gzqzrq"
               value-format="yyyy-MM-dd"
               size="small"
@@ -174,6 +197,7 @@
           </el-form-item>
           <el-form-item label="周教学日设置:" label-width="100px">
             <el-select
+              :disabled="isLock == 1"
               v-model="form.zjxrsz"
               multiple
               placeholder="请选择"
@@ -198,6 +222,7 @@
               </div>
               <div class="ks_bottom">
                 <el-select
+                  :disabled="isLock == 1"
                   style="width: 90px"
                   v-model="form.swks"
                   placeholder="请选择"
@@ -213,6 +238,7 @@
                   </el-option>
                 </el-select>
                 <el-select
+                  :disabled="isLock == 1"
                   style="width: 90px"
                   v-model="form.xwks"
                   placeholder="请选择"
@@ -228,6 +254,7 @@
                   </el-option>
                 </el-select>
                 <el-select
+                  :disabled="isLock == 1"
                   style="width: 90px"
                   v-model="form.wsks"
                   placeholder="请选择"
@@ -249,6 +276,7 @@
             <div class="ks_contain">
               <div class="ks_top">
                 <el-input
+                  :disabled="isLock == 1"
                   v-model="form.swsc"
                   style="width: 90px"
                   placeholder="上午"
@@ -257,6 +285,7 @@
                   <template slot="suffix"> 分钟 </template></el-input
                 >
                 <el-input
+                  :disabled="isLock == 1"
                   v-model="form.xwsc"
                   style="width: 90px"
                   placeholder="下午"
@@ -264,6 +293,7 @@
                   ><template slot="suffix"> 分钟 </template></el-input
                 >
                 <el-input
+                  :disabled="isLock == 1"
                   v-model="form.wssc"
                   style="width: 90px"
                   placeholder="晚午"
@@ -276,6 +306,7 @@
           <el-divider content-position="center">第二学期</el-divider>
           <el-form-item label="学生报到时间:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.xsbdsj_two"
               value-format="yyyy-MM-dd HH:mm"
               size="small"
@@ -287,6 +318,7 @@
           </el-form-item>
           <el-form-item label="开学起止日期:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.kxqzrq_two"
               value-format="yyyy-MM-dd"
               size="small"
@@ -300,6 +332,7 @@
           </el-form-item>
           <el-form-item label="工作起止日期:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.gzqzrq_two"
               value-format="yyyy-MM-dd"
               size="small"
@@ -313,6 +346,7 @@
           </el-form-item>
           <el-form-item label="下学期报到时间:" label-width="100px">
             <el-date-picker
+              :disabled="isLock == 1"
               v-model="form.xxqbdsj"
               value-format="yyyy-MM-dd HH:mm"
               size="small"
@@ -324,6 +358,7 @@
           </el-form-item>
           <el-form-item label="周教学日设置:" label-width="100px">
             <el-select
+              :disabled="isLock == 1"
               v-model="form.zjxrsz_two"
               multiple
               placeholder="请选择"
@@ -348,6 +383,7 @@
               </div>
               <div class="ks_bottom">
                 <el-select
+                  :disabled="isLock == 1"
                   style="width: 90px"
                   v-model="form.swks_two"
                   placeholder="请选择"
@@ -363,6 +399,7 @@
                   </el-option>
                 </el-select>
                 <el-select
+                  :disabled="isLock == 1"
                   style="width: 90px"
                   v-model="form.xwks_two"
                   placeholder="请选择"
@@ -378,6 +415,7 @@
                   </el-option>
                 </el-select>
                 <el-select
+                  :disabled="isLock == 1"
                   style="width: 90px"
                   v-model="form.wsks_two"
                   placeholder="请选择"
@@ -399,6 +437,7 @@
             <div class="ks_contain">
               <div class="ks_top">
                 <el-input
+                  :disabled="isLock == 1"
                   v-model="form.swsc_two"
                   style="width: 90px"
                   placeholder="上午"
@@ -407,6 +446,7 @@
                   <template slot="suffix"> 分钟 </template></el-input
                 >
                 <el-input
+                  :disabled="isLock == 1"
                   v-model="form.xwsc_two"
                   style="width: 90px"
                   placeholder="下午"
@@ -414,6 +454,7 @@
                   ><template slot="suffix"> 分钟 </template></el-input
                 >
                 <el-input
+                  :disabled="isLock == 1"
                   v-model="form.wssc_two"
                   style="width: 90px"
                   placeholder="晚午"
@@ -431,6 +472,7 @@
           </div>
           <div class="njbd">
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.xtnj_one"
               placeholder="请选择"
@@ -446,6 +488,7 @@
               </el-option>
             </el-select>
             <el-select
+              :disabled="isLock == 1"
               @change="change_one"
               style="width: 130px"
               v-model="form.ddnj_one"
@@ -470,6 +513,7 @@
           </div>
           <div class="njbd">
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.xtnj_two"
               placeholder="请选择"
@@ -485,6 +529,7 @@
               </el-option>
             </el-select>
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               @change="change_two"
               v-model="form.ddnj_two"
@@ -509,6 +554,7 @@
           </div>
           <div class="njbd">
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.xtnj_three"
               placeholder="请选择"
@@ -524,6 +570,7 @@
               </el-option>
             </el-select>
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.ddnj_three"
               @change="change_three"
@@ -548,6 +595,7 @@
           </div>
           <div class="njbd">
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.xtnj_four"
               placeholder="请选择"
@@ -563,6 +611,7 @@
               </el-option>
             </el-select>
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               @change="change_four"
               v-model="form.ddnj_four"
@@ -587,6 +636,7 @@
           </div>
           <div class="njbd">
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.xtnj_five"
               placeholder="请选择"
@@ -602,6 +652,7 @@
               </el-option>
             </el-select>
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               @change="change_five"
               v-model="form.ddnj_five"
@@ -626,6 +677,7 @@
           </div>
           <div class="njbd">
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               v-model="form.xtnj_six"
               placeholder="请选择"
@@ -641,6 +693,7 @@
               </el-option>
             </el-select>
             <el-select
+              :disabled="isLock == 1"
               style="width: 130px"
               @change="change_six"
               v-model="form.ddnj_six"
@@ -688,6 +741,7 @@ export default {
   data() {
     return {
       itemId: 0, //当前item的id
+      isLock: 0,
       formType: 0, //0--新增，1--编辑
       activeName: "first",
       gradeList: [],
@@ -1093,16 +1147,21 @@ export default {
           xsarrive2: this.form.xsbdsj_two,
           year: this.form.term,
         };
-        main
-          .edit(val)
-          .then((res) => {
-            this.$message.success(res.data);
-            this.getAllTerm();
-            this.showAddClassDia = false;
-          })
-          .catch((err) => {
-            this.$message.error(res.data);
-          });
+        if (this.isLock == 0) {
+          main
+            .edit(val)
+            .then((res) => {
+              this.$message.success(res.data);
+              this.getAllTerm();
+              this.showAddClassDia = false;
+            })
+            .catch((err) => {
+              this.$message.error(res.data);
+            });
+        } else {
+          this.getAllTerm();
+          this.showAddClassDia = false;
+        }
       }
     },
     //关闭学期表单
@@ -1116,6 +1175,25 @@ export default {
       this.formType = 0;
     },
     handleClick() {},
+    lock(item) {
+      this.$confirm({
+        title: "确定需要锁定吗?",
+        content: "锁定后将不能修改，只可以查看了哦",
+        cancelText: "取消",
+        okText: "锁定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .edit({ id: item.id, islock: 1 })
+            .then((res) => {
+              this.getAllTerm();
+              this.$message.success(res.data);
+            })
+            .catch((err) => {});
+        },
+      });
+    },
     del(item) {
       this.$confirm({
         title: "确认删除吗",
@@ -1178,6 +1256,7 @@ export default {
       this.form.ddnj_six = "";
     },
     edit(item) {
+      this.isLock = item.islock;
       this.itemId = item.id;
       this.formType = 1;
       console.log("item", item);

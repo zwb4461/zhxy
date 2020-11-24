@@ -2,10 +2,14 @@
   <div>
     <el-tabs v-model="activeName" @tab-click="clickTab">
       <el-tab-pane label="第一学期" name="1"
-        ><firstTerm :cjlbId="cjlbId" :djxq="activeName"></firstTerm
+        ><firstTerm
+          :cjlbId="cjlbId"
+          :isLock="isLock"
+          :djxq="activeName"
+        ></firstTerm
       ></el-tab-pane>
       <el-tab-pane label="第二学期" name="2"
-        ><secondTerm :cjlbId="cjlbId"></secondTerm
+        ><secondTerm :isLock="isLock" :cjlbId="cjlbId"></secondTerm
       ></el-tab-pane>
       <el-tab-pane label="成绩录入" name="3">
         <div class="condition">
@@ -69,6 +73,7 @@
               </el-table-column>
               <el-table-column prop="name" label="姓名" width="180">
               </el-table-column>
+
               <template v-for="(item, index) in DynamicColumn">
                 <el-table-column
                   :key="index"
@@ -101,13 +106,23 @@
                     :key="subIndex + item.name"
                     :label="subItem.name"
                   >
-                    {{ subItem.score }}
+                    <template
+                      slot-scope="scope"
+                      v-if="scope.row.showExam[index].scoreChange"
+                    >
+                      <div>
+                        {{
+                          scope.row.showExam[index].scoreChange
+                            ? scope.row.showExam[index].scoreChange[subIndex]
+                                .score
+                            : ""
+                        }}
+                      </div>
+                    </template>
                   </el-table-column>
                 </template>
               </template>
-              <!-- 
-              <el-table-column prop="xkName" label="课程名称" width="180">
-              </el-table-column> -->
+
               <el-table-column prop="comment" label="期末评语" width="250">
                 <template slot-scope="scope">
                   <div>
@@ -115,7 +130,6 @@
                       <div style="width: 380px">
                         <p>{{ scope.row.comment }}</p>
                       </div>
-                      <!-- <p>住址: {{ scope.row.xkName }}</p> -->
                       <div
                         slot="reference"
                         style="
@@ -159,6 +173,10 @@ export default {
   },
   props: {
     id: {
+      type: Number,
+      default: 0,
+    },
+    isLock: {
       type: Number,
       default: 0,
     },

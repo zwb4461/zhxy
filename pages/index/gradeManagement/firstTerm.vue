@@ -6,12 +6,19 @@
         type="primary"
         style="width: 218px"
         @click="addExam"
+        :disabled="isLock == 1"
         >新增考试</el-button
       >
-      <el-button size="small" style="width: 108px" @click="lrsz"
+      <el-button
+        size="small"
+        style="width: 108px"
+        @click="lrsz"
+        :disabled="isLock == 1"
         >录入设置</el-button
       >
-      <el-button size="small" style="width: 108px">批量复制</el-button>
+      <el-button size="small" style="width: 108px" :disabled="isLock == 1"
+        >批量复制</el-button
+      >
     </div>
     <div class="contain">
       <div class="left">
@@ -37,6 +44,7 @@
           <el-table-column prop="name" label="学科/设置" width="180">
             <template slot-scope="scope">
               <el-select
+                :disabled="isLock == 1"
                 @change="xkChange(scope)"
                 size="small"
                 v-model="scope.row.name"
@@ -55,6 +63,7 @@
           <el-table-column prop="kssj" label="考试时间" width="180">
             <template slot-scope="scope">
               <el-date-picker
+                :disabled="isLock == 1"
                 @change="kssjChange(scope)"
                 style="width: 150px"
                 size="small"
@@ -68,6 +77,7 @@
           <el-table-column prop="ksfs" label="考试方式" width="120">
             <template slot-scope="scope">
               <el-input
+                :disabled="isLock == 1"
                 size="small"
                 @change="ksfsChange(scope)"
                 v-model="scope.row.ksfs"
@@ -108,6 +118,7 @@
         </el-table>
         <div class="addRow">
           <el-button
+            :disabled="isLock == 1"
             @click="addRow"
             style="width: 95%; margin-top: 10px"
             size="small"
@@ -129,10 +140,20 @@
       :before-close="closeLrqx"
     >
       <div class="lrqx">
-        <el-radio v-model="lrqxRadio" label="1">任课老师</el-radio>
+        <el-radio v-model="lrqxRadio" label="1" :disabled="isLock == 1"
+          >任课老师</el-radio
+        >
         <div class="lrqx1">
-          <el-radio v-model="lrqxRadio" label="2">指定教师</el-radio>
-          <el-select multiple size="small" v-model="zdjs" placeholder="请选择">
+          <el-radio v-model="lrqxRadio" label="2" :disabled="isLock == 1"
+            >指定教师</el-radio
+          >
+          <el-select
+            multiple
+            :disabled="isLock == 1"
+            size="small"
+            v-model="zdjs"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in zdjsOpt"
               :key="item.teacherUnionid"
@@ -191,12 +212,17 @@
       width="30%"
       :before-close="closeLrfs"
     >
-      <el-radio v-model="llfsRadio" label="0">数值</el-radio>
-      <el-radio v-model="llfsRadio" label="1">等第</el-radio>
+      <el-radio v-model="llfsRadio" :disabled="isLock == 1" label="0"
+        >数值</el-radio
+      >
+      <el-radio v-model="llfsRadio" :disabled="isLock == 1" label="1"
+        >等第</el-radio
+      >
       <div v-if="llfsRadio == '0'" style="margin-top: 15px">
         <el-form ref="form2" label-width="80px">
           <el-form-item label="最低值:">
             <el-input
+              :disabled="isLock == 1"
               size="small"
               style="width: 300px"
               v-model="minScore"
@@ -204,6 +230,7 @@
           </el-form-item>
           <el-form-item label="最高值:">
             <el-input
+              :disabled="isLock == 1"
               size="small"
               style="width: 300px"
               v-model="maxScore"
@@ -211,6 +238,7 @@
           </el-form-item>
           <el-form-item label="单位:">
             <el-select
+              :disabled="isLock == 1"
               size="small"
               style="width: 300px"
               v-model="ksdw"
@@ -236,12 +264,20 @@
         >
           <el-table-column prop="bh" label="编码" width="100">
             <template slot-scope="scope">
-              <el-input size="small" v-model="scope.row.bh"></el-input>
+              <el-input
+                size="small"
+                :disabled="isLock == 1"
+                v-model="scope.row.bh"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="rank" label="等第名称" width="198">
             <template slot-scope="scope">
-              <el-input size="small" v-model="scope.row.rank"></el-input>
+              <el-input
+                size="small"
+                :disabled="isLock == 1"
+                v-model="scope.row.rank"
+              ></el-input>
             </template>
           </el-table-column>
         </el-table>
@@ -249,6 +285,7 @@
           size="small"
           style="width: 300px; margin-top: 5px"
           @click="addCjlrfsRow"
+          :disabled="isLock == 1"
           >+</el-button
         >
       </div>
@@ -295,6 +332,7 @@
       <el-form ref="form4" label-width="80px">
         <el-form-item label="名称:">
           <el-input
+            :disabled="isLock == 1"
             size="small"
             v-model="columnsName"
             placeholder="请输入等第转换名"
@@ -303,7 +341,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeAddDdzh">取消</el-button>
-        <el-button @click="submitAddDdzh">添加</el-button>
+        <el-button @click="submitAddDdzh" :disabled="isLock == 1"
+          >添加</el-button
+        >
       </span>
     </el-dialog>
     <el-dialog
@@ -313,12 +353,13 @@
       :before-close="closeDdzh"
     >
       <el-radio-group v-model="needZh" @change="zhChang">
-        <el-radio label="无需转换">无需转换</el-radio>
-        <el-radio label="已设置">需要转换</el-radio>
+        <el-radio label="无需转换" :disabled="isLock == 1">无需转换</el-radio>
+        <el-radio label="已设置" :disabled="isLock == 1">需要转换</el-radio>
       </el-radio-group>
       <div class="sjly" v-show="needZh == '已设置'">
         <span>数据来源:</span>
         <el-select
+          :disabled="isLock == 1"
           size="small"
           @change="changSjly"
           v-model="sjly"
@@ -344,6 +385,7 @@
             <el-table-column prop="yscj" label="原始成绩" width="180">
               <template slot-scope="scope">
                 <el-slider
+                  :disabled="isLock == 1"
                   v-model="scope.row.yscj"
                   input-size="mini"
                   show-stops
@@ -356,16 +398,28 @@
             </el-table-column>
             <el-table-column prop="bh" label="编码" width="100">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.bh"></el-input>
+                <el-input
+                  :disabled="isLock == 1"
+                  size="small"
+                  v-model="scope.row.bh"
+                ></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="zhhmc" label="转换后等第名称">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.zhhmc"></el-input>
+                <el-input
+                  :disabled="isLock == 1"
+                  size="small"
+                  v-model="scope.row.zhhmc"
+                ></el-input>
               </template>
             </el-table-column>
           </el-table>
-          <el-button size="mini" style="width: 100%" @click="addDdRow"
+          <el-button
+            :disabled="isLock == 1"
+            size="mini"
+            style="width: 100%"
+            @click="addDdRow"
             >+</el-button
           >
         </div>
@@ -384,12 +438,20 @@
             </el-table-column>
             <el-table-column prop="bm" label="编码" width="100">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.bm"></el-input>
+                <el-input
+                  :disabled="isLock == 1"
+                  size="small"
+                  v-model="scope.row.bm"
+                ></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="zhhmc" label="转换后等第名称">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.zhhmc"></el-input>
+                <el-input
+                  :disabled="isLock == 1"
+                  size="small"
+                  v-model="scope.row.zhhmc"
+                ></el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -397,7 +459,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDdzh">取消</el-button>
-        <el-button @click="submitDdzh">确定</el-button>
+        <el-button :disabled="isLock == 1" @click="submitDdzh">确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -408,7 +470,7 @@ import main from "~/api/examManage";
 import main1 from "~/api/termManage";
 import main2 from "~/api/cjdw";
 export default {
-  props: ["djxq", "cjlbId"],
+  props: ["djxq", "cjlbId", "isLock"],
   computed: {
     //学校id
     schoolId() {

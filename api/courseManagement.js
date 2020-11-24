@@ -87,6 +87,13 @@ const intelligenceCourse = query => {
     data: query
   });
 };
+const seeOwnerHour = query => {
+  return request({
+    url: Api.courseManagement.seeOwnerHour,
+    method: "post",
+    data: query
+  });
+};
 
 export default {
   setLeiBie,
@@ -99,5 +106,6 @@ export default {
   deleteTeacher,
   seeCurriculumCount,
   seeClassHour1,
-  intelligenceCourse
+  intelligenceCourse,
+  seeOwnerHour
 };
