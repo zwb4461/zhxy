@@ -68,7 +68,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       if (form.username === "admin" && form.password === "123456") {
         ddServer
-          .findUser({ unionid: "282220545227448134" })
+          .findUser({ unionid: "manager571" })
           .then(res => {
             let info = res.data[0];
             let auth = 1;
@@ -77,8 +77,8 @@ const actions = {
             let power = [];
             // if (info.jurisdiction) {
             // let jurisdiction = 'm-1,m-1-1,p-1-t,p-1-t-add,p-1-t-edit,p-1-t-del,p-1-l-add,p-1-l-edit,p-1-l-del,p-1-l-upload,p-1-r-add,p-1-r-edit,p-1-r-del,p-1-f,p-1-f-add,p-1-f-edit,p-1-f-del,p-1-s,p-1-close,m-1-2,m-4,m-2,m-2-2,m-2-3,m-2-4,m-3,m-3-1,m-3-2,p-1-l,p-1-r,p-1-h,p-1-x';
-
             let list = info.jurisdiction.split(",");
+            console.log("权限", info.jurisdiction);
             // let list = jurisdiction.split(',');
             //单独添加学校管理菜单
             list.push("s-m-1");

@@ -77,7 +77,7 @@
         :key="index"
         :label="item"
         :name="item"
-        ><gradeClass :isLock="isLock" :id="id"></gradeClass
+        ><gradeClass :isLock="isLock" :xueqiId="xueqiId" :id="id"></gradeClass
       ></el-tab-pane>
     </el-tabs>
     <!-- 添加成绩分类dia -->
@@ -115,6 +115,7 @@ export default {
   },
   data() {
     return {
+      xueqiId: 0,
       isLock: 0,
       tabList: [], //tab列表
       gradeList: [], //成绩类别列表
@@ -128,6 +129,7 @@ export default {
     //跳转特定类别tab
     toGradeClass(item) {
       this.isLock = item.isLock;
+      this.xueqiId = item.xueqiId;
       this.id = item.id;
       if (!this.tabList.includes(item.name)) {
         this.tabList.push(item.name);

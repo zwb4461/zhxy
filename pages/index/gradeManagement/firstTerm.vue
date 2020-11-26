@@ -16,7 +16,11 @@
         :disabled="isLock == 1"
         >录入设置</el-button
       >
-      <el-button size="small" style="width: 108px" :disabled="isLock == 1"
+      <el-button
+        size="small"
+        style="width: 108px"
+        :disabled="isLock == 1"
+        @click="copy"
         >批量复制</el-button
       >
     </div>
@@ -462,6 +466,44 @@
         <el-button :disabled="isLock == 1" @click="submitDdzh">确定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="批量复制"
+      :visible.sync="showPlfz"
+      width="30%"
+      :before-close="closePlfz"
+    >
+      <el-radio-group @change="plfzChange" v-model="plfzRadio">
+        <el-radio :label="0">学科复制</el-radio>
+        <el-radio :label="1">年级复制</el-radio>
+        <el-radio :label="2">考试复制</el-radio>
+      </el-radio-group>
+      <!-- 学科复制 -->
+      <div style="margin-top: 15px">
+        <el-form ref="form" :model="form7" label-width="80px">
+          <el-form-item label="数据源">
+            <el-cascader
+              size="small"
+              :key="cascaderKey"
+              v-model="xkfz"
+              :options="xkfzOpt"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="复制到">
+            <el-cascader
+              size="small"
+              :key="cascaderKey"
+              v-model="xkfzTo"
+              :options="xkfzOpt"
+              :props="{ multiple: true }"
+            ></el-cascader>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closePlfz">取 消</el-button>
+        <el-button type="primary" @click="submitPlfz">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -470,7 +512,7 @@ import main from "~/api/examManage";
 import main1 from "~/api/termManage";
 import main2 from "~/api/cjdw";
 export default {
-  props: ["djxq", "cjlbId", "isLock"],
+  props: ["djxq", "cjlbId", "isLock", "xueqiId"],
   computed: {
     //学校id
     schoolId() {
@@ -479,6 +521,11 @@ export default {
   },
   data() {
     return {
+      form7: {},
+      xkfzOpt: [],
+      xkfz: [],
+      xkfzTo: [],
+      plfzRadio: 0,
       ksId: 0, //点击树获取考试id
       gradeId: 0, //点击树获取年级id
       // 右侧表格数据
@@ -530,9 +577,129 @@ export default {
       zdjs: [], //指定教师绑定值
       zdjsOpt: [], //指定教师选项
       dwOpt: [], //成绩单位选项
+      showPlfz: false,
+      plfzType: 0, //0--学科复制,1--年级复制,2--考试复制
+      cascaderKey: 1,
     };
   },
   methods: {
+    //   批量复制radio改变值
+    plfzChange(val) {
+      ++this.cascaderKey;
+      this.xkfz = [];
+      this.xkfzTo = [];
+      if (val == 0) {
+        this.plfzType = 0;
+        this.seeCopy();
+      } else if (val == 1) {
+        this.plfzType = 1;
+        let val = {
+          cjlbId: this.cjlbId,
+          search: 1,
+        };
+        main
+          .seeCopy(val)
+          .then((res) => {
+            this.xkfzOpt = res.data;
+          })
+          .catch((err) => {});
+      } else if (val == 2) {
+        this.plfzType = 2;
+        let val = {
+          cjlbId: this.cjlbId,
+          search: 2,
+        };
+        main
+          .seeCopy(val)
+          .then((res) => {
+            this.xkfzOpt = res.data;
+          })
+          .catch((err) => {});
+      }
+    },
+    //   获取批量复制数据源
+    seeCopy() {
+      let val = {
+        cjlbId: this.cjlbId,
+      };
+      main
+        .seeCopy(val)
+        .then((res) => {
+          this.xkfzOpt = res.data;
+        })
+        .catch((err) => {});
+    },
+    //关闭批量复制
+    closePlfz() {
+      this.showPlfz = false;
+    },
+    //提交批量复制
+    submitPlfz() {
+      console.log("plfzType", this.plfzType);
+      if (this.plfzType == 0) {
+        let arr = [];
+        this.xkfzTo.map((item) => {
+          arr.push(item[3]);
+        });
+        let val = { id: this.xkfz[3], ids: arr };
+        console.log("val", val);
+        main
+          .copyXueke(val)
+          .then((res) => {
+            this.showPlfz = false;
+            this.$message.success(res.data);
+            this.plfzRadio = 0;
+            this.xkfz = [];
+            this.xkfzTo = [];
+          })
+          .catch((err) => {});
+      } else if (this.plfzType == 1) {
+        let arr = [];
+        this.xkfzTo.map((item) => {
+          arr.push({
+            gradeId: item[2],
+            ksId: item[1],
+          });
+        });
+        let val = {
+          fuzhiNjs: arr,
+          gradeId: this.xkfz[2],
+          ksId: this.xkfz[1],
+        };
+        console.log("val", val);
+        main
+          .copyNj(val)
+          .then((res) => {
+            this.showPlfz = false;
+            this.$message.success(res.data);
+            this.plfzRadio = 0;
+            this.xkfz = [];
+            this.xkfzTo = [];
+          })
+          .catch((err) => {});
+      } else if (this.plfzType == 2) {
+        let arr = [];
+        this.xkfzTo.map((item) => {
+          arr.push(item[1]);
+        });
+        let val = { id: this.xkfz[1], ids: arr };
+        console.log("val", val);
+        main
+          .copyKs(val)
+          .then((res) => {
+            this.showPlfz = false;
+            this.$message.success(res.data);
+            this.plfzRadio = 0;
+            this.xkfz = [];
+            this.xkfzTo = [];
+          })
+          .catch((err) => {});
+      }
+    },
+    //批量复制
+    copy() {
+      this.showPlfz = true;
+    },
     //   获取所有单位
     getDw() {
       main2
@@ -866,6 +1033,7 @@ export default {
           gradeId: this.gradeId,
           ksId: this.ksId,
           name: scope.row.name,
+          cjlbId: this.cjlbId,
         };
         console.log("1111", scope.row);
         main
@@ -879,8 +1047,9 @@ export default {
           gradeId: this.gradeId,
           ksId: this.ksId,
           name: scope.row.name,
+          cjlbId: this.cjlbId,
         };
-        console.log("2222");
+        console.log("2222", val);
         main
           .addXk(val)
           .then((res) => {
@@ -1000,11 +1169,12 @@ export default {
     getDynj() {
       let val = {
         schoolId: this.schoolId,
-        xueqiId: this.djxq,
+        xueqiId: this.xueqiId,
       };
       main1
         .find(val)
         .then((res) => {
+          console.log("对应年级", res.data);
           this.dynjOpt = res.data.list[0].showNj;
         })
         .catch((err) => {});
@@ -1162,6 +1332,7 @@ export default {
     this.getAllXk();
     this.findTeacher();
     this.getDw();
+    this.seeCopy();
   },
 };
 </script>

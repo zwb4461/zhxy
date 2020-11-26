@@ -49,10 +49,12 @@ export default {
         .then((res) => {
           this.options = [];
           res.data.list.map((item) => {
-            this.options.push({
-              value: item.id,
-              label: item.year,
-            });
+            if (item.islock !== 1) {
+              this.options.push({
+                value: item.id,
+                label: item.year,
+              });
+            }
           });
         })
         .catch((err) => {});

@@ -212,11 +212,18 @@ module.exports = {
     edit: baseUrl + "/updateExam", //编辑考试
     findXk: baseUrl + "/selectXueke", //查询所有学科
     editXk: baseUrl + "/updateKsXueke", //修改考试学科
-    addXk: baseUrl + "/insertKsXueke", //添加考试学科
+    editXk: baseUrl + "/updateKsXueke", //修改考试学科
+    sel: baseUrl + "/selectKsXueke",
     addDd: baseUrl + "/insertScoreRankChange", //添加等第转换
     findDd: baseUrl + "/selectScoreRankChange", //查看等第转换
     findTeacher: baseUrl + "/getTeacherName", //获取所有老师
-    findsjly: baseUrl + "/seeSource"
+    findsjly: baseUrl + "/seeSource",
+    seeCopy: baseUrl + "/seeCopySource",
+    copyKs: baseUrl + "/copyKs",
+    copyXueke: baseUrl + "/copyXueke",
+    copyNj: baseUrl + "/copyNj",
+    batchQc: baseUrl + "/batchQc",
+    batchHandle: baseUrl + "/batchHandle"
   },
   //学科汇总
   xkhz: {

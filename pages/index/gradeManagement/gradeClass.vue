@@ -6,10 +6,15 @@
           :cjlbId="cjlbId"
           :isLock="isLock"
           :djxq="activeName"
+          :xueqiId="xueqiId"
         ></firstTerm
       ></el-tab-pane>
       <el-tab-pane label="第二学期" name="2"
-        ><secondTerm :isLock="isLock" :cjlbId="cjlbId"></secondTerm
+        ><secondTerm
+          :isLock="isLock"
+          :cjlbId="cjlbId"
+          :xueqiId="xueqiId"
+        ></secondTerm
       ></el-tab-pane>
       <el-tab-pane label="成绩录入" name="3">
         <div class="condition">
@@ -157,11 +162,65 @@
       :commentRow="commentRow"
       :getTable="changeXq"
     ></qmpy>
+    <el-dialog
+      title="批量处理"
+      :visible.sync="showPlcl"
+      width="30%"
+      :before-close="closePlcl"
+    >
+      <el-radio-group v-model="plclRadio">
+        <el-radio :label="0">清空</el-radio>
+        <el-radio :label="1">批量</el-radio>
+      </el-radio-group>
+      <div v-show="plclRadio == 1" class="sel">
+        <el-select
+          style="width: 200px; margin-top: 15px"
+          size="small"
+          v-model="ksLabel"
+          placeholder="请选择"
+          @change="ksLabelChange"
+        >
+          <el-option
+            v-for="item in ksOpt"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+        <el-input
+          v-model="plfz"
+          style="width: 200px; margin-top: 15px"
+          size="small"
+          v-show="lrfs == 0"
+        ></el-input>
+        <el-select
+          style="width: 200px; margin-top: 15px"
+          v-show="lrfs == 1"
+          size="small"
+          v-model="ddName"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in ddOpt"
+            :key="item.rank"
+            :label="item.rank"
+            :value="item.rank"
+          >
+          </el-option>
+        </el-select>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closePlcl">取 消</el-button>
+        <el-button type="primary" @click="submitPlcl">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import main from "~/api/scoreEntry";
+import main1 from "~/api/examManage";
 import qmpy from "./components/qmpy";
 import firstTerm from "./firstTerm";
 import secondTerm from "./secondTerm";
@@ -177,6 +236,10 @@ export default {
       default: 0,
     },
     isLock: {
+      type: Number,
+      default: 0,
+    },
+    xueqiId: {
       type: Number,
       default: 0,
     },
@@ -221,9 +284,82 @@ export default {
         label: "name",
       },
       commentRow: {}, //当前评语行数据
+      showPlcl: false,
+      plclRadio: 0,
+      ksOpt: [],
+      ksLabel: "",
+      lrfs: -1,
+      plfz: 0,
+      ddName: "",
+      ddOpt: [],
+      ksId: 0,
     };
   },
   methods: {
+    ksLabelChange(val) {
+      console.log("val", val);
+      this.ksId = val;
+      let data = {
+        classId: this.classId,
+        name: this.xueke,
+        ksId: val,
+      };
+      main1
+        .sel(data)
+        .then((res) => {
+          this.lrfs = res.data[0].lrfs;
+          console.log("this.lrfs", res);
+          this.ddOpt = res.data[0].showdedi;
+        })
+        .catch((err) => {});
+    },
+    closePlcl() {
+      this.showPlcl = false;
+    },
+    submitPlcl() {
+      if (this.plclRadio == 0) {
+        //   清空
+        let val = {
+          classId: this.classId,
+          ksId: this.ksId,
+          schoolId: this.schoolId,
+          xuekeName: this.xueke,
+        };
+        main1
+          .batchQc(val)
+          .then((res) => {
+            this.showPlcl = false;
+            this.$message.success(res.data);
+            this.plclRadio = 0;
+            this.ksId = 0;
+            this.ksLabel = "";
+            this.plfz = "";
+            this.ddName = "";
+          })
+          .catch((err) => {});
+      } else if (this.plclRadio == 1) {
+        //复制
+        let val = {
+          classId: this.classId,
+          ksId: this.ksId,
+          schoolId: this.schoolId,
+          score: this.ddName ? this.ddName : this.plfz,
+          xuekeName: this.xueke,
+        };
+        main1
+          .batchHandle(val)
+          .then((res) => {
+            this.showPlcl = false;
+            this.$message.success(res.data);
+            this.plclRadio = 0;
+            this.ksId = 0;
+            this.ksLabel = "";
+            this.plfz = "";
+            this.ddName = "";
+          })
+          .catch((err) => {});
+      }
+    },
     tableRowClassName({ row, rowIndex }) {
       // 把每一行的索引放进row
       row.index = rowIndex;
@@ -298,6 +434,7 @@ export default {
     },
     //下拉框--学科
     changeXk() {
+      console.log("xueke", this.xueke);
       let val = {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
@@ -335,6 +472,11 @@ export default {
               value: item.name,
             });
           });
+          this.ksOpt = [];
+          this.DynamicColumn.map((item) => {
+            this.ksOpt.push({ name: item.name, id: item.id });
+          });
+          console.log("this.tableData", res.data2);
         })
         .catch((err) => {});
     },
@@ -354,7 +496,11 @@ export default {
     },
     // 批量处理
     plDeal() {
-      console.log("this.cjlbId", this.cjlbId);
+      if (this.xueke) {
+        this.showPlcl = true;
+      } else {
+        this.$message.error("请选择学科");
+      }
     },
     //点击顶部tabs
     clickTab(tab, event) {
@@ -392,5 +538,9 @@ export default {
 .right {
   width: 100%;
   padding-left: 15px;
+}
+.sel {
+  display: flex;
+  flex-direction: column;
 }
 </style>

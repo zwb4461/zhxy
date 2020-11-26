@@ -15,6 +15,7 @@
       <el-table-column prop="four" label="星期四"> </el-table-column>
       <el-table-column prop="five" label="星期五"> </el-table-column>
     </el-table>
+    <el-button type="primary" @click="getTable">123</el-button>
   </div>
 </template>
 
@@ -31,7 +32,16 @@ export default {
     },
   },
   data() {
-    return { tableData: [{ time: "上午" }, {}, {}, { time: "下午" }, {}, {}] };
+    return {
+      tableData: [
+        { time: "上午", one: "", two: "", three: "", four: "", five: "" },
+        { one: "", two: "", three: "", four: "", five: "" },
+        { one: "", two: "", three: "", four: "", five: "" },
+        { time: "下午", one: "", two: "", three: "", four: "", five: "" },
+        { one: "", two: "", three: "", four: "", five: "" },
+        { one: "", two: "", three: "", four: "", five: "" },
+      ],
+    };
   },
   methods: {
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
@@ -151,6 +161,7 @@ export default {
                 item.subjectName + "(" + item.className + ")";
             }
           });
+          console.log("tableData", this.tableData);
         })
         .catch((err) => {});
     },

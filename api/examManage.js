@@ -84,6 +84,55 @@ const findsjly = query => {
     data: query
   });
 };
+const copyXueke = query => {
+  return request({
+    url: Api.examManage.copyXueke,
+    method: "post-json",
+    data: query
+  });
+};
+const copyNj = query => {
+  return request({
+    url: Api.examManage.copyNj,
+    method: "post-json",
+    data: query
+  });
+};
+const copyKs = query => {
+  return request({
+    url: Api.examManage.copyKs,
+    method: "post-json",
+    data: query
+  });
+};
+const seeCopy = query => {
+  return request({
+    url: Api.examManage.seeCopy,
+    method: "get",
+    params: query
+  });
+};
+const sel = query => {
+  return request({
+    url: Api.examManage.sel,
+    method: "post",
+    data: query
+  });
+};
+const batchHandle = query => {
+  return request({
+    url: Api.examManage.batchHandle,
+    method: "post",
+    data: query
+  });
+};
+const batchQc = query => {
+  return request({
+    url: Api.examManage.batchQc,
+    method: "post",
+    data: query
+  });
+};
 export default {
   add,
   edit,
@@ -95,5 +144,12 @@ export default {
   addDd,
   findDd,
   findTeacher,
-  findsjly
+  findsjly,
+  seeCopy,
+  copyXueke,
+  copyNj,
+  copyKs,
+  sel,
+  batchHandle,
+  batchQc
 };
