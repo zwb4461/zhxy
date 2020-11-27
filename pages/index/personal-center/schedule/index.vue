@@ -15,7 +15,6 @@
       <el-table-column prop="four" label="星期四"> </el-table-column>
       <el-table-column prop="five" label="星期五"> </el-table-column>
     </el-table>
-    <el-button type="primary" @click="getTable">123</el-button>
   </div>
 </template>
 

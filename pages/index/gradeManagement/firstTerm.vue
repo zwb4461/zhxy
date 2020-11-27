@@ -353,7 +353,7 @@
     <el-dialog
       :title="zhName"
       :visible.sync="showDDzh"
-      width="30%"
+      width="40%"
       :before-close="closeDdzh"
     >
       <el-radio-group v-model="needZh" @change="zhChang">
@@ -386,7 +386,7 @@
           >
             <el-table-column type="index" label="序" width="50">
             </el-table-column>
-            <el-table-column prop="yscj" label="原始成绩" width="180">
+            <el-table-column prop="yscj" label="原始成绩">
               <template slot-scope="scope">
                 <el-slider
                   :disabled="isLock == 1"
@@ -409,7 +409,7 @@
                 ></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="zhhmc" label="转换后等第名称">
+            <el-table-column prop="zhhmc" label="转换后等第名称" width="160px">
               <template slot-scope="scope">
                 <el-input
                   :disabled="isLock == 1"
@@ -1033,7 +1033,6 @@ export default {
           gradeId: this.gradeId,
           ksId: this.ksId,
           name: scope.row.name,
-          cjlbId: this.cjlbId,
         };
         console.log("1111", scope.row);
         main
@@ -1047,7 +1046,6 @@ export default {
           gradeId: this.gradeId,
           ksId: this.ksId,
           name: scope.row.name,
-          cjlbId: this.cjlbId,
         };
         console.log("2222", val);
         main
@@ -1189,16 +1187,17 @@ export default {
         .find(val)
         .then((res) => {
           this.treeData = res.data.list;
-          console.log("res.data.list", res.data.list);
+          console.log("  this.treeData", this.treeData);
           let arr = [];
           res.data.list.map((item) => {
             arr.push({
               name: item.name,
               id: item.id,
-              date: [item.startTime, item.endTime],
+              date: ["2020-01-01", "2020-01-01"],
             });
           });
           this.lrszList = arr;
+          console.log("this.lrszList", this.lrszList);
         })
         .catch((err) => {});
     },

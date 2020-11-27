@@ -86,24 +86,31 @@
                   :prop="item.name"
                 >
                   <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.index === tabClickIndex &&
-                        tabClickLabel === item.name
-                      "
-                    >
+                    <div v-show="scope.row.showExam[index].lrfs == 0">
                       <el-input
+                        type="number"
                         v-model="scope.row.showExam[index].score"
                         max-length="300"
                         size="mini"
-                        @blur="inputBlur(scope.row)"
+                        @blur="inputBlur(scope.row, index)"
                       />
-                    </span>
-                    <span v-else>{{
-                      scope.row.showExam && scope.row.showExam.length > 0
-                        ? scope.row.showExam[index].score
-                        : ""
-                    }}</span>
+                    </div>
+                    <div v-show="scope.row.showExam[index].lrfs == 1">
+                      <el-select
+                        max-length="300"
+                        size="mini"
+                        v-model="scope.row.showExam[index].score"
+                        @change="inputBlur1(scope.row)"
+                      >
+                        <el-option
+                          v-for="item in scope.row.showExam[index].showdedi"
+                          :key="item.rank"
+                          :label="item.rank"
+                          :value="item.rank"
+                        >
+                        </el-option>
+                      </el-select>
+                    </div>
                   </template>
                 </el-table-column>
                 <template v-for="(subItem, subIndex) in item.scoreChange">
@@ -117,7 +124,7 @@
                     >
                       <div>
                         {{
-                          scope.row.showExam[index].scoreChange
+                          scope.row.showExam[index].scoreChange[subIndex]
                             ? scope.row.showExam[index].scoreChange[subIndex]
                                 .score
                             : ""
@@ -172,6 +179,23 @@
         <el-radio :label="0">清空</el-radio>
         <el-radio :label="1">批量</el-radio>
       </el-radio-group>
+      <div v-show="plclRadio == 0" class="sel">
+        <el-select
+          style="width: 200px; margin-top: 15px"
+          size="small"
+          v-model="ksLabel"
+          placeholder="请选择"
+          @change="ksLabelChange"
+        >
+          <el-option
+            v-for="item in ksOpt"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+      </div>
       <div v-show="plclRadio == 1" class="sel">
         <el-select
           style="width: 200px; margin-top: 15px"
@@ -261,6 +285,7 @@ export default {
   },
   data() {
     return {
+      ddScoreOpt: [{ name: "11" }, { name: "22" }],
       tabClickIndex: null, // 点击的单元格
       tabClickLabel: "", // 当前点击的列名
       activeName: "1", //顶部tabs
@@ -297,7 +322,6 @@ export default {
   },
   methods: {
     ksLabelChange(val) {
-      console.log("val", val);
       this.ksId = val;
       let data = {
         classId: this.classId,
@@ -364,9 +388,9 @@ export default {
       // 把每一行的索引放进row
       row.index = rowIndex;
     },
-
+    ddChange() {},
     // 失去焦点初始化
-    inputBlur(row) {
+    inputBlur(row, index) {
       let val = row;
       delete val.comment;
       delete val.createTime;
@@ -380,7 +404,42 @@ export default {
       delete val.xh;
       val.schoolId = this.schoolId;
       val.createUser = this.unionid;
-      console.log("val", val);
+      if (val.showExam[index].score > val.showExam[index].maxScore) {
+        val.showExam[index].score = val.showExam[index].maxScore.toString();
+        row.showExam[index].score = row.showExam[index].maxScore.toString();
+      } else if (val.showExam[index].score < val.showExam[index].minScore) {
+        val.showExam[index].score = val.showExam[index].minScore.toString();
+        row.showExam[index].score = row.showExam[index].minScore.toString();
+      }
+      if (!val.id) {
+        val.xkName = this.xueke;
+        val.djxq = this.xueqi;
+        val.cjlbId = this.cjlbId;
+      }
+
+      main
+        .addEdit(val)
+        .then((res) => {
+          this.changeXq();
+        })
+        .catch((err) => {});
+      this.tabClickIndex = null;
+      this.tabClickLabel = "";
+    },
+    inputBlur1(row) {
+      let val = row;
+      delete val.comment;
+      delete val.createTime;
+      delete val.ifdelete;
+      delete val.index;
+      delete val.ksName;
+      delete val.ksTime;
+      delete val.ksdata;
+      delete val.rank;
+      delete val.score;
+      delete val.xh;
+      val.schoolId = this.schoolId;
+      val.createUser = this.unionid;
       if (!val.id) {
         val.xkName = this.xueke;
         val.djxq = this.xueqi;
@@ -417,14 +476,16 @@ export default {
       }
     },
     //下拉框--学期
-    changeXq() {
+    changeXq(data) {
+      console.log("data", data);
       let val = {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
         xkName: this.xueke,
-        djxq: this.xueqi,
+        djxq: this.xueqi ? this.xueqi : data,
       };
+      console.log("val11111", val);
       main
         .find(val)
         .then((res) => {
@@ -441,6 +502,7 @@ export default {
         classId: this.classId,
         xkName: this.xueke,
         djxq: this.xueqi,
+        unionid: this.unionid,
       };
       main
         .find(val)
@@ -455,6 +517,7 @@ export default {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: data.id,
+        unionid: this.unionid,
       };
       console.log(val);
       this.classId = data.id;
@@ -463,9 +526,9 @@ export default {
         .then((res) => {
           // 点击班级时清空下拉框
           this.xuekeOpt = [];
-          this.xueqi = 1;
+          //   this.xueqi = 1;
           this.xueke = "";
-          this.tableData = res.data.list;
+          this.tableData = [];
           res.data2.xuekes.map((item) => {
             this.xuekeOpt.push({
               label: item.name,
@@ -485,8 +548,8 @@ export default {
       let val = {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
+        djxq: this.xueqi,
       };
-      //   console.log("val", val);
       main
         .find(val)
         .then((res) => {

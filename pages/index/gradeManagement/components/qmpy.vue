@@ -34,7 +34,7 @@
         </div>
         <div class="py">
           <div style="width: 100%; height: 60px">
-            <span style="color: #298CF7; font-size: 20px">评语词库</span>
+            <span style="color: #298cf7; font-size: 20px">评语词库</span>
             <el-select
               v-model="nj"
               size="small"
@@ -84,6 +84,9 @@ export default {
     //学校id
     schoolId() {
       return this.$store.state.auth.schoolId;
+    },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
     },
   },
   props: {
@@ -143,6 +146,7 @@ export default {
       let val = {
         id: this.commentRow.id,
         comment: this.pyText,
+        createUser: this.unionid,
       };
       main
         .edit(val)

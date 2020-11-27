@@ -130,7 +130,7 @@
     </el-tabs>
     <my-drawer-vue
       title="学期设置"
-      :width="500"
+      :width="600"
       :visible="showAddClassDia"
       :onOk="submitXq"
       @onClose="closeXq"
@@ -1421,7 +1421,7 @@ export default {
   background-color: #8aceff;
 }
 .wid {
-  width: 300px;
+  width: 400px;
 }
 .ks_contain {
   width: 100%;
