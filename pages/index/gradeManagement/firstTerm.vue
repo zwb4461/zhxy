@@ -89,13 +89,13 @@
               ></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="lrqx" label="录入权限" width="100">
+          <!-- <el-table-column prop="lrqx" label="录入权限" width="100">
             <template slot-scope="scope">
               <div>
                 {{ zhLrqx(scope.row.lrqx) }}
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="lrfs" label="录入方式" width="80">
             <template slot-scope="scope">
               {{
@@ -323,8 +323,35 @@
           </el-date-picker>
         </el-form-item>
       </el-form>
+      <el-table size="mini" :data="passwordTable" border style="width: 100%">
+        <el-table-column prop="njname" label="年级" width="180">
+        </el-table-column>
+        <el-table-column prop="username" label="账号" width="180">
+          <template slot-scope="scope">
+            <div>
+              <el-input
+                size="mini"
+                v-model="scope.row.username"
+                placeholder=""
+              ></el-input>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="password" label="密码">
+          <template slot-scope="scope">
+            <div>
+              <el-input
+                size="mini"
+                v-model="scope.row.password"
+                placeholder=""
+              ></el-input>
+            </div> </template
+        ></el-table-column>
+      </el-table>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeLrsz">关闭</el-button>
+        <el-button type="primary" @click="submitLrsz">确定</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -388,16 +415,21 @@
             </el-table-column>
             <el-table-column prop="yscj" label="原始成绩">
               <template slot-scope="scope">
-                <el-slider
-                  :disabled="isLock == 1"
-                  v-model="scope.row.yscj"
-                  input-size="mini"
-                  show-stops
-                  range
-                  :max="maxScoreRow"
-                  :min="minScoreRow"
-                >
-                </el-slider>
+                <div style="display: flex; flex-direction: row">
+                  <el-input
+                    size="mini"
+                    style="width: 40%"
+                    v-model="scope.row.yscj[0]"
+                    @blur="inpBlur"
+                  ></el-input>
+                  <span>~</span>
+                  <el-input
+                    size="mini"
+                    style="width: 40%"
+                    v-model="scope.row.yscj[1]"
+                    @blur="inpBlur"
+                  ></el-input>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="bh" label="编码" width="100">
@@ -511,6 +543,7 @@
 import main from "~/api/examManage";
 import main1 from "~/api/termManage";
 import main2 from "~/api/cjdw";
+import main3 from "~/api/addGradeClass";
 export default {
   props: ["djxq", "cjlbId", "isLock", "xueqiId"],
   computed: {
@@ -521,6 +554,7 @@ export default {
   },
   data() {
     return {
+      passwordTable: [],
       form7: {},
       xkfzOpt: [],
       xkfz: [],
@@ -583,6 +617,40 @@ export default {
     };
   },
   methods: {
+    //提交账号密码
+    submitLrsz() {
+      let val = {
+        id: this.cjlbId,
+        setNjList: this.passwordTable,
+      };
+      main3
+        .edit(val)
+        .then((res) => {
+          this.$message.success("设置成功!");
+          this.showLrsz = false;
+        })
+        .catch((err) => {});
+    },
+    //获取账号密码表格
+    getPassWordTable() {
+      let val = {
+        schoolId: this.schoolId,
+      };
+      main3
+        .find(val)
+        .then((res) => {
+          let obj = [];
+          res.data.map((item) => {
+            if (item.id == this.cjlbId) {
+              obj = item.setNjList;
+            }
+          });
+          this.passwordTable = obj.filter((item) => {
+            return item.djxq == this.djxq;
+          });
+        })
+        .catch((err) => {});
+    },
     //   批量复制radio改变值
     plfzChange(val) {
       ++this.cascaderKey;
@@ -766,9 +834,25 @@ export default {
     },
     addDdRow() {
       this.ddzhtableData.push({
-        yscj: [this.minScoreRow, this.maxScoreRow],
+        yscj: [],
         bm: "",
         zhhmc: "",
+      });
+    },
+    inpBlur(e) {
+      console.log("this.ddzhtableData", this.ddzhtableData);
+      if (e.target.value > this.maxScoreRow) {
+        e.target.value = null;
+        this.$message.error("填入值不能大于设置的范围!");
+      } else if (e.target.value < this.minScoreRow) {
+        e.target.value = null;
+        this.$message.error("填入值不能小于设置的范围!");
+      }
+      this.ddzhtableData.map((item) => {
+        if (e.target.value > item.yscj[0] && e.target.value < item.yscj[1]) {
+          e.target.value = null;
+          this.$message.error("填入值区间重叠!");
+        }
       });
     },
     //关闭等地转换dia
@@ -845,8 +929,8 @@ export default {
     // 录入设置
     lrsz() {
       this.showLrsz = true;
+      this.getPassWordTable();
     },
-
     //添加行
     addRow() {
       if (this.gradeId == 0) {
@@ -945,18 +1029,7 @@ export default {
         if (row.xkdedi[0] ? row.xkdedi[0].flag == "已设置" : false) {
           this.ddzhtableData = [];
           this.needZh = "已设置";
-          //   this.sjlyOpt.map((item) => {
-          //     if (item.name == row.xkdedi[0].typeName) {
-          //       this.sjly = item.id;
-          //     }
-          //   });
-          //   row.xkdedi.map((item) => {
-          //     this.ddzhtableData.push({
-          //       yscj: [item.minScore, item.maxScore],
-          //       bh: item.bh,
-          //       zhhmc: item.rank,
-          //     });
-          //   });
+
           row.zhdedi.map((item) => {
             if (Object.keys(item)[0] == column.label) {
               console.log("item", item);

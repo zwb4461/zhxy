@@ -241,7 +241,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
@@ -519,7 +518,6 @@ export default {
         classId: data.id,
         unionid: this.unionid,
       };
-      console.log(val);
       this.classId = data.id;
       main
         .find(val)
