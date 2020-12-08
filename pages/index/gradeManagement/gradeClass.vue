@@ -18,41 +18,18 @@
       ></el-tab-pane>
       <el-tab-pane label="成绩录入" name="3">
         <div class="condition">
-          <el-select
-            v-model="xueqi"
-            placeholder="请选择学期"
-            size="small"
-            style="margin-right: 15px; width: 218px"
-            @change="changeXq"
-          >
-            <el-option
-              v-for="item in xueqiOpt"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-          <el-select
-            v-model="xueke"
-            placeholder="请选择学科"
-            size="small"
-            style="margin-right: 15px"
-            @change="changeXk"
-          >
-            <el-option
-              v-for="item in xuekeOpt"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
           <el-button
             size="small"
             style="background-color: #fafafa; width: 108px"
             @click="plDeal"
             >批量处理</el-button
+          >
+          <el-button
+            size="small"
+            type="primary"
+            style="width: 108px"
+            @click="modelUpload"
+            >模板下载</el-button
           >
         </div>
         <div class="contain">
@@ -167,7 +144,7 @@
     <qmpy
       ref="qmpyComponent"
       :commentRow="commentRow"
-      :getTable="changeXq"
+      :getTable="reData"
     ></qmpy>
     <el-dialog
       title="批量处理"
@@ -317,9 +294,28 @@ export default {
       ddName: "",
       ddOpt: [],
       ksId: 0,
+      djxq: undefined,
+      xkName: undefined,
     };
   },
   methods: {
+    //   模板下载
+    modelUpload() {
+      let val = {
+        cjlbId: this.cjlbId,
+        djxq: this.djxq,
+      };
+      if (this.djxq) {
+        main
+          .testStuScore(val)
+          .then((res) => {
+            window.location.href = res.data;
+          })
+          .catch((err) => {});
+      } else {
+        this.$message.error("请选择班级!");
+      }
+    },
     ksLabelChange(val) {
       this.ksId = val;
       let data = {
@@ -411,15 +407,15 @@ export default {
         row.showExam[index].score = row.showExam[index].minScore.toString();
       }
       if (!val.id) {
-        val.xkName = this.xueke;
-        val.djxq = this.xueqi;
+        val.xkName = this.xkName;
+        val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
 
       main
         .addEdit(val)
         .then((res) => {
-          this.changeXq();
+          this.reData();
         })
         .catch((err) => {});
       this.tabClickIndex = null;
@@ -440,17 +436,16 @@ export default {
       val.schoolId = this.schoolId;
       val.createUser = this.unionid;
       if (!val.id) {
-        val.xkName = this.xueke;
-        val.djxq = this.xueqi;
+        val.xkName = this.xkName;
+        val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
-      // comment/createTime/ifdelete/index/ksName/ksTime/ksdata/rank/score/xh/showExam.scoreChange
-      //   添加createUser
+      console.log(this.xkName);
 
       main
         .addEdit(val)
         .then((res) => {
-          this.changeXq();
+          this.reData();
         })
         .catch((err) => {});
       this.tabClickIndex = null;
@@ -460,15 +455,11 @@ export default {
     //单击单元格
     clickCell(row, column, cell, event) {
       console.log("rowrowrow", row);
-      if (row.id == null && !this.xueke) {
-        this.$message.error("请选择录入学科！");
-      } else {
-        this.tabClickIndex = row.index;
-        this.tabClickLabel = column.label;
-      }
+
+      this.tabClickIndex = row.index;
+      this.tabClickLabel = column.label;
 
       if (column.label == "期末评语") {
-        // console.log("期末评语", row);
         this.commentRow = row;
         this.$refs.qmpyComponent.showPy(row.comment);
         this.$refs.qmpyComponent.showQmpyDia = true;
@@ -510,23 +501,21 @@ export default {
         })
         .catch((err) => {});
     },
-    //   点击树
-    clickTree(data) {
+    reData() {
       let val = {
-        cjlbId: this.cjlbId,
         schoolId: this.schoolId,
-        classId: data.id,
+        xkName: this.xkName,
+        djxq: this.djxq,
+        classId: this.classId,
+        cjlbId: this.cjlbId,
         unionid: this.unionid,
       };
-      this.classId = data.id;
+
       main
         .find(val)
         .then((res) => {
-          // 点击班级时清空下拉框
-          this.xuekeOpt = [];
-          //   this.xueqi = 1;
           this.xueke = "";
-          this.tableData = [];
+          this.tableData = res.data.list;
           res.data2.xuekes.map((item) => {
             this.xuekeOpt.push({
               label: item.name,
@@ -537,31 +526,58 @@ export default {
           this.DynamicColumn.map((item) => {
             this.ksOpt.push({ name: item.name, id: item.id });
           });
-          console.log("this.tableData", res.data2);
         })
         .catch((err) => {});
+    },
+    //   点击树
+    clickTree(data, node, obj) {
+      if (node.level == 4) {
+        let val = {
+          schoolId: this.schoolId,
+          xkName: node.data.name,
+          djxq: node.parent.parent.parent.data.id,
+          classId: node.parent.data.id,
+          cjlbId: this.cjlbId,
+          unionid: this.unionid,
+        };
+        this.classId = node.parent.data.id;
+        this.djxq = node.parent.parent.parent.data.id;
+        this.xkName = node.data.name;
+        console.log(val);
+        main
+          .find(val)
+          .then((res) => {
+            this.xueke = "";
+            this.tableData = res.data.list;
+            res.data2.xuekes.map((item) => {
+              this.xuekeOpt.push({
+                label: item.name,
+                value: item.name,
+              });
+            });
+            this.ksOpt = [];
+            this.DynamicColumn.map((item) => {
+              this.ksOpt.push({ name: item.name, id: item.id });
+            });
+          })
+          .catch((err) => {});
+      }
     },
     //获取树
     getClass() {
       let val = {
         cjlbId: this.cjlbId,
-        schoolId: this.schoolId,
-        djxq: this.xueqi,
       };
       main
-        .find(val)
+        .seeSiji(val)
         .then((res) => {
-          this.ClassData = res.data2.class;
+          this.ClassData = res.data;
         })
         .catch((err) => {});
     },
     // 批量处理
     plDeal() {
-      if (this.xueke) {
-        this.showPlcl = true;
-      } else {
-        this.$message.error("请选择学科");
-      }
+      this.showPlcl = true;
     },
     //点击顶部tabs
     clickTab(tab, event) {

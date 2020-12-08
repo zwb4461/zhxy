@@ -143,8 +143,10 @@ export default {
     },
     //   提交
     submit() {
+      console.log("this.commentRow", this.commentRow);
       let val = {
         id: this.commentRow.id,
+        classId: this.commentRow.classId,
         comment: this.pyText,
         createUser: this.unionid,
       };

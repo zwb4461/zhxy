@@ -202,7 +202,9 @@ module.exports = {
     del: baseUrl + "/deleteStuScore", //删除成绩录入
     edit: baseUrl + "/updateStuScore", //编辑成绩录入
     findPy: baseUrl + "/selectComment", //查看评语库
-    addEdit: baseUrl + "/saveStuScore" //新增修改成绩录入
+    addEdit: baseUrl + "/saveStuScore", //新增修改成绩录入
+    seeSiji: baseUrl + "/seeSiji",
+    testStuScore: baseUrl + "/testStuScore"
   },
   //考试管理
   examManage: {

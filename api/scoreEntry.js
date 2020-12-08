@@ -36,11 +36,27 @@ const addEdit = query => {
     data: query
   });
 };
+const seeSiji = query => {
+  return request({
+    url: Api.scoreEntry.seeSiji,
+    method: "post",
+    data: query
+  });
+};
+const testStuScore = query => {
+  return request({
+    url: Api.scoreEntry.testStuScore,
+    method: "get",
+    params: query
+  });
+};
 
 export default {
   find,
   del,
   edit,
   findPy,
-  addEdit
+  addEdit,
+  seeSiji,
+  testStuScore
 };
