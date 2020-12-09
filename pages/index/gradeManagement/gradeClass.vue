@@ -31,6 +31,23 @@
             @click="modelUpload"
             >模板下载</el-button
           >
+          <el-upload
+            style="margin-left: 10px"
+            action="http://124.70.180.17:10013/importStuScore"
+            :limit="1"
+            :show-file-list="false"
+            name="file"
+            :on-success="fileInSuccess"
+            :data="{
+              cjlbId: cjlbId,
+              classId: classId,
+              djxq: djxq,
+              schoolId: schoolId,
+              xkName: xkName,
+            }"
+          >
+            <el-button size="small" type="primary">成绩导入</el-button>
+          </el-upload>
         </div>
         <div class="contain">
           <div class="left">
@@ -299,6 +316,11 @@ export default {
     };
   },
   methods: {
+    //导入
+    fileInSuccess() {
+      this.$message.success("导入成功!");
+      this.reData();
+    },
     //   模板下载
     modelUpload() {
       let val = {

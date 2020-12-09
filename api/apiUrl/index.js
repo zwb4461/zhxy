@@ -227,6 +227,16 @@ module.exports = {
     batchQc: baseUrl + "/batchQc",
     batchHandle: baseUrl + "/batchHandle"
   },
+  jcManage: {
+    add: baseUrl + "/insertPrizepunCate",
+    del: baseUrl + "/delPrizepunCate",
+    find: baseUrl + "/seePrizepunCate",
+    seeSanjiMeui: baseUrl + "/seeSanjiMeui",
+    findJc: baseUrl + "/selectMoralPrize",
+    saveMoralPrize: baseUrl + "/saveMoralPrize",
+    seeJcsz: baseUrl + "/seeJcsz",
+    saveJcsz: baseUrl + "/saveJcsz"
+  },
   //学科汇总
   xkhz: {
     add: baseUrl + "/insertXueke", //添加

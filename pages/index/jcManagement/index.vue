@@ -2,23 +2,21 @@
   <div>
     <!-- 顶部标签页 -->
     <el-tabs v-model="gradeClass" type="card">
-      <el-tab-pane label="成绩分类" name="cjfl">
+      <el-tab-pane label="获奖分类" name="hjfl">
         <div class="contain">
           <!-- 创建分类contain -->
           <div class="gradeClass_contain" @click="addClass">
             <div>
-              <span style="font-size: 28px; color: #c8c8c8"
-                >创建一个成绩类别</span
-              >
+              <span class="createOneClassify">创建一个类别</span>
             </div>
             <div class="jia"><span>+</span></div>
           </div>
           <!-- 列表 -->
           <div
             class="gradeClass_contain_list"
-            v-for="(item, index) in gradeList"
+            v-for="(item, index) in jcList"
             :key="index"
-            @click="toGradeClass(item)"
+            @click="toJcClass(item)"
           >
             <div
               style="
@@ -34,10 +32,13 @@
                 item.name
               }}</span>
               <span style="font-size: 16px; color: #c8c8c8"
-                >对应学期:{{ item.xueqiname }}</span
+                >对应学期:{{ item.xueqiName }}</span
               >
             </div>
-            <div class="item_bottom_btn" v-show="item.isLock == 0">
+            <div
+              class="item_bottom_btn"
+              v-show="item.locked == 0 || item.locked == null"
+            >
               <img
                 src="../../../assets/img/del.svg"
                 style="cursor: pointer"
@@ -54,7 +55,7 @@
                 @click.stop="edit(item)"
               />
             </div>
-            <div class="item_bottom_btn" v-show="item.isLock == 1">
+            <div class="item_bottom_btn" v-show="item.locked == 1">
               <img
                 src="../../../assets/img/delOn.svg"
                 style="cursor: pointer"
@@ -77,30 +78,55 @@
         :key="index"
         :label="item"
         :name="item"
-        ><gradeClass :isLock="isLock" :xueqiId="xueqiId" :id="id"></gradeClass
+        ><jcDetail :jcId="id"></jcDetail
       ></el-tab-pane>
     </el-tabs>
-    <!-- 添加成绩分类dia -->
     <my-drawer-vue
-      title="学期成绩"
+      title="奖惩类别"
       :width="500"
       :visible="showAddClassDia"
       :onOk="submit"
       @onClose="formClose"
     >
       <template slot="contentInfo">
-        <addGradeClass ref="tableForm" :isLock="isLock" />
+        <el-form ref="form" label-width="80px">
+          <el-form-item label="类别名称:" label-width="100px">
+            <el-input
+              :disabled="locked == 1"
+              class="inp"
+              v-model="form.name"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="对应学期:" label-width="100px">
+            <el-select
+              :disabled="locked == 1"
+              class="inp"
+              v-model="form.term"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
       </template>
     </my-drawer-vue>
   </div>
 </template>
 
 <script>
-import addGradeClass from "./components/addGradeClass";
+//Api
+import main from "~/api/termManage";
+import main1 from "~/api/jcManage";
+//组件
 import myDrawerVue from "~/components/common/myDrawer.vue";
-import main from "~/api/addGradeClass";
+import jcDetail from "./components/jcClassDetail.vue";
 
-import gradeClass from "./gradeClass";
 export default {
   computed: {
     //学校id
@@ -109,65 +135,74 @@ export default {
     },
   },
   components: {
-    addGradeClass,
+    //弹出表单组件
     myDrawerVue,
-    gradeClass,
+    jcDetail,
   },
   data() {
     return {
-      xueqiId: 0,
-      isLock: 0,
-      tabList: [], //tab列表
-      gradeList: [], //成绩类别列表
-      gradeClass: "cjfl", //选中的tab名
-      showAddClassDia: false, //控制显示添加成绩分类dia
-      formType: 1, //1--新增,2--编辑
-      id: 0, //当前编辑的id
+      //当前活动的tab
+      gradeClass: "hjfl",
+      //控制表单的显示隐藏
+      showAddClassDia: false,
+      //0--新增，1--编辑
+      formType: 0,
+      //奖惩列表
+      jcList: [],
+      //tab列表
+      tabList: [],
+      //是否锁定。0--未锁定，1--锁定
+      locked: 0,
+      //表单字段
+      form: {
+        name: "",
+        term: "",
+      },
+      //表单中学期的选项列表
+      options: [],
+      //当前类别的id
+      id: 0,
     };
   },
   methods: {
-    //跳转特定类别tab
-    toGradeClass(item) {
-      this.isLock = item.isLock;
-      this.xueqiId = item.xueqiId;
-      this.id = item.id;
-      if (!this.tabList.includes(item.name)) {
-        this.tabList.push(item.name);
-      }
-      this.gradeClass = item.name;
+    //!删除奖惩分类
+    del(item) {
+      this.$confirm({
+        title: "确认删除吗",
+        cancelText: "取消",
+        okText: "确定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main1
+            .del({ id: item.id })
+            .then((res) => {
+              this.$message.success("删除该奖惩分类成功!");
+              this.getJcList();
+            })
+            .catch((err) => {
+              this.$message.error(res.data);
+            });
+        },
+      });
     },
-    getGradeClass() {
-      main
-        .find({
-          schoolId: this.schoolId,
-        })
-        .then((res) => {
-          this.gradeList = res.data;
-        })
-        .catch((err) => {});
-    },
-
-    // 点击添加成绩分类
+    //!添加奖惩分类
     addClass() {
       this.showAddClassDia = true;
-      this.formType = 1;
+      this.formType = 0;
     },
-    //关闭添加分类的dia
-    formClose() {
-      this.showAddClassDia = false;
-    },
-    // 编辑
+    //!编辑奖惩分类
     edit(item) {
-      this.isLock = item.isLock;
-      console.log("1111", this.isLock);
       this.showAddClassDia = true;
-      this.formType = 2;
+      this.formType = 1;
+      //回显
+      this.form.name = item.name;
+      this.form.term = item.xueqiId;
+      //赋值
+      this.locked = item.locked ? item.locked : 0;
       this.id = item.id;
-      console.log("item", item);
-      setTimeout(() => {
-        this.$refs.tableForm.setForm(item);
-      }, 100);
     },
+    //!锁定奖惩分类
     lock(item) {
       this.$confirm({
         title: "确定需要锁定吗?",
@@ -177,87 +212,123 @@ export default {
         okType: "danger",
         centered: true,
         onOk: () => {
-          main
-            .edit({ id: item.id, isLock: 1 })
+          main1
+            .add({ id: item.id, locked: 1 })
             .then((res) => {
-              this.getGradeClass();
+              this.getJcList();
               this.$message.success(res.data);
             })
             .catch((err) => {});
         },
       });
     },
-    // 删除
-    del(item) {
-      this.$confirm({
-        title: "确认删除吗",
-        cancelText: "取消",
-        okText: "确定",
-        okType: "danger",
-        centered: true,
-        onOk: () => {
-          main
-            .del({ id: item.id })
-            .then((res) => {
-              console.log("res", res);
-              this.$message.success(res.data);
-              this.getGradeClass();
-            })
-            .catch((err) => {
-              this.$message.error(err);
-            });
-        },
-      });
+    //!点击奖惩分类跳转该分类
+    toJcClass(item) {
+      this.locked = item.locked;
+      this.id = item.id;
+      console.log("this.id", this.id);
+      if (!this.tabList.includes(item.name)) {
+        this.tabList.push(item.name);
+      }
+      this.gradeClass = item.name;
     },
-    // 提交
+    //!获取奖惩分类列表
+    getJcList() {
+      main1
+        .find({ schoolId: this.schoolId })
+        .then((res) => {
+          this.jcList = res.data;
+        })
+        .catch((err) => {});
+    },
+
+    //!新增修改奖惩分类
     submit() {
-      if (this.formType == 1) {
+      if (this.formType == 0) {
+        //   新增
         let val = {
-          name: this.$refs.tableForm.form.name,
-          xueqiId: this.$refs.tableForm.form.term,
+          name: this.form.name,
+          xueqiId: this.form.term,
           schoolId: this.schoolId,
         };
-        console.log("val", val);
-        main
+        main1
           .add(val)
           .then((res) => {
             this.$message.success(res.data);
             this.showAddClassDia = false;
-            this.getGradeClass();
+            this.clearForm();
+            this.getJcList();
           })
           .catch((err) => {
             this.$message.error(err);
             this.showAddClassDia = false;
+            this.clearForm();
+            this.getJcList();
           });
-      } else if (this.formType == 2) {
+      } else {
+        //编辑
         let val = {
-          id: this.id,
-          name: this.$refs.tableForm.form.name,
-          xueqiId: this.$refs.tableForm.form.term,
+          name: this.form.name,
+          xueqiId: this.form.term,
           schoolId: this.schoolId,
+          id: this.id,
         };
-        if (this.isLock == 0) {
-          main
-            .edit(val)
+        if (this.locked == 0) {
+          main1
+            .add(val)
             .then((res) => {
               this.$message.success(res.data);
               this.showAddClassDia = false;
-              this.getGradeClass();
+              this.clearForm();
+              this.getJcList();
             })
             .catch((err) => {
               this.$message.error(err);
               this.showAddClassDia = false;
+              this.clearForm();
+              this.getJcList();
             });
-        } else {
+        } else if (this.locked == 1) {
+          this.$message.error("已锁定,不可修改!");
           this.showAddClassDia = false;
-          this.getGradeClass();
         }
       }
     },
+    //!关闭表单
+    formClose() {
+      this.showAddClassDia = false;
+      this.clearForm();
+    },
+    //!清空表单
+    clearForm() {
+      this.form = {
+        name: "",
+        term: "",
+      };
+    },
+    //!获取表单中学期列表
+    getTermList() {
+      main
+        .find({ schoolId: this.schoolId })
+        .then((res) => {
+          this.options = [];
+          res.data.list.map((item) => {
+            if (item.islock !== 1) {
+              this.options.push({
+                value: item.id,
+                label: item.year,
+              });
+            }
+          });
+        })
+        .catch((err) => {});
+    },
   },
   created() {
-    this.getGradeClass();
-    console.log("schoolId", this.schoolId);
+    //初始化表单中学期列表
+    this.getTermList();
+    //初始化奖惩列表
+    this.getJcList();
   },
 };
 </script>
@@ -320,5 +391,12 @@ export default {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+}
+.inp {
+  width: 300px;
+}
+.createOneClassify {
+  font-size: 28px;
+  color: #c8c8c8;
 }
 </style>

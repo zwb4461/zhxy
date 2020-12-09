@@ -157,10 +157,17 @@ const getNewMenu = power => {
           title: "成绩管理",
           hide: true,
           power: "m-18-1",
-          //   alwaysShow: true,
           meta: {
             title: "成绩管理"
-            // affix: true,
+          }
+        },
+        {
+          key: "jcManagement",
+          title: "奖惩管理",
+          hide: true,
+          power: "m-18-2",
+          meta: {
+            title: "奖惩管理"
           }
         }
       ]
