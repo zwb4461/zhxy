@@ -237,6 +237,17 @@ module.exports = {
     seeJcsz: baseUrl + "/seeJcsz",
     saveJcsz: baseUrl + "/saveJcsz"
   },
+  twManage: {
+    add: baseUrl + "/insertPhysicalCate",
+    find: baseUrl + "/seephysicalCate",
+    del: baseUrl + "/delphysicalCate",
+    deleteSport: baseUrl + "/deleteSport",
+    saveSport: baseUrl + "/saveSport",
+    selectSport: baseUrl + "/selectSport",
+    seeTwsz: baseUrl + "/seeTwsz",
+    saveTwsz: baseUrl + "/saveTwsz",
+    delTwsz: baseUrl + "/delTwsz"
+  },
   //学科汇总
   xkhz: {
     add: baseUrl + "/insertXueke", //添加

@@ -151,6 +151,10 @@ export default {
               title: "奖惩管理",
               key: "m-18-2",
             },
+            {
+              title: "体卫管理",
+              key: "m-18-3",
+            },
           ],
         },
 

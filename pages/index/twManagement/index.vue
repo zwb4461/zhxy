@@ -2,7 +2,7 @@
   <div>
     <!-- 顶部标签页 -->
     <el-tabs v-model="gradeClass" type="card">
-      <el-tab-pane label="获奖分类" name="hjfl">
+      <el-tab-pane label="体卫分类" name="hjfl">
         <div class="contain">
           <!-- 创建分类contain -->
           <div class="gradeClass_contain" @click="addClass">
@@ -78,11 +78,11 @@
         :key="index"
         :label="item"
         :name="item"
-        ><jcDetail :jcId="id"></jcDetail
+        ><twDetail :twId="id"></twDetail
       ></el-tab-pane>
     </el-tabs>
     <my-drawer-vue
-      title="奖惩类别"
+      title="体卫类别"
       :width="500"
       :visible="showAddClassDia"
       :onOk="submit"
@@ -122,10 +122,10 @@
 <script>
 //Api
 import main from "~/api/termManage";
-import main1 from "~/api/jcManage";
+import main1 from "~/api/twManage";
 //组件
 import myDrawerVue from "~/components/common/myDrawer.vue";
-import jcDetail from "./components/jcClassDetail.vue";
+import twDetail from "./components/twClassDetail.vue";
 
 export default {
   computed: {
@@ -137,7 +137,7 @@ export default {
   components: {
     //弹出表单组件
     myDrawerVue,
-    jcDetail,
+    twDetail,
   },
   data() {
     return {
@@ -147,7 +147,7 @@ export default {
       showAddClassDia: false,
       //0--新增，1--编辑
       formType: 0,
-      //奖惩列表
+      //体卫列表
       jcList: [],
       //tab列表
       tabList: [],
@@ -165,7 +165,7 @@ export default {
     };
   },
   methods: {
-    //!点击奖惩分类跳转该分类
+    //!点击体卫分类跳转该分类
     toJcClass(item) {
       this.locked = item.locked;
       this.id = item.id;
@@ -175,7 +175,7 @@ export default {
       }
       this.gradeClass = item.name;
     },
-    //!删除奖惩分类
+    //!删除体卫分类
     del(item) {
       this.$confirm({
         title: "确认删除吗",
@@ -187,7 +187,7 @@ export default {
           main1
             .del({ id: item.id })
             .then((res) => {
-              this.$message.success("删除该奖惩分类成功!");
+              this.$message.success("删除该体卫分类成功!");
               this.getJcList();
             })
             .catch((err) => {
@@ -196,12 +196,12 @@ export default {
         },
       });
     },
-    //!添加奖惩分类
+    //!添加体卫分类
     addClass() {
       this.showAddClassDia = true;
       this.formType = 0;
     },
-    //!编辑奖惩分类
+    //!编辑体卫分类
     edit(item) {
       this.showAddClassDia = true;
       this.formType = 1;
@@ -212,7 +212,7 @@ export default {
       this.locked = item.locked ? item.locked : 0;
       this.id = item.id;
     },
-    //!锁定奖惩分类
+    //!锁定体卫分类
     lock(item) {
       this.$confirm({
         title: "确定需要锁定吗?",
@@ -233,7 +233,7 @@ export default {
       });
     },
 
-    //!获取奖惩分类列表
+    //!获取体卫分类列表
     getJcList() {
       main1
         .find({ schoolId: this.schoolId })
@@ -243,7 +243,7 @@ export default {
         .catch((err) => {});
     },
 
-    //!新增修改奖惩分类
+    //!新增修改体卫分类
     submit() {
       if (this.formType == 0) {
         //   新增
@@ -329,7 +329,7 @@ export default {
   created() {
     //初始化表单中学期列表
     this.getTermList();
-    //初始化奖惩列表
+    //初始化体卫列表
     this.getJcList();
   },
 };

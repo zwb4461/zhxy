@@ -169,6 +169,15 @@ const getNewMenu = power => {
           meta: {
             title: "奖惩管理"
           }
+        },
+        {
+          key: "twManagement",
+          title: "体卫管理",
+          hide: true,
+          power: "m-18-3",
+          meta: {
+            title: "体卫管理"
+          }
         }
       ]
     },
