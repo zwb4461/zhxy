@@ -259,7 +259,8 @@ module.exports = {
   //成绩统计
   gradeTotal: {
     ksSeeScore: baseUrl + "/ksSeeScore",
-    seeScore: baseUrl + "/seeScore"
+    seeScore: baseUrl + "/seeScore",
+    BjSeeScore: baseUrl + "/BjSeeScore"
   },
   //成绩单位
   cjdw: {

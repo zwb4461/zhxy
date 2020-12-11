@@ -17,6 +17,7 @@
           :data="tableData"
           border
           style="width: 100%"
+          @header-click="headClick"
         >
           <el-table-column
             :label="item"
@@ -25,18 +26,106 @@
           >
             <template slot-scope="scope">
               <div>
-                {{ scope.row }}
+                {{ scope.row[index + 1] }}
               </div>
             </template>
           </el-table-column>
         </el-table>
+        <div class="btn_contain">
+          <div
+            v-for="(item, index) in colList"
+            :key="index"
+            class="btn"
+            :style="{ width: 100 / colList.length + '%' }"
+          >
+            <el-button
+              v-show="index != 0 && index != colList.length - 1"
+              type="primary"
+              size="mini"
+              @click="detail(index)"
+              >详细</el-button
+            >
+          </div>
+        </div>
       </div>
     </div>
+    <el-dialog title="提示" :visible.sync="showDetail" width="40%">
+      <el-button
+        @click="exportExcel"
+        style="margin-bottom: 15px"
+        type="primary"
+        class="button"
+        >导出</el-button
+      >
+      <div class="table">
+        <div class="tongji">
+          <span>统计</span>
+        </div>
+        <div class="tableData">
+          <div class="table1">任课老师</div>
+          <div class="table1">{{ detailData.teacherName }}</div>
+          <div class="table1">总分</div>
+          <div class="table1">{{ detailData.sum }}</div>
+        </div>
+        <div class="tableData">
+          <div class="table1">实考人数</div>
+          <div class="table1">{{ detailData.skNum }}</div>
+          <div class="table1">统计人数</div>
+          <div class="table1">{{ detailData.tjNum }}</div>
+        </div>
+        <div class="tableData">
+          <div class="table1">最高分</div>
+          <div class="table1">{{ detailData.max }}</div>
+          <div class="table1">最低分</div>
+          <div class="table1">{{ detailData.min }}</div>
+        </div>
+        <div class="tableData">
+          <div class="table1">平均分</div>
+          <div class="table1">{{ detailData.average }}</div>
+          <div class="table1">均分差</div>
+          <div class="table1">{{ detailData.averDiff }}</div>
+        </div>
+        <div class="tableData">
+          <div class="table1">后20%均分</div>
+          <div class="table1">{{ detailData.laserAver }}</div>
+          <div class="table1">后20%差值</div>
+          <div class="table1">{{ detailData.laserDiff }}</div>
+        </div>
+      </div>
+      <el-table
+        id="out-table"
+        size="mini"
+        :data="DetailTable"
+        border
+        style="width: 100%"
+      >
+        <el-table-column type="index" label="序"> </el-table-column>
+        <el-table-column prop="xh" label="学号"> </el-table-column>
+        <el-table-column prop="name" label="姓名"> </el-table-column>
+        <el-table-column
+          :label="item"
+          v-for="(item, index) in detailDataCol"
+          :key="index"
+        >
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.scores[index] }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="njPm" label="全年级排名"> </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showDetail = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import main from "~/api/gradeTotal";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
   computed: {
     //学校id
@@ -52,10 +141,17 @@ export default {
   },
   data() {
     return {
+      showDetail: false,
       Menu: [],
       colList: [],
       tableData: [],
+      detailData: [],
+      DetailTable: [],
+      detailDataCol: [],
       rowKey: [],
+      classId: "",
+      ksId: "",
+      ksxkId: "",
       ClassProps: {
         //树形的默认设置
         children: "children",
@@ -64,13 +160,63 @@ export default {
     };
   },
   methods: {
+    exportExcel() {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          this.paperName + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+
+    detail(index) {
+      let data = this.tableData[this.tableData.length - 1];
+      let data1 = Object.keys(this.tableData[this.tableData.length - 1]);
+      this.classId = data[data1[index]];
+      let val = {
+        schoolId: this.schoolId,
+        ksId: this.ksId,
+        ksxkId: this.ksxkId,
+        classId: this.classId,
+      };
+      console.log(val);
+      main
+        .BjSeeScore(val)
+        .then((res) => {
+          this.detailData = res.data.data;
+          this.DetailTable = res.data.data.seeScoreList;
+          this.detailDataCol = res.data.data2;
+          console.log("this.DetailTable", this.DetailTable);
+          this.showDetail = true;
+        })
+        .catch((err) => {});
+    },
+    headClick(column, event) {
+      console.log("column", column);
+      console.log("event", event);
+    },
     labelHead(h, { column, index }) {
       return h("span", { class: "table-head", style: { width: "100%" } }, [
         column.label,
       ]);
     },
     getMenu() {
-      console.log("this.cjlbId11111111111111", this.cjlbId);
       let val = { cjlbId: this.cjlbId };
       main
         .seeScore(val)
@@ -82,21 +228,19 @@ export default {
     //点击树
     clickTree(data, node) {
       if (node.level == 4) {
+        console.log("node", node);
         let val = {
           schoolId: this.schoolId,
           ksxkId: node.data.id,
-          ksId: node.parent.data.id,
           gradeId: node.parent.parent.data.id,
         };
-        console.log(val);
+        this.ksxkId = node.data.id;
+        this.ksId = node.parent.data.id;
         main
           .ksSeeScore(val)
           .then((res) => {
             this.colList = res.data.data2;
             this.tableData = res.data.data;
-            this.rowKey = Object.keys(res.data.data[0]);
-            console.log(this.tableData, "this.tableData");
-            console.log(this.rowKey, "this.rowKey");
           })
           .catch((err) => {});
       }
@@ -123,5 +267,49 @@ export default {
 .right {
   width: 100%;
   padding-left: 15px;
+}
+.btn_contain {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.table {
+  width: 95%;
+  height: 240px;
+  border: 1px solid #ededed;
+  margin-bottom: 20px;
+}
+.tongji {
+  width: 95%;
+  height: 40px;
+  border-bottom: 1px solid #ededed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background-color: #fafafa;
+}
+.tableData {
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid #ededed;
+  border-top: 1px solid #ededed;
+  display: flex;
+  flex-direction: row;
+}
+.table1 {
+  width: 25%;
+  height: 40px;
+  border-right: 1px solid #ededed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

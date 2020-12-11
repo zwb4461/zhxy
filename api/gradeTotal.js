@@ -9,6 +9,13 @@ const ksSeeScore = query => {
     data: query
   });
 };
+const BjSeeScore = query => {
+  return request({
+    url: Api.gradeTotal.BjSeeScore,
+    method: "post",
+    data: query
+  });
+};
 
 const seeScore = query => {
   return request({
@@ -20,5 +27,6 @@ const seeScore = query => {
 
 export default {
   ksSeeScore,
-  seeScore
+  seeScore,
+  BjSeeScore
 };
