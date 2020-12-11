@@ -193,7 +193,8 @@ module.exports = {
     add: baseUrl + "/insertScoreCategry", //添加成绩类别
     find: baseUrl + "/selectScoreCategry", //查询全部成绩类别
     del: baseUrl + "/deleteScoreCategry", //删除成绩类别
-    edit: baseUrl + "/updateScoreCategry" //删除成绩类别
+    edit: baseUrl + "/updateScoreCategry", //删除成绩类别
+    loginScore: baseUrl + "/loginScore" //删除成绩类别
   },
   //成绩录入
   scoreEntry: {
@@ -254,6 +255,11 @@ module.exports = {
     find: baseUrl + "/selectXueke",
     del: baseUrl + "/deleteXueke",
     edit: baseUrl + "/updateXueke"
+  },
+  //成绩统计
+  gradeTotal: {
+    ksSeeScore: baseUrl + "/ksSeeScore",
+    seeScore: baseUrl + "/seeScore"
   },
   //成绩单位
   cjdw: {

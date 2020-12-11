@@ -148,6 +148,10 @@ export default {
               key: "m-18-1",
             },
             {
+              title: "成绩录入",
+              key: "m-18-4",
+            },
+            {
               title: "奖惩管理",
               key: "m-18-2",
             },

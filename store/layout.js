@@ -162,6 +162,15 @@ const getNewMenu = power => {
           }
         },
         {
+          key: "gradeIn",
+          title: "成绩录入",
+          hide: true,
+          power: "m-18-4",
+          meta: {
+            title: "成绩录入"
+          }
+        },
+        {
           key: "jcManagement",
           title: "奖惩管理",
           hide: true,

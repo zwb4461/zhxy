@@ -22,6 +22,13 @@ const del = query => {
     data: query
   });
 };
+const loginScore = query => {
+  return request({
+    url: Api.addGradeClass.loginScore,
+    method: "post",
+    data: query
+  });
+};
 const edit = query => {
   return request({
     url: Api.addGradeClass.edit,
@@ -34,5 +41,6 @@ export default {
   add,
   find,
   del,
-  edit
+  edit,
+  loginScore
 };

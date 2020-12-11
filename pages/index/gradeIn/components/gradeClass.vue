@@ -1,170 +1,138 @@
 <template>
   <div>
-    <el-tabs v-model="activeName" @tab-click="clickTab">
-      <el-tab-pane label="第一学期" name="1"
-        ><firstTerm
-          :cjlbId="cjlbId"
-          :isLock="isLock"
-          :djxq="activeName"
-          :xueqiId="xueqiId"
-        ></firstTerm
-      ></el-tab-pane>
-      <el-tab-pane label="第二学期" name="2"
-        ><secondTerm
-          :isLock="isLock"
-          :cjlbId="cjlbId"
-          :xueqiId="xueqiId"
-        ></secondTerm
-      ></el-tab-pane>
-      <el-tab-pane label="成绩录入" name="3">
-        <div class="condition">
-          <el-button
-            size="small"
-            style="background-color: #fafafa; width: 108px"
-            @click="plDeal"
-            >批量处理</el-button
-          >
-          <el-button
-            size="small"
-            type="primary"
-            style="width: 108px"
-            @click="modelUpload"
-            >模板下载</el-button
-          >
-          <el-upload
-            style="margin-left: 10px"
-            action="http://124.70.180.17:10013/importStuScore"
-            :limit="1"
-            :show-file-list="false"
-            name="file"
-            :on-success="fileInSuccess"
-            :data="{
-              cjlbId: cjlbId,
-              classId: classId,
-              djxq: djxq,
-              schoolId: schoolId,
-              xkName: xkName,
-            }"
-          >
-            <el-button size="small" type="primary">成绩导入</el-button>
-          </el-upload>
-        </div>
-        <div class="contain">
-          <div class="left">
-            <el-tree
-              :data="ClassData"
-              :props="ClassProps"
-              @node-click="clickTree"
-              highlight-current
-              accordion
-            ></el-tree>
-          </div>
-          <div class="right">
-            <el-table
-              :data="tableData"
-              border
-              style="width: 100%"
-              size="small"
-              @cell-click="clickCell"
-              :row-class-name="tableRowClassName"
-            >
-              <el-table-column prop="xh" label="学号" width="180">
-              </el-table-column>
-              <el-table-column prop="name" label="姓名" width="180">
-              </el-table-column>
+    <div class="condition">
+      <el-button
+        size="small"
+        style="background-color: #fafafa; width: 108px"
+        @click="plDeal"
+        >批量处理</el-button
+      >
+      <!-- <el-button
+        size="small"
+        type="primary"
+        style="width: 108px"
+        @click="modelUpload"
+        >模板下载</el-button
+      >
+      <el-upload
+        style="margin-left: 10px"
+        action="http://124.70.180.17:10013/importStuScore"
+        :limit="1"
+        :show-file-list="false"
+        name="file"
+        :on-success="fileInSuccess"
+        :data="{
+          cjlbId: cjlbId,
+          classId: classId,
+          djxq: djxq,
+          schoolId: schoolId,
+          xkName: xkName,
+        }"
+      >
+        <el-button size="small" type="primary">成绩导入</el-button> -->
+      </el-upload>
+    </div>
+    <div class="contain">
+      <div class="left">
+        <el-tree
+          :data="ClassData"
+          :props="ClassProps"
+          @node-click="clickTree"
+          highlight-current
+          accordion
+        ></el-tree>
+      </div>
+      <div class="right">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%"
+          size="small"
+          @cell-click="clickCell"
+          :row-class-name="tableRowClassName"
+        >
+          <el-table-column prop="xh" label="学号" width="180">
+          </el-table-column>
+          <el-table-column prop="name" label="姓名" width="180">
+          </el-table-column>
 
-              <template v-for="(item, index) in DynamicColumn">
-                <el-table-column
-                  :key="index"
-                  :label="item.name"
-                  :prop="item.name"
-                >
-                  <template slot-scope="scope">
-                    <div v-show="scope.row.showExam[index].lrfs == 0">
-                      <el-input
-                        type="number"
-                        v-model="scope.row.showExam[index].score"
-                        max-length="300"
-                        size="mini"
-                        @blur="inputBlur(scope.row, index)"
-                      />
-                    </div>
-                    <div v-show="scope.row.showExam[index].lrfs == 1">
-                      <el-select
-                        max-length="300"
-                        size="mini"
-                        v-model="scope.row.showExam[index].score"
-                        @change="inputBlur1(scope.row)"
-                      >
-                        <el-option
-                          v-for="item in scope.row.showExam[index].showdedi"
-                          :key="item.rank"
-                          :label="item.rank"
-                          :value="item.rank"
-                        >
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </template>
-                </el-table-column>
-                <template v-for="(subItem, subIndex) in item.scoreChange">
-                  <el-table-column
-                    :key="subIndex + item.name"
-                    :label="subItem.name"
+          <template v-for="(item, index) in DynamicColumn">
+            <el-table-column :key="index" :label="item.name" :prop="item.name">
+              <template slot-scope="scope">
+                <div v-show="scope.row.showExam[index].lrfs == 0">
+                  <el-input
+                    type="number"
+                    v-model="scope.row.showExam[index].score"
+                    max-length="300"
+                    size="mini"
+                    @blur="inputBlur(scope.row, index)"
+                  />
+                </div>
+                <div v-show="scope.row.showExam[index].lrfs == 1">
+                  <el-select
+                    max-length="300"
+                    size="mini"
+                    v-model="scope.row.showExam[index].score"
+                    @change="inputBlur1(scope.row)"
                   >
-                    <template
-                      slot-scope="scope"
-                      v-if="scope.row.showExam[index].scoreChange"
+                    <el-option
+                      v-for="item in scope.row.showExam[index].showdedi"
+                      :key="item.rank"
+                      :label="item.rank"
+                      :value="item.rank"
                     >
-                      <div>
-                        {{
-                          scope.row.showExam[index].scoreChange[subIndex]
-                            ? scope.row.showExam[index].scoreChange[subIndex]
-                                .score
-                            : ""
-                        }}
-                      </div>
-                    </template>
-                  </el-table-column>
-                </template>
+                    </el-option>
+                  </el-select>
+                </div>
               </template>
-
-              <el-table-column prop="comment" label="期末评语" width="250">
-                <template slot-scope="scope">
+            </el-table-column>
+            <template v-for="(subItem, subIndex) in item.scoreChange">
+              <el-table-column
+                :key="subIndex + item.name"
+                :label="subItem.name"
+              >
+                <template
+                  slot-scope="scope"
+                  v-if="scope.row.showExam[index].scoreChange"
+                >
                   <div>
-                    <el-popover trigger="hover" placement="top">
-                      <div style="width: 380px">
-                        <p>{{ scope.row.comment }}</p>
-                      </div>
-                      <div
-                        slot="reference"
-                        style="
-                          display: inline-block;
-                          white-space: nowrap;
-                          width: 220px;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        "
-                      >
-                        <span size="medium">{{ scope.row.comment }}</span>
-                      </div>
-                    </el-popover>
+                    {{
+                      scope.row.showExam[index].scoreChange[subIndex]
+                        ? scope.row.showExam[index].scoreChange[subIndex].score
+                        : ""
+                    }}
                   </div>
                 </template>
               </el-table-column>
-            </el-table>
-          </div>
-        </div></el-tab-pane
-      >
-      <el-tab-pane label="成绩统计" name="4"
-        ><gradeTotal :cjlbId="cjlbId"></gradeTotal
-      ></el-tab-pane>
-    </el-tabs>
-    <qmpy
-      ref="qmpyComponent"
-      :commentRow="commentRow"
-      :getTable="reData"
-    ></qmpy>
+            </template>
+          </template>
+
+          <el-table-column prop="comment" label="期末评语" width="250">
+            <template slot-scope="scope">
+              <div>
+                <el-popover trigger="hover" placement="top">
+                  <div style="width: 380px">
+                    <p>{{ scope.row.comment }}</p>
+                  </div>
+                  <div
+                    slot="reference"
+                    style="
+                      display: inline-block;
+                      white-space: nowrap;
+                      width: 220px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    "
+                  >
+                    <span size="medium">{{ scope.row.comment }}</span>
+                  </div>
+                </el-popover>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
     <el-dialog
       title="批量处理"
       :visible.sync="showPlcl"
@@ -240,17 +208,8 @@
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
-import qmpy from "./components/qmpy";
-import firstTerm from "./firstTerm";
-import secondTerm from "./secondTerm";
-import gradeTotal from "./components/gradeTotal";
 export default {
-  components: {
-    qmpy,
-    firstTerm,
-    secondTerm,
-    gradeTotal,
-  },
+  components: {},
   props: {
     id: {
       type: Number,
@@ -261,6 +220,10 @@ export default {
       default: 0,
     },
     xueqiId: {
+      type: Number,
+      default: 0,
+    },
+    njId: {
       type: Number,
       default: 0,
     },
@@ -290,6 +253,7 @@ export default {
       classId: "", //当前选择的班级id
       xueqi: 1, //下拉框-学期-绑定值
       xueqiOpt: [
+        //
         //下拉框-学期-选项
         { label: "第一学期", value: 1 },
         { label: "第二学期", value: 2 },
@@ -321,27 +285,27 @@ export default {
   },
   methods: {
     //导入
-    fileInSuccess() {
-      this.$message.success("导入成功!");
-      this.reData();
-    },
+    // fileInSuccess() {
+    //   this.$message.success("导入成功!");
+    //   this.reData();
+    // },
     //   模板下载
-    modelUpload() {
-      let val = {
-        cjlbId: this.cjlbId,
-        djxq: this.djxq,
-      };
-      if (this.djxq) {
-        main
-          .testStuScore(val)
-          .then((res) => {
-            window.location.href = res.data;
-          })
-          .catch((err) => {});
-      } else {
-        this.$message.error("请选择班级!");
-      }
-    },
+    // modelUpload() {
+    //   let val = {
+    //     cjlbId: this.cjlbId,
+    //     djxq: this.djxq,
+    //   };
+    //   if (this.djxq) {
+    //     main
+    //       .testStuScore(val)
+    //       .then((res) => {
+    //         window.location.href = res.data;
+    //       })
+    //       .catch((err) => {});
+    //   } else {
+    //     this.$message.error("请选择班级!");
+    //   }
+    // },
     ksLabelChange(val) {
       this.ksId = val;
       let data = {
@@ -593,6 +557,7 @@ export default {
     getClass() {
       let val = {
         cjlbId: this.cjlbId,
+        gradeId: this.njId,
       };
       main
         .seeSiji(val)
