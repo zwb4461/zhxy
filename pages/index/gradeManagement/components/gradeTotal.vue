@@ -11,45 +11,68 @@
         ></el-tree>
       </div>
       <div class="right">
-        <el-table
-          size="small"
-          :render-header="labelHead"
-          :data="tableData"
-          border
-          style="width: 100%"
-          @header-click="headClick"
-        >
-          <el-table-column
-            :label="item"
-            v-for="(item, index) in colList"
-            :key="index"
-          >
-            <template slot-scope="scope">
-              <div>
-                {{ scope.row[index + 1] }}
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="btn_contain">
-          <div
-            v-for="(item, index) in colList"
-            :key="index"
-            class="btn"
-            :style="{ width: 100 / colList.length + '%' }"
-          >
-            <el-button
-              v-show="index != 0 && index != colList.length - 1"
-              type="primary"
-              size="mini"
-              @click="detail(index)"
-              >详细</el-button
+        <div v-if="TotalName == '总统计表'">
+          <el-table size="small" :data="totalTable" border style="width: 100%">
+            <el-table-column prop="ranking" label="排名"> </el-table-column>
+            <el-table-column prop="xh" label="学号"> </el-table-column>
+            <el-table-column prop="name" label="姓名"> </el-table-column>
+            <el-table-column prop="className" label="所在班级">
+            </el-table-column>
+            <el-table-column
+              :label="item"
+              v-for="(item, index) in totalColName"
+              :key="index"
             >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.scoreXkDedis[index] }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="score" label="总分"> </el-table-column>
+          </el-table>
+        </div>
+        <div v-else>
+          <el-table
+            size="small"
+            :render-header="labelHead"
+            :data="tableData"
+            border
+            style="width: 100%"
+            @header-click="headClick"
+          >
+            <el-table-column
+              :label="item"
+              v-for="(item, index) in colList"
+              :key="index"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row[index + 1] }}
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="btn_contain">
+            <div
+              v-for="(item, index) in colList"
+              :key="index"
+              class="btn"
+              :style="{ width: 100 / colList.length + '%' }"
+            >
+              <el-button
+                v-show="index != 0 && index != colList.length - 1"
+                type="primary"
+                size="mini"
+                @click="detail(index)"
+                >详细</el-button
+              >
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog title="提示" :visible.sync="showDetail" width="40%">
+    <el-dialog title="统计" :visible.sync="showDetail" width="40%">
       <el-button
         @click="exportExcel"
         style="margin-bottom: 15px"
@@ -57,64 +80,67 @@
         class="button"
         >导出</el-button
       >
-      <div class="table">
-        <div class="tongji">
-          <span>统计</span>
+      　<el-button v-print="'#printTest'">打印</el-button>
+      <div id="printTest">
+        <div class="table">
+          <div class="tongji">
+            <span>统计</span>
+          </div>
+          <div class="tableData">
+            <div class="table1">任课老师</div>
+            <div class="table1">{{ detailData.teacherName }}</div>
+            <div class="table1">总分</div>
+            <div class="table1">{{ detailData.sum }}</div>
+          </div>
+          <div class="tableData">
+            <div class="table1">实考人数</div>
+            <div class="table1">{{ detailData.skNum }}</div>
+            <div class="table1">统计人数</div>
+            <div class="table1">{{ detailData.tjNum }}</div>
+          </div>
+          <div class="tableData">
+            <div class="table1">最高分</div>
+            <div class="table1">{{ detailData.max }}</div>
+            <div class="table1">最低分</div>
+            <div class="table1">{{ detailData.min }}</div>
+          </div>
+          <div class="tableData">
+            <div class="table1">平均分</div>
+            <div class="table1">{{ detailData.average }}</div>
+            <div class="table1">均分差</div>
+            <div class="table1">{{ detailData.averDiff }}</div>
+          </div>
+          <div class="tableData">
+            <div class="table1">后20%均分</div>
+            <div class="table1">{{ detailData.laserAver }}</div>
+            <div class="table1">后20%差值</div>
+            <div class="table1">{{ detailData.laserDiff }}</div>
+          </div>
         </div>
-        <div class="tableData">
-          <div class="table1">任课老师</div>
-          <div class="table1">{{ detailData.teacherName }}</div>
-          <div class="table1">总分</div>
-          <div class="table1">{{ detailData.sum }}</div>
-        </div>
-        <div class="tableData">
-          <div class="table1">实考人数</div>
-          <div class="table1">{{ detailData.skNum }}</div>
-          <div class="table1">统计人数</div>
-          <div class="table1">{{ detailData.tjNum }}</div>
-        </div>
-        <div class="tableData">
-          <div class="table1">最高分</div>
-          <div class="table1">{{ detailData.max }}</div>
-          <div class="table1">最低分</div>
-          <div class="table1">{{ detailData.min }}</div>
-        </div>
-        <div class="tableData">
-          <div class="table1">平均分</div>
-          <div class="table1">{{ detailData.average }}</div>
-          <div class="table1">均分差</div>
-          <div class="table1">{{ detailData.averDiff }}</div>
-        </div>
-        <div class="tableData">
-          <div class="table1">后20%均分</div>
-          <div class="table1">{{ detailData.laserAver }}</div>
-          <div class="table1">后20%差值</div>
-          <div class="table1">{{ detailData.laserDiff }}</div>
-        </div>
-      </div>
-      <el-table
-        id="out-table"
-        size="mini"
-        :data="DetailTable"
-        border
-        style="width: 100%"
-      >
-        <el-table-column type="index" label="序"> </el-table-column>
-        <el-table-column prop="xh" label="学号"> </el-table-column>
-        <el-table-column prop="name" label="姓名"> </el-table-column>
-        <el-table-column
-          :label="item"
-          v-for="(item, index) in detailDataCol"
-          :key="index"
+        <el-table
+          id="out-table"
+          size="mini"
+          :data="DetailTable"
+          border
+          style="width: 100%"
         >
-          <template slot-scope="scope">
-            <div>
-              {{ scope.row.scores[index] }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="njPm" label="全年级排名"> </el-table-column>
-      </el-table>
+          <el-table-column type="index" label="序"> </el-table-column>
+          <el-table-column prop="xh" label="学号"> </el-table-column>
+          <el-table-column prop="name" label="姓名"> </el-table-column>
+          <el-table-column
+            :label="item"
+            v-for="(item, index) in detailDataCol"
+            :key="index"
+          >
+            <template slot-scope="scope">
+              <div>
+                {{ scope.row.scores[index] }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="njPm" label="全年级排名"> </el-table-column>
+        </el-table>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showDetail = false">关闭</el-button>
       </span>
@@ -148,10 +174,13 @@ export default {
       detailData: [],
       DetailTable: [],
       detailDataCol: [],
+      totalTable: [],
+      totalColName: [],
       rowKey: [],
       classId: "",
       ksId: "",
       ksxkId: "",
+      TotalName: "",
       ClassProps: {
         //树形的默认设置
         children: "children",
@@ -229,20 +258,41 @@ export default {
     clickTree(data, node) {
       if (node.level == 4) {
         console.log("node", node);
-        let val = {
-          schoolId: this.schoolId,
-          ksxkId: node.data.id,
-          gradeId: node.parent.parent.data.id,
-        };
-        this.ksxkId = node.data.id;
-        this.ksId = node.parent.data.id;
-        main
-          .ksSeeScore(val)
-          .then((res) => {
-            this.colList = res.data.data2;
-            this.tableData = res.data.data;
-          })
-          .catch((err) => {});
+        //判断是否是总统计表
+        this.TotalName = node.data.name;
+        if (this.TotalName != "总统计表") {
+          let val = {
+            schoolId: this.schoolId,
+            ksxkId: node.data.id,
+            gradeId: node.parent.parent.data.id,
+          };
+          console.log(val);
+          this.ksxkId = node.data.id;
+          this.ksId = node.parent.data.id;
+          main
+            .ksSeeScore(val)
+            .then((res) => {
+              this.colList = res.data.data2;
+              this.tableData = res.data.data;
+            })
+            .catch((err) => {});
+        } else {
+          let val = {
+            schoolId: this.schoolId,
+            ksxkId: node.data.id,
+            gradeId: node.parent.parent.data.id,
+          };
+          console.log(val);
+          this.ksxkId = node.data.id;
+          this.ksId = node.parent.data.id;
+          main
+            .ztjSeeScore(val)
+            .then((res) => {
+              this.totalTable = res.data.data;
+              this.totalColName = res.data.data2;
+            })
+            .catch((err) => {});
+        }
       }
     },
   },

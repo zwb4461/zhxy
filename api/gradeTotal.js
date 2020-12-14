@@ -1,7 +1,6 @@
 const request = require("~/utils/request.js");
 const Api = require("~/api/apiUrl/");
 
-//列表
 const ksSeeScore = query => {
   return request({
     url: Api.gradeTotal.ksSeeScore,
@@ -12,6 +11,13 @@ const ksSeeScore = query => {
 const BjSeeScore = query => {
   return request({
     url: Api.gradeTotal.BjSeeScore,
+    method: "post",
+    data: query
+  });
+};
+const ztjSeeScore = query => {
+  return request({
+    url: Api.gradeTotal.ztjSeeScore,
     method: "post",
     data: query
   });
@@ -28,5 +34,6 @@ const seeScore = query => {
 export default {
   ksSeeScore,
   seeScore,
-  BjSeeScore
+  BjSeeScore,
+  ztjSeeScore
 };

@@ -260,7 +260,8 @@ module.exports = {
   gradeTotal: {
     ksSeeScore: baseUrl + "/ksSeeScore",
     seeScore: baseUrl + "/seeScore",
-    BjSeeScore: baseUrl + "/BjSeeScore"
+    BjSeeScore: baseUrl + "/BjSeeScore",
+    ztjSeeScore: baseUrl + "/ztjSeeScore"
   },
   //成绩单位
   cjdw: {
@@ -268,5 +269,9 @@ module.exports = {
     find: baseUrl + "/selectScoreUnit",
     del: baseUrl + "/deleteScoreUnit",
     edit: baseUrl + "/updateScoreUnit"
+  },
+  //成绩单设置
+  cjdsz: {
+    find: baseUrl + "/selectAchimodule" //添加
   }
 };

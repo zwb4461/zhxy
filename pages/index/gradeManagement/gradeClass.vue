@@ -159,6 +159,9 @@
       <el-tab-pane label="成绩统计" name="4"
         ><gradeTotal :cjlbId="cjlbId"></gradeTotal
       ></el-tab-pane>
+      <el-tab-pane label="成绩单设置" name="5"
+        ><cjdOpt :cjlbId="cjlbId"></cjdOpt
+      ></el-tab-pane>
     </el-tabs>
     <qmpy
       ref="qmpyComponent"
@@ -244,12 +247,14 @@ import qmpy from "./components/qmpy";
 import firstTerm from "./firstTerm";
 import secondTerm from "./secondTerm";
 import gradeTotal from "./components/gradeTotal";
+import cjdOpt from "./components/cjdOpt";
 export default {
   components: {
     qmpy,
     firstTerm,
     secondTerm,
     gradeTotal,
+    cjdOpt,
   },
   props: {
     id: {

@@ -30,7 +30,7 @@
         }"
       >
         <el-button size="small" type="primary">成绩导入</el-button> -->
-      </el-upload>
+      <!-- </el-upload> -->
     </div>
     <div class="contain">
       <div class="left">
@@ -203,13 +203,19 @@
         <el-button type="primary" @click="submitPlcl">确 定</el-button>
       </span>
     </el-dialog>
+    <qmpy
+      ref="qmpyComponent"
+      :commentRow="commentRow"
+      :getTable="reData"
+    ></qmpy>
   </div>
 </template>
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
+import qmpy from "./qmpy";
 export default {
-  components: {},
+  components: { qmpy },
   props: {
     id: {
       type: Number,

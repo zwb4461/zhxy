@@ -114,24 +114,26 @@
         <div class="optContain">
           <div class="leftOpt">
             <el-table size="small" :data="jTable" border style="width: 100%">
-              <el-table-column type="index" label="序"> </el-table-column>
-              <el-table-column prop="bh" label="编码" width="100">
-                <template slot-scope="scope">
-                  <el-input
-                    size="mini"
-                    v-model="scope.row.bh"
-                    @blur="editJ(scope.row)"
-                  ></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="current" label="内容">
-                <template slot-scope="scope">
-                  <el-input
-                    size="mini"
-                    v-model="scope.row.current"
-                    @blur="editJ(scope.row)"
-                  ></el-input>
-                </template>
+              <el-table-column label="奖励内容">
+                <el-table-column type="index" label="序"> </el-table-column>
+                <el-table-column prop="bh" label="编码" width="100">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.bh"
+                      @blur="editJ(scope.row)"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="current" label="内容">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.current"
+                      @blur="editJ(scope.row)"
+                    ></el-input>
+                  </template>
+                </el-table-column>
               </el-table-column>
             </el-table>
             <el-button size="small" style="width: 100%" @click="addJ"
@@ -140,24 +142,26 @@
           </div>
           <div class="rightOpt">
             <el-table size="small" :data="cTable" border style="width: 100%">
-              <el-table-column type="index" label="序"> </el-table-column>
-              <el-table-column prop="bh" label="编码" width="100">
-                <template slot-scope="scope">
-                  <el-input
-                    size="mini"
-                    v-model="scope.row.bh"
-                    @blur="editC(scope.row)"
-                  ></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="current" label="内容">
-                <template slot-scope="scope">
-                  <el-input
-                    size="mini"
-                    v-model="scope.row.current"
-                    @blur="editC(scope.row)"
-                  ></el-input>
-                </template>
+              <el-table-column label="惩罚内容">
+                <el-table-column type="index" label="序"> </el-table-column>
+                <el-table-column prop="bh" label="编码" width="100">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.bh"
+                      @blur="editC(scope.row)"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="current" label="内容">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.current"
+                      @blur="editC(scope.row)"
+                    ></el-input>
+                  </template>
+                </el-table-column>
               </el-table-column>
             </el-table>
             <el-button size="small" style="width: 100%" @click="addC"
