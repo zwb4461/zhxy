@@ -9,13 +9,13 @@ import Layout from "~/components/layout/";
 export default {
   head() {
     return {
-      title: "管理平台",
-      meta: []
+      title: "智慧校园",
+      meta: [],
     };
   },
   components: {
-    Layout
-  }
+    Layout,
+  },
 };
 </script>
 

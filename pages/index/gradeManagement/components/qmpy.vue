@@ -64,8 +64,29 @@
             :cell-style="{ 'text-align': 'center' }"
           >
             <el-table-column type="index" label="序号"> </el-table-column>
-            <el-table-column prop="name" label="评语词条"> </el-table-column>
+            <el-table-column prop="name" label="评语词条">
+              <template slot-scope="scope">
+                <el-input
+                  @blur="edit(scope.row)"
+                  size="mini"
+                  type="textarea"
+                  autosize
+                  style="width: 100%"
+                  v-model="scope.row.name"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120">
+              <template slot-scope="scope">
+                <el-button size="mini" type="danger" @click="del(scope.row)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
           </el-table>
+          <el-button size="mini" style="width: 100%" v-show="nj" @click="addRow"
+            >+</el-button
+          >
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -109,6 +130,18 @@ export default {
     };
   },
   methods: {
+    //删除数据
+    del(record) {
+      main
+        .deleteComment({ id: record.id })
+        .then((res) => {
+          this.getPy();
+          this.$message.success("删除评语成功!");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     //   字符串指定位置插入方法
     insertStr(soure, start, newStr) {
       console.log("soure", soure);
@@ -140,6 +173,38 @@ export default {
           this.tableData = res.data;
         })
         .catch((err) => {});
+    },
+    addRow() {
+      this.tableData.push({});
+    },
+    edit(row) {
+      console.log("row", row);
+      if (row.id) {
+        let val = {
+          name: row.name,
+          id: row.id,
+          grade: this.nj,
+          schoolId: this.schoolId,
+        };
+        main
+          .updateComment(val)
+          .then((res) => {
+            this.getPy();
+          })
+          .catch((err) => {});
+      } else {
+        let val = {
+          grade: this.nj,
+          name: row.name,
+          schoolId: this.schoolId,
+        };
+        main
+          .insertComment(val)
+          .then((res) => {
+            this.getPy();
+          })
+          .catch((err) => {});
+      }
     },
     //   提交
     submit() {

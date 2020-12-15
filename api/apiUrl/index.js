@@ -203,6 +203,9 @@ module.exports = {
     del: baseUrl + "/deleteStuScore", //删除成绩录入
     edit: baseUrl + "/updateStuScore", //编辑成绩录入
     findPy: baseUrl + "/selectComment", //查看评语库
+    updateComment: baseUrl + "/updateComment", //查看评语库
+    deleteComment: baseUrl + "/deleteComment", //查看评语库
+    insertComment: baseUrl + "/insertComment", //查看评语库
     addEdit: baseUrl + "/saveStuScore", //新增修改成绩录入
     seeSiji: baseUrl + "/seeSiji",
     testStuScore: baseUrl + "/testStuScore"
@@ -216,6 +219,7 @@ module.exports = {
     findXk: baseUrl + "/selectXueke", //查询所有学科
     editXk: baseUrl + "/updateKsXueke", //修改考试学科
     addXk: baseUrl + "/insertKsXueke",
+    deleteKsXueke: baseUrl + "/deleteKsXueke",
     sel: baseUrl + "/selectKsXueke",
     addDd: baseUrl + "/insertScoreRankChange", //添加等第转换
     findDd: baseUrl + "/selectScoreRankChange", //查看等第转换

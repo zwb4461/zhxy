@@ -198,14 +198,19 @@ export default {
               key: "m-2-2",
               children: [],
             },
-            {
-              title: "类别管理",
-              key: "m-2-3",
-              children: [],
-            },
+            // {
+            //   title: "类别管理",
+            //   key: "m-2-3",
+            //   children: [],
+            // },
             {
               title: "短信通道",
               key: "m-2-4",
+              children: [],
+            },
+            {
+              title: "基本设置",
+              key: "m-2-5",
               children: [],
             },
           ],

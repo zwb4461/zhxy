@@ -305,12 +305,10 @@ const getNewMenu = power => {
         {
           key: "BasicSetting",
           title: "基本设置",
-          //   hide: true,
-          //   power: "m-2-4",
-          //   alwaysShow: false,
+          hide: true,
+          power: "m-2-5",
           meta: {
             title: "基本设置"
-            // affix: false
           }
         }
       ]

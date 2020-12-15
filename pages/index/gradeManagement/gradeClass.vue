@@ -335,6 +335,7 @@ export default {
       let val = {
         cjlbId: this.cjlbId,
         djxq: this.djxq,
+        classId: this.classId,
       };
       if (this.djxq) {
         main

@@ -230,14 +230,10 @@
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
-import qmpy from "./components/qmpy";
-import firstTerm from "./firstTerm";
-import secondTerm from "./secondTerm";
+import qmpy from "~/pages/index/gradeManagement/components/qmpy";
 export default {
   components: {
     qmpy,
-    firstTerm,
-    secondTerm,
   },
   props: {
     id: {

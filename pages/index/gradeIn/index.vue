@@ -41,6 +41,7 @@
           :xueqiId="xueqiId"
           :id="id"
           :njId="njId"
+          :xq="form.djxq"
         ></gradeClass
       ></el-tab-pane>
     </el-tabs>

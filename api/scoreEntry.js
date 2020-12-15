@@ -36,9 +36,30 @@ const addEdit = query => {
     data: query
   });
 };
+const insertComment = query => {
+  return request({
+    url: Api.scoreEntry.insertComment,
+    method: "post-json",
+    data: query
+  });
+};
+const updateComment = query => {
+  return request({
+    url: Api.scoreEntry.updateComment,
+    method: "post-json",
+    data: query
+  });
+};
 const seeSiji = query => {
   return request({
     url: Api.scoreEntry.seeSiji,
+    method: "post",
+    data: query
+  });
+};
+const deleteComment = query => {
+  return request({
+    url: Api.scoreEntry.deleteComment,
     method: "post",
     data: query
   });
@@ -58,5 +79,8 @@ export default {
   findPy,
   addEdit,
   seeSiji,
-  testStuScore
+  testStuScore,
+  insertComment,
+  updateComment,
+  deleteComment
 };

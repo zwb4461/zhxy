@@ -213,7 +213,7 @@
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
-import qmpy from "./qmpy";
+import qmpy from "~/pages/index/gradeManagement/components/qmpy";
 export default {
   components: { qmpy },
   props: {
@@ -230,6 +230,10 @@ export default {
       default: 0,
     },
     njId: {
+      type: Number,
+      default: 0,
+    },
+    xq: {
       type: Number,
       default: 0,
     },
@@ -564,6 +568,7 @@ export default {
       let val = {
         cjlbId: this.cjlbId,
         gradeId: this.njId,
+        djxq: this.xq,
       };
       main
         .seeSiji(val)

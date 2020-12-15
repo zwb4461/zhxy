@@ -11,6 +11,14 @@
       >
       <el-button
         size="small"
+        type="danger"
+        style="width: 150px"
+        @click="delExam"
+        :disabled="isLock == 1"
+        >删除考试</el-button
+      >
+      <el-button
+        size="small"
         style="width: 108px"
         @click="lrsz"
         :disabled="isLock == 1"
@@ -119,6 +127,13 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="del(scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
         <div class="addRow">
           <el-button
@@ -128,12 +143,6 @@
             size="small"
             >+添加行</el-button
           >
-          <!-- <el-button
-            @click="addColumn"
-            style="width: 95%; margin-top: 10px"
-            size="small"
-            >+添加列</el-button
-          > -->
         </div>
       </div>
     </div>
@@ -536,6 +545,27 @@
         <el-button type="primary" @click="submitPlfz">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="删除考试" :visible.sync="showDelExam" width="30%">
+      <div style="margin-top: 15px">
+        <el-form label-width="80px">
+          <el-form-item label="考试">
+            <el-select size="small" v-model="examId">
+              <el-option
+                v-for="item in treeData"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showDelExam = false">取 消</el-button>
+        <el-button type="primary" @click="submitDelExam">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -554,6 +584,10 @@ export default {
   },
   data() {
     return {
+      showDelExam: false,
+      examId: undefined,
+      examIdOpt: [],
+      //
       passwordTable: [],
       form7: {},
       xkfzOpt: [],
@@ -617,6 +651,41 @@ export default {
     };
   },
   methods: {
+    //删除考试
+    delExam() {
+      this.showDelExam = true;
+    },
+    submitDelExam() {
+      main
+        .del({ id: this.examId })
+        .then((res) => {
+          this.getTreeData();
+          this.$message.success("删除成功!");
+          this.showDelExam = false;
+          this.examId = undefined;
+        })
+        .catch((err) => {});
+    },
+    //删除数据
+    del(record) {
+      this.$confirm({
+        title: "确认删除吗",
+        cancelText: "取消",
+        okText: "确定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .deleteKsXueke({ id: record.id })
+            .then((res) => {
+              this.hxTabel();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      });
+    },
     //提交账号密码
     submitLrsz() {
       let val = {
@@ -646,7 +715,7 @@ export default {
             }
           });
           this.passwordTable = obj.filter((item) => {
-            return item.djxq == this.djxq;
+            return item.djxq == 1;
           });
         })
         .catch((err) => {});
@@ -719,6 +788,7 @@ export default {
             this.plfzRadio = 0;
             this.xkfz = [];
             this.xkfzTo = [];
+            this.hxTabel();
           })
           .catch((err) => {});
       } else if (this.plfzType == 1) {
@@ -743,6 +813,7 @@ export default {
             this.plfzRadio = 0;
             this.xkfz = [];
             this.xkfzTo = [];
+            this.hxTabel();
           })
           .catch((err) => {});
       } else if (this.plfzType == 2) {
@@ -760,6 +831,7 @@ export default {
             this.plfzRadio = 0;
             this.xkfz = [];
             this.xkfzTo = [];
+            this.hxTabel();
           })
           .catch((err) => {});
       }
@@ -767,6 +839,7 @@ export default {
     //批量复制
     copy() {
       this.showPlfz = true;
+      this.seeCopy();
     },
     //   获取所有单位
     getDw() {
@@ -1260,7 +1333,7 @@ export default {
         .find(val)
         .then((res) => {
           this.treeData = res.data.list;
-          console.log("  this.treeData", this.treeData);
+          console.log("  this.treeData-------", this.treeData);
           let arr = [];
           res.data.list.map((item) => {
             arr.push({
@@ -1321,6 +1394,7 @@ export default {
     addExam() {
       this.showAddExam = true;
     },
+
     // 关闭新增考试dia
     closeAddExam() {
       this.showAddExam = false;

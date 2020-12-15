@@ -133,6 +133,13 @@ const batchQc = query => {
     data: query
   });
 };
+const deleteKsXueke = query => {
+  return request({
+    url: Api.examManage.deleteKsXueke,
+    method: "post",
+    data: query
+  });
+};
 export default {
   add,
   edit,
@@ -151,5 +158,6 @@ export default {
   copyKs,
   sel,
   batchHandle,
-  batchQc
+  batchQc,
+  deleteKsXueke
 };
