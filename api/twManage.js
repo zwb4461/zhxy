@@ -65,6 +65,13 @@ const delTwsz = query => {
     data: query
   });
 };
+const DownTwsz = query => {
+  return request({
+    url: Api.twManage.DownTwsz,
+    method: "post",
+    data: query
+  });
+};
 
 export default {
   add,
@@ -75,5 +82,6 @@ export default {
   selectSport,
   saveTwsz,
   seeTwsz,
+  DownTwsz,
   delTwsz
 };

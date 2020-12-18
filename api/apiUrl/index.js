@@ -251,6 +251,7 @@ module.exports = {
     selectSport: baseUrl + "/selectSport",
     seeTwsz: baseUrl + "/seeTwsz",
     saveTwsz: baseUrl + "/saveTwsz",
+    DownTwsz: baseUrl + "/DownTwsz",
     delTwsz: baseUrl + "/delTwsz"
   },
   //学科汇总
@@ -276,6 +277,8 @@ module.exports = {
   },
   //成绩单设置
   cjdsz: {
-    find: baseUrl + "/selectAchimodule" //添加
+    find: baseUrl + "/selectAchimodule", //添加
+    seeDedis: baseUrl + "/seeDedis",
+    saveAchimodule: baseUrl + "/saveAchimodule"
   }
 };

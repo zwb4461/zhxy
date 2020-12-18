@@ -72,6 +72,19 @@
               </el-select>
             </template>
           </el-table-column>
+          <el-table-column
+            prop="islock"
+            label="录入锁定"
+            width="120"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <el-checkbox
+                @change="lrsdChange(scope)"
+                v-model="scope.row.islock"
+              ></el-checkbox>
+            </template>
+          </el-table-column>
           <el-table-column prop="kssj" label="考试时间" width="180">
             <template slot-scope="scope">
               <el-date-picker
@@ -97,13 +110,13 @@
               ></el-input>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="lrqx" label="录入权限" width="100">
+          <el-table-column prop="lrqx" label="录入权限" width="100">
             <template slot-scope="scope">
               <div>
-                {{ zhLrqx(scope.row.lrqx) }}
+                {{ scope.row.lrqx }}
               </div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column prop="lrfs" label="录入方式" width="80">
             <template slot-scope="scope">
               {{
@@ -158,9 +171,9 @@
         >
         <div class="lrqx1">
           <el-radio v-model="lrqxRadio" label="2" :disabled="isLock == 1"
-            >指定教师</el-radio
+            >账号密码登录</el-radio
           >
-          <el-select
+          <!-- <el-select
             multiple
             :disabled="isLock == 1"
             size="small"
@@ -174,7 +187,7 @@
               :value="item.teacherUnionid"
             >
             </el-option>
-          </el-select>
+          </el-select> -->
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -862,7 +875,7 @@ export default {
           id: this.rowId,
           gradeId: this.gradeId,
           ksId: this.ksId,
-          lrqx: this.zdjs.join(","),
+          lrqx: "账号密码登录",
         };
       } else {
         var val = {
@@ -1231,6 +1244,20 @@ export default {
         })
         .catch((err) => {});
     },
+    lrsdChange(scope) {
+      let val = {
+        id: scope.row.id,
+        gradeId: this.gradeId,
+        ksId: this.ksId,
+        islock: scope.row.islock,
+      };
+      main
+        .editXk(val)
+        .then((res) => {
+          this.hxTabel();
+        })
+        .catch((err) => {});
+    },
     //  考试方式改变
     ksfsChange(scope) {
       let val = {
@@ -1452,25 +1479,25 @@ export default {
         })
         .catch((err) => {});
     },
-    zhLrqx(lrqx) {
-      if (lrqx) {
-        if (lrqx == "任课老师") {
-          return "任课老师";
-        } else {
-          let arr = [];
-          let str = [];
-          arr = lrqx.split(",");
-          this.zdjsOpt.map((item) => {
-            arr.map((subItem) => {
-              if (item.teacherUnionid == subItem) {
-                str.push(item.teacherName);
-              }
-            });
-          });
-          return str.join(",");
-        }
-      }
-    },
+    // zhLrqx(lrqx) {
+    //   if (lrqx) {
+    //     if (lrqx == "任课老师") {
+    //       return "任课老师";
+    //     } else {
+    //       let arr = [];
+    //       let str = [];
+    //       arr = lrqx.split(",");
+    //       this.zdjsOpt.map((item) => {
+    //         arr.map((subItem) => {
+    //           if (item.teacherUnionid == subItem) {
+    //             str.push(item.teacherName);
+    //           }
+    //         });
+    //       });
+    //       return str.join(",");
+    //     }
+    //   }
+    // },
   },
   created() {
     this.getTreeData();

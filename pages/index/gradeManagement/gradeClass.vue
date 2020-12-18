@@ -82,6 +82,7 @@
                   <template slot-scope="scope">
                     <div v-show="scope.row.showExam[index].lrfs == 0">
                       <el-input
+                        :disabled="scope.row.showExam[index].islock"
                         type="number"
                         v-model="scope.row.showExam[index].score"
                         max-length="300"

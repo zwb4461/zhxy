@@ -131,15 +131,17 @@ export default {
         .loginScore(val)
         .then((res) => {
           if (res.code == 200) {
+            console.log("111111", res.code);
             this.showLogin = false;
             this.njId = res.data;
-            console.log(" this.njId", this.njId);
             this.$message.success(res.msg);
             if (!this.tabList.includes(this.gradeClass1)) {
               this.tabList.push(this.gradeClass1);
             }
             this.gradeClass = this.gradeClass1;
-          } else {
+          }
+          if (res.code == 500) {
+            console.log("13132121");
             this.$message.error("账号密码错误!");
           }
         })

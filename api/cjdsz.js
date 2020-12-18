@@ -8,7 +8,23 @@ const find = query => {
     data: query
   });
 };
+const seeDedis = query => {
+  return request({
+    url: Api.cjdsz.seeDedis,
+    method: "post-json",
+    data: query
+  });
+};
+const saveAchimodule = query => {
+  return request({
+    url: Api.cjdsz.saveAchimodule,
+    method: "post-json",
+    data: query
+  });
+};
 
 export default {
-  find
+  find,
+  seeDedis,
+  saveAchimodule
 };

@@ -7,7 +7,7 @@
         @click="plDeal"
         >批量处理</el-button
       >
-      <!-- <el-button
+      <el-button
         size="small"
         type="primary"
         style="width: 108px"
@@ -29,8 +29,8 @@
           xkName: xkName,
         }"
       >
-        <el-button size="small" type="primary">成绩导入</el-button> -->
-      <!-- </el-upload> -->
+        <el-button size="small" type="primary">成绩导入</el-button>
+      </el-upload>
     </div>
     <div class="contain">
       <div class="left">
@@ -295,27 +295,27 @@ export default {
   },
   methods: {
     //导入
-    // fileInSuccess() {
-    //   this.$message.success("导入成功!");
-    //   this.reData();
-    // },
-    //   模板下载
-    // modelUpload() {
-    //   let val = {
-    //     cjlbId: this.cjlbId,
-    //     djxq: this.djxq,
-    //   };
-    //   if (this.djxq) {
-    //     main
-    //       .testStuScore(val)
-    //       .then((res) => {
-    //         window.location.href = res.data;
-    //       })
-    //       .catch((err) => {});
-    //   } else {
-    //     this.$message.error("请选择班级!");
-    //   }
-    // },
+    fileInSuccess() {
+      this.$message.success("导入成功!");
+      this.reData();
+    },
+    modelUpload() {
+      let val = {
+        cjlbId: this.cjlbId,
+        djxq: this.djxq,
+        classId: this.classId,
+      };
+      if (this.djxq) {
+        main
+          .testStuScore(val)
+          .then((res) => {
+            window.location.href = res.data;
+          })
+          .catch((err) => {});
+      } else {
+        this.$message.error("请选择班级!");
+      }
+    },
     ksLabelChange(val) {
       this.ksId = val;
       let data = {

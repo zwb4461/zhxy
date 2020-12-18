@@ -2,6 +2,27 @@
   <div>
     <el-tabs v-model="activeName">
       <el-tab-pane label="体卫录入" name="first">
+        <div class="btn_contain">
+          <el-button size="small" style="width: 108px" @click="modelUpload"
+            >模板下载</el-button
+          >
+          <el-upload
+            style="margin-left: 10px"
+            action="http://124.70.180.17:10013/importTwsz"
+            :limit="1"
+            :show-file-list="false"
+            name="file"
+            :on-success="fileInSuccess"
+            :data="{
+              classId: classId,
+              djxq: djxq,
+              twId: twId,
+              schoolId: schoolId,
+            }"
+          >
+            <el-button size="small" type="primary">体卫导入</el-button>
+          </el-upload>
+        </div>
         <div class="contain">
           <div class="left">
             <el-tree
@@ -138,6 +159,12 @@ export default {
       default: 0,
     },
   },
+  computed: {
+    //学校id
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
+  },
   data() {
     return {
       activeName: "first",
@@ -151,6 +178,7 @@ export default {
       studentId: "",
       //当前选中第几学期
       djxq: "",
+      classId: "",
       treeData: [],
       //体卫表格
       twTable: [],
@@ -189,6 +217,34 @@ export default {
     };
   },
   methods: {
+    //导入
+    fileInSuccess() {
+      let val = {
+        twId: this.twId,
+        classId: this.classId,
+        djxq: this.djxq,
+      };
+      this.gettwTable(val);
+      this.$message.success("导入成功!");
+    },
+    //   模板下载
+    modelUpload() {
+      let val = {
+        twId: this.twId,
+        schoolId: this.schoolId,
+        classId: this.classId,
+      };
+      if (this.classId) {
+        main1
+          .DownTwsz(val)
+          .then((res) => {
+            window.location.href = res.data;
+          })
+          .catch((err) => {});
+      } else {
+        this.$message.error("请选择班级!");
+      }
+    },
     edit(row) {
       //修改表格
       console.log(row);
@@ -241,6 +297,8 @@ export default {
           classId: data.data.id,
           djxq: data.parent.parent.data.id,
         };
+        this.djxq = data.parent.parent.data.id;
+        this.classId = data.data.id;
         this.gettwTable(val);
       }
     },
@@ -326,5 +384,11 @@ export default {
 /deep/.el-table_46_column_340_column_342,
 /deep/.el-table_46_column_340_column_343 {
   color: #be4fff;
+}
+.btn_contain {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
 }
 </style>
