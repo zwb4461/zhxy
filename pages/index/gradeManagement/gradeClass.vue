@@ -162,9 +162,11 @@
               border
               style="width: 100%"
             >
-              <el-table-column prop="xh" label="学号"> </el-table-column>
-              <el-table-column prop="name" label="姓名"> </el-table-column>
-              <el-table-column prop="illness" label="病事假天数">
+              <el-table-column prop="xh" label="学号" width="100">
+              </el-table-column>
+              <el-table-column prop="name" label="姓名" width="100">
+              </el-table-column>
+              <el-table-column prop="illness" label="病事假天数" width="100">
                 <template slot-scope="scope">
                   <el-input
                     @blur="editQmpy(scope.row)"
@@ -173,11 +175,11 @@
                   ></el-input>
                 </template>
               </el-table-column>
-              <el-table-column prop="comment" label="期末评语">
+              <el-table-column prop="comment" label="期末评语" width="350px">
                 <template slot-scope="scope">
                   <div>
                     <el-popover trigger="hover" placement="top">
-                      <div style="width: 380px">
+                      <div style="width: 100%">
                         <p>{{ scope.row.comment }}</p>
                       </div>
                       <div
@@ -185,7 +187,7 @@
                         style="
                           display: inline-block;
                           white-space: nowrap;
-                          width: 220px;
+                          width: 100%;
                           overflow: hidden;
                           text-overflow: ellipsis;
                         "
