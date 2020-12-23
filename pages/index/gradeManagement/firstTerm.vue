@@ -1565,4 +1565,10 @@ export default {
   align-items: center;
   justify-content: center;
 }
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
+}
 </style>

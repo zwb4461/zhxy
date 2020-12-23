@@ -279,6 +279,7 @@ module.exports = {
   cjdsz: {
     find: baseUrl + "/selectAchimodule", //添加
     seeDedis: baseUrl + "/seeDedis",
-    saveAchimodule: baseUrl + "/saveAchimodule"
+    saveAchimodule: baseUrl + "/saveAchimodule",
+    seeAchimodule: baseUrl + "/seeAchimodule"
   }
 };

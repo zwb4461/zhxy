@@ -10,7 +10,8 @@
               @node-click="clickTree"
               highlight-current
               accordion
-            ></el-tree>
+            >
+            </el-tree>
           </div>
           <div class="right">
             <el-table :data="jcTable" size="small" border style="width: 100%">
@@ -244,6 +245,7 @@ export default {
           let val = {
             classId: this.classId,
             ppcateId: this.jcId,
+            name: this.name,
           };
           this.getJcTable(val);
         })
@@ -308,6 +310,10 @@ export default {
           this.jcTable = res.data;
         })
         .catch((err) => {});
+    },
+    test(node, data) {
+      console.log("node", node);
+      console.log("data", data);
     },
     //点击树
     clickTree(node, data) {
@@ -431,5 +437,11 @@ export default {
 .add {
   width: 100%;
   height: 50px;
+}
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
 }
 </style>

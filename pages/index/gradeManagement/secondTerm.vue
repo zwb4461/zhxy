@@ -313,7 +313,7 @@
       width="30%"
       :before-close="closeLrsz"
     >
-      <el-form ref="form3" label-width="80px">
+      <el-form label-width="80px">
         <el-form-item
           :label="item.name + ':'"
           v-for="(item, index) in lrszList"
@@ -1545,5 +1545,11 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
 }
 </style>

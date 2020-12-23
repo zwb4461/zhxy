@@ -22,9 +22,17 @@ const saveAchimodule = query => {
     data: query
   });
 };
+const seeAchimodule = query => {
+  return request({
+    url: Api.cjdsz.seeAchimodule,
+    method: "post-json",
+    data: query
+  });
+};
 
 export default {
   find,
   seeDedis,
-  saveAchimodule
+  saveAchimodule,
+  seeAchimodule
 };
