@@ -3,42 +3,36 @@
     <el-tabs v-model="activeName" @tab-click="clickTab">
       <el-tab-pane label="成绩录入" name="3">
         <div class="condition">
-          <el-select
-            v-model="xueqi"
-            placeholder="请选择学期"
-            size="small"
-            style="margin-right: 15px; width: 218px"
-            @change="changeXq"
-          >
-            <el-option
-              v-for="item in xueqiOpt"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-          <el-select
-            v-model="xueke"
-            placeholder="请选择学科"
-            size="small"
-            style="margin-right: 15px"
-            @change="changeXk"
-          >
-            <el-option
-              v-for="item in xuekeOpt"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
           <el-button
             size="small"
             style="background-color: #fafafa; width: 108px"
             @click="plDeal"
             >批量处理</el-button
           >
+          <el-button
+            size="small"
+            type="primary"
+            style="width: 108px"
+            @click="modelUpload"
+            >模板下载</el-button
+          >
+          <el-upload
+            style="margin-left: 10px"
+            action="http://103.219.33.112:10010/importStuScore"
+            :limit="1"
+            :show-file-list="false"
+            name="file"
+            :on-success="fileInSuccess"
+            :data="{
+              cjlbId: cjlbId,
+              classId: classId,
+              djxq: djxq,
+              schoolId: schoolId,
+              xkName: xkName,
+            }"
+          >
+            <el-button size="small" type="primary">成绩导入</el-button>
+          </el-upload>
         </div>
         <div class="contain">
           <div class="left">
@@ -50,7 +44,7 @@
               accordion
             ></el-tree>
           </div>
-          <div class="right">
+          <div class="right" v-if="!isqm">
             <el-table
               :data="tableData"
               border
@@ -73,6 +67,7 @@
                   <template slot-scope="scope">
                     <div v-show="scope.row.showExam[index].lrfs == 0">
                       <el-input
+                        :disabled="scope.row.showExam[index].islock"
                         type="number"
                         v-model="scope.row.showExam[index].score"
                         max-length="300"
@@ -119,8 +114,51 @@
                   </el-table-column>
                 </template>
               </template>
-
-              <el-table-column prop="comment" label="期末评语" width="250">
+              <!-- <el-table-column prop="comment" label="期末评语" width="250">
+                <template slot-scope="scope">
+                  <div>
+                    <el-popover trigger="hover" placement="top">
+                      <div style="width: 380px">
+                        <p>{{ scope.row.comment }}</p>
+                      </div>
+                      <div
+                        slot="reference"
+                        style="
+                          display: inline-block;
+                          white-space: nowrap;
+                          width: 220px;
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                        "
+                      >
+                        <span size="medium">{{ scope.row.comment }}</span>
+                      </div>
+                    </el-popover>
+                  </div>
+                </template>
+              </el-table-column> -->
+            </el-table>
+          </div>
+          <div class="right" v-else-if="isqm">
+            <el-table
+              @cell-click="clickCell1"
+              size="small"
+              :data="qmpyData"
+              border
+              style="width: 100%"
+            >
+              <el-table-column prop="xh" label="学号"> </el-table-column>
+              <el-table-column prop="name" label="姓名"> </el-table-column>
+              <el-table-column prop="illness" label="病事假天数">
+                <template slot-scope="scope">
+                  <el-input
+                    @blur="editQmpy(scope.row)"
+                    v-model="scope.row.illness"
+                    size="mini"
+                  ></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="comment" label="期末评语">
                 <template slot-scope="scope">
                   <div>
                     <el-popover trigger="hover" placement="top">
@@ -143,16 +181,27 @@
                   </div>
                 </template>
               </el-table-column>
+              <el-table-column prop="hobby" label="课外兴趣、爱好和特长">
+                <template slot-scope="scope">
+                  <el-input
+                    @blur="editQmpy(scope.row)"
+                    v-model="scope.row.hobby"
+                    size="mini"
+                  ></el-input>
+                </template>
+              </el-table-column>
             </el-table>
-          </div>
-        </div></el-tab-pane
-      >
-      <el-tab-pane label="成绩统计" name="4">成绩统计</el-tab-pane>
+          </div></div
+      ></el-tab-pane>
+      <el-tab-pane label="成绩统计" name="4"
+        ><gradeTotal :cjlbId="cjlbId"></gradeTotal
+      ></el-tab-pane>
     </el-tabs>
     <qmpy
       ref="qmpyComponent"
       :commentRow="commentRow"
-      :getTable="changeXq"
+      :getTable="reData"
+      :reloadQmpyTable="reloadQmpyTable"
     ></qmpy>
     <el-dialog
       title="批量处理"
@@ -230,10 +279,12 @@
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
+import gradeTotal from "~/pages/index/gradeManagement/components/gradeTotal";
 import qmpy from "~/pages/index/gradeManagement/components/qmpy";
 export default {
   components: {
     qmpy,
+    gradeTotal,
   },
   props: {
     id: {
@@ -266,6 +317,8 @@ export default {
   },
   data() {
     return {
+      qmpyData: [],
+      isqm: false,
       ddScoreOpt: [{ name: "11" }, { name: "22" }],
       tabClickIndex: null, // 点击的单元格
       tabClickLabel: "", // 当前点击的列名
@@ -299,11 +352,58 @@ export default {
       ddName: "",
       ddOpt: [],
       ksId: 0,
+      djxq: undefined,
+      xkName: undefined,
     };
   },
   methods: {
+    reloadQmpyTable() {
+      let val = {
+        djxq: this.djxq,
+        cjlbId: this.cjlbId,
+        classId: this.classId,
+        schoolId: this.schoolId,
+      };
+      main1
+        .selectFinalEvaluate(val)
+        .then((res) => {
+          this.qmpyData = res.data;
+        })
+        .catch((err) => {});
+    },
+    editQmpy(row) {
+      row.schoolId = this.schoolId;
+      main1
+        .saveFinalEvaluate(row)
+        .then((res) => {
+          this.reloadQmpyTable();
+        })
+        .catch((err) => {});
+    },
+    //导入
+    fileInSuccess() {
+      this.$message.success("导入成功!");
+      this.reData();
+    },
+    //   模板下载
+    modelUpload() {
+      let val = {
+        cjlbId: this.cjlbId,
+        djxq: this.djxq,
+        classId: this.classId,
+      };
+      if (this.djxq) {
+        main
+          .testStuScore(val)
+          .then((res) => {
+            window.location.href = res.data;
+          })
+          .catch((err) => {});
+      } else {
+        this.$message.error("请选择班级!");
+      }
+    },
     ksLabelChange(val) {
-      console.log("val", val);
       this.ksId = val;
       let data = {
         classId: this.classId,
@@ -394,15 +494,15 @@ export default {
         row.showExam[index].score = row.showExam[index].minScore.toString();
       }
       if (!val.id) {
-        val.xkName = this.xueke;
-        val.djxq = this.xueqi;
+        val.xkName = this.xkName;
+        val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
 
       main
         .addEdit(val)
         .then((res) => {
-          this.changeXq();
+          this.reData();
         })
         .catch((err) => {});
       this.tabClickIndex = null;
@@ -423,17 +523,16 @@ export default {
       val.schoolId = this.schoolId;
       val.createUser = this.unionid;
       if (!val.id) {
-        val.xkName = this.xueke;
-        val.djxq = this.xueqi;
+        val.xkName = this.xkName;
+        val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
-      // comment/createTime/ifdelete/index/ksName/ksTime/ksdata/rank/score/xh/showExam.scoreChange
-      //   添加createUser
+      console.log(this.xkName);
 
       main
         .addEdit(val)
         .then((res) => {
-          this.changeXq();
+          this.reData();
         })
         .catch((err) => {});
       this.tabClickIndex = null;
@@ -443,15 +542,20 @@ export default {
     //单击单元格
     clickCell(row, column, cell, event) {
       console.log("rowrowrow", row);
-      if (row.id == null && !this.xueke) {
-        this.$message.error("请选择录入学科！");
-      } else {
-        this.tabClickIndex = row.index;
-        this.tabClickLabel = column.label;
-      }
+
+      this.tabClickIndex = row.index;
+      this.tabClickLabel = column.label;
 
       if (column.label == "期末评语") {
-        // console.log("期末评语", row);
+        this.commentRow = row;
+        this.$refs.qmpyComponent.showPy(row.comment);
+        this.$refs.qmpyComponent.showQmpyDia = true;
+      }
+    },
+    clickCell1(row, column, cell, event) {
+      this.tabClickIndex = row.index;
+      this.tabClickLabel = column.label;
+      if (column.label == "期末评语") {
         this.commentRow = row;
         this.$refs.qmpyComponent.showPy(row.comment);
         this.$refs.qmpyComponent.showQmpyDia = true;
@@ -459,15 +563,15 @@ export default {
     },
     //下拉框--学期
     changeXq(data) {
+      console.log("data", data);
       let val = {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
         xkName: this.xueke,
         djxq: this.xueqi ? this.xueqi : data,
-        unionid: this.unionid,
       };
-
+      console.log("val11111", val);
       main
         .find(val)
         .then((res) => {
@@ -493,24 +597,21 @@ export default {
         })
         .catch((err) => {});
     },
-    //   点击树
-    clickTree(data) {
+    reData() {
       let val = {
-        cjlbId: this.cjlbId,
         schoolId: this.schoolId,
-        classId: data.id,
+        xkName: this.xkName,
+        djxq: this.djxq,
+        classId: this.classId,
+        cjlbId: this.cjlbId,
         unionid: this.unionid,
       };
-      console.log(val);
-      this.classId = data.id;
+
       main
         .find(val)
         .then((res) => {
-          // 点击班级时清空下拉框
-          this.xuekeOpt = [];
-          //   this.xueqi = 1;
           this.xueke = "";
-          this.tableData = [];
+          this.tableData = res.data.list;
           res.data2.xuekes.map((item) => {
             this.xuekeOpt.push({
               label: item.name,
@@ -521,33 +622,76 @@ export default {
           this.DynamicColumn.map((item) => {
             this.ksOpt.push({ name: item.name, id: item.id });
           });
-          console.log("this.tableData", res.data2);
         })
         .catch((err) => {});
+    },
+    //   点击树
+    clickTree(data, node, obj) {
+      if (node.level == 4 && node.data.name !== "期末评语") {
+        this.isqm = false;
+        let val = {
+          schoolId: this.schoolId,
+          xkName: node.data.name,
+          djxq: node.parent.parent.parent.data.id,
+          classId: node.parent.data.id,
+          cjlbId: this.cjlbId,
+          unionid: this.unionid,
+        };
+        this.classId = node.parent.data.id;
+        this.djxq = node.parent.parent.parent.data.id;
+        this.xkName = node.data.name;
+        console.log(val);
+        main
+          .find(val)
+          .then((res) => {
+            this.xueke = "";
+            this.tableData = res.data.list;
+            res.data2.xuekes.map((item) => {
+              this.xuekeOpt.push({
+                label: item.name,
+                value: item.name,
+              });
+            });
+            this.ksOpt = [];
+            this.DynamicColumn.map((item) => {
+              this.ksOpt.push({ name: item.name, id: item.id });
+            });
+          })
+          .catch((err) => {});
+      } else if (node.level == 4 && node.data.name == "期末评语") {
+        this.isqm = true;
+        let val = {
+          djxq: node.parent.parent.parent.data.id,
+          cjlbId: this.cjlbId,
+          classId: node.parent.data.id,
+          schoolId: this.schoolId,
+        };
+        this.djxq = node.parent.parent.parent.data.id;
+        this.classId = node.parent.data.id;
+        main1
+          .selectFinalEvaluate(val)
+          .then((res) => {
+            this.qmpyData = res.data;
+          })
+          .catch((err) => {});
+      }
     },
     //获取树
     getClass() {
       let val = {
         cjlbId: this.cjlbId,
-        schoolId: this.schoolId,
-        djxq: this.xueqi,
         unionid: this.unionid,
       };
-      //   console.log("val", val);
       main
-        .find(val)
+        .seeSiji(val)
         .then((res) => {
-          this.ClassData = res.data2.class;
+          this.ClassData = res.data;
         })
         .catch((err) => {});
     },
     // 批量处理
     plDeal() {
-      if (this.xueke) {
-        this.showPlcl = true;
-      } else {
-        this.$message.error("请选择学科");
-      }
+      this.showPlcl = true;
     },
     //点击顶部tabs
     clickTab(tab, event) {

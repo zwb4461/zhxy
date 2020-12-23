@@ -8,10 +8,10 @@
           >
           <el-upload
             style="margin-left: 10px"
-            action="http://124.70.180.17:10013/importTwsz"
+            action="http://103.219.33.112:10010/importTwsz"
             :limit="1"
             :show-file-list="false"
-            name="file"
+            name="uploadFile"
             :on-success="fileInSuccess"
             :data="{
               classId: classId,

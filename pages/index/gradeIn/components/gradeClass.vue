@@ -16,7 +16,7 @@
       >
       <el-upload
         style="margin-left: 10px"
-        action="http://124.70.180.17:10013/importStuScore"
+        action="http://103.219.33.112:10010/importStuScore"
         :limit="1"
         :show-file-list="false"
         name="file"
@@ -61,6 +61,7 @@
               <template slot-scope="scope">
                 <div v-show="scope.row.showExam[index].lrfs == 0">
                   <el-input
+                    :disabled="scope.row.showExam[index].islock"
                     type="number"
                     v-model="scope.row.showExam[index].score"
                     max-length="300"
@@ -107,7 +108,7 @@
             </template>
           </template>
 
-          <el-table-column prop="comment" label="期末评语" width="250">
+          <!-- <el-table-column prop="comment" label="期末评语" width="250">
             <template slot-scope="scope">
               <div>
                 <el-popover trigger="hover" placement="top">
@@ -129,7 +130,7 @@
                 </el-popover>
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </div>
     </div>
@@ -543,7 +544,6 @@ export default {
         this.classId = node.parent.data.id;
         this.djxq = node.parent.parent.parent.data.id;
         this.xkName = node.data.name;
-        console.log(val);
         main
           .find(val)
           .then((res) => {

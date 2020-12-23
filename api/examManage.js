@@ -105,6 +105,20 @@ const copyKs = query => {
     data: query
   });
 };
+const selectFinalEvaluate = query => {
+  return request({
+    url: Api.examManage.selectFinalEvaluate,
+    method: "post-json",
+    data: query
+  });
+};
+const saveFinalEvaluate = query => {
+  return request({
+    url: Api.examManage.saveFinalEvaluate,
+    method: "post-json",
+    data: query
+  });
+};
 const seeCopy = query => {
   return request({
     url: Api.examManage.seeCopy,
@@ -159,5 +173,7 @@ export default {
   sel,
   batchHandle,
   batchQc,
-  deleteKsXueke
+  deleteKsXueke,
+  selectFinalEvaluate,
+  saveFinalEvaluate
 };

@@ -11,18 +11,18 @@
       >
       <el-button
         size="small"
-        type="danger"
+        type="success"
         style="width: 150px"
         @click="delExam"
         :disabled="isLock == 1"
-        >删除考试</el-button
+        >编辑考试</el-button
       >
       <el-button
         size="small"
         style="width: 108px"
         @click="lrsz"
         :disabled="isLock == 1"
-        >录入设置</el-button
+        >录入账号</el-button
       >
       <el-button
         size="small"
@@ -137,6 +137,7 @@
             <template slot="header">
               <div class="jia">
                 <i class="el-icon-circle-plus-outline"></i>
+                <span style="font-size: 16px">转换</span>
               </div>
             </template>
           </el-table-column>
@@ -154,7 +155,7 @@
             @click="addRow"
             style="width: 95%; margin-top: 10px"
             size="small"
-            >+添加行</el-button
+            >+添加学科</el-button
           >
         </div>
       </div>
@@ -321,12 +322,12 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="录入设置"
+      title="录入账号"
       :visible.sync="showLrsz"
       width="30%"
       :before-close="closeLrsz"
     >
-      <el-form ref="form3" label-width="80px">
+      <!-- <el-form ref="form3" label-width="80px">
         <el-form-item
           :label="item.name + ':'"
           v-for="(item, index) in lrszList"
@@ -344,7 +345,7 @@
           >
           </el-date-picker>
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <el-table size="mini" :data="passwordTable" border style="width: 100%">
         <el-table-column prop="njname" label="年级" width="180">
         </el-table-column>
@@ -558,9 +559,35 @@
         <el-button type="primary" @click="submitPlfz">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="删除考试" :visible.sync="showDelExam" width="30%">
+    <el-dialog
+      :close-on-click-modal="false"
+      title="编辑考试"
+      :visible.sync="showDelExam"
+      width="30%"
+    >
       <div style="margin-top: 15px">
-        <el-form label-width="80px">
+        <el-table :data="treeData" style="width: 100%">
+          <el-table-column size="mini" prop="name" label="考试名">
+            <template slot-scope="scope">
+              <el-input
+                size="mini"
+                @blur="editExam(scope.row)"
+                v-model="scope.row.name"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="danger"
+                @click="submitDelExam(scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- <el-form label-width="80px">
           <el-form-item label="考试">
             <el-select size="small" v-model="examId">
               <el-option
@@ -572,11 +599,10 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showDelExam = false">取 消</el-button>
-        <el-button type="primary" @click="submitDelExam">确 定</el-button>
+        <el-button @click="showDelExam = false">关闭</el-button>
       </span>
     </el-dialog>
   </div>
@@ -664,17 +690,29 @@ export default {
     };
   },
   methods: {
+    editExam(row) {
+      let val = {
+        id: row.id,
+        name: row.name,
+      };
+      main
+        .edit(val)
+        .then((res) => {
+          this.getTreeData();
+        })
+        .catch((err) => {});
+    },
     //删除考试
     delExam() {
       this.showDelExam = true;
     },
-    submitDelExam() {
+    submitDelExam(row) {
       main
-        .del({ id: this.examId })
+        .del({ id: row.id })
         .then((res) => {
           this.getTreeData();
-          this.$message.success("删除成功!");
-          this.showDelExam = false;
+          //   this.$message.success("删除成功!");
+          //   this.showDelExam = false;
           this.examId = undefined;
         })
         .catch((err) => {});
@@ -1012,7 +1050,7 @@ export default {
         });
       }
     },
-    // 录入设置
+    // 录入账号
     lrsz() {
       this.showLrsz = true;
       this.getPassWordTable();
@@ -1557,6 +1595,10 @@ export default {
 }
 .jia {
   font-size: 25px;
+  display: flex;
+
+  flex-direction: row;
+  align-items: center;
 }
 .tableLrfs {
   width: 100%;

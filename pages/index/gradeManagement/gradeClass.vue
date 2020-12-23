@@ -33,7 +33,7 @@
           >
           <el-upload
             style="margin-left: 10px"
-            action="http://124.70.180.17:10013/importStuScore"
+            action="http://103.219.33.112:10010/importStuScore"
             :limit="1"
             :show-file-list="false"
             name="file"
@@ -59,7 +59,7 @@
               accordion
             ></el-tree>
           </div>
-          <div class="right">
+          <div class="right" v-if="!isqm">
             <el-table
               :data="tableData"
               border
@@ -129,8 +129,51 @@
                   </el-table-column>
                 </template>
               </template>
-
-              <el-table-column prop="comment" label="期末评语" width="250">
+              <!-- <el-table-column prop="comment" label="期末评语" width="250">
+                <template slot-scope="scope">
+                  <div>
+                    <el-popover trigger="hover" placement="top">
+                      <div style="width: 380px">
+                        <p>{{ scope.row.comment }}</p>
+                      </div>
+                      <div
+                        slot="reference"
+                        style="
+                          display: inline-block;
+                          white-space: nowrap;
+                          width: 220px;
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                        "
+                      >
+                        <span size="medium">{{ scope.row.comment }}</span>
+                      </div>
+                    </el-popover>
+                  </div>
+                </template>
+              </el-table-column> -->
+            </el-table>
+          </div>
+          <div class="right" v-else-if="isqm">
+            <el-table
+              @cell-click="clickCell1"
+              size="small"
+              :data="qmpyData"
+              border
+              style="width: 100%"
+            >
+              <el-table-column prop="xh" label="学号"> </el-table-column>
+              <el-table-column prop="name" label="姓名"> </el-table-column>
+              <el-table-column prop="illness" label="病事假天数">
+                <template slot-scope="scope">
+                  <el-input
+                    @blur="editQmpy(scope.row)"
+                    v-model="scope.row.illness"
+                    size="mini"
+                  ></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="comment" label="期末评语">
                 <template slot-scope="scope">
                   <div>
                     <el-popover trigger="hover" placement="top">
@@ -153,10 +196,18 @@
                   </div>
                 </template>
               </el-table-column>
+              <el-table-column prop="hobby" label="课外兴趣、爱好和特长">
+                <template slot-scope="scope">
+                  <el-input
+                    @blur="editQmpy(scope.row)"
+                    v-model="scope.row.hobby"
+                    size="mini"
+                  ></el-input>
+                </template>
+              </el-table-column>
             </el-table>
-          </div>
-        </div></el-tab-pane
-      >
+          </div></div
+      ></el-tab-pane>
       <el-tab-pane label="成绩统计" name="4"
         ><gradeTotal :cjlbId="cjlbId"></gradeTotal
       ></el-tab-pane>
@@ -171,6 +222,7 @@
       ref="qmpyComponent"
       :commentRow="commentRow"
       :getTable="reData"
+      :reloadQmpyTable="reloadQmpyTable"
     ></qmpy>
     <el-dialog
       title="批量处理"
@@ -293,6 +345,8 @@ export default {
   },
   data() {
     return {
+      qmpyData: [],
+      isqm: false,
       ddScoreOpt: [{ name: "11" }, { name: "22" }],
       tabClickIndex: null, // 点击的单元格
       tabClickLabel: "", // 当前点击的列名
@@ -331,6 +385,29 @@ export default {
     };
   },
   methods: {
+    reloadQmpyTable() {
+      let val = {
+        djxq: this.djxq,
+        cjlbId: this.cjlbId,
+        classId: this.classId,
+        schoolId: this.schoolId,
+      };
+      main1
+        .selectFinalEvaluate(val)
+        .then((res) => {
+          this.qmpyData = res.data;
+        })
+        .catch((err) => {});
+    },
+    editQmpy(row) {
+      row.schoolId = this.schoolId;
+      main1
+        .saveFinalEvaluate(row)
+        .then((res) => {
+          this.reloadQmpyTable();
+        })
+        .catch((err) => {});
+    },
     //导入
     fileInSuccess() {
       this.$message.success("导入成功!");
@@ -503,6 +580,15 @@ export default {
         this.$refs.qmpyComponent.showQmpyDia = true;
       }
     },
+    clickCell1(row, column, cell, event) {
+      this.tabClickIndex = row.index;
+      this.tabClickLabel = column.label;
+      if (column.label == "期末评语") {
+        this.commentRow = row;
+        this.$refs.qmpyComponent.showPy(row.comment);
+        this.$refs.qmpyComponent.showQmpyDia = true;
+      }
+    },
     //下拉框--学期
     changeXq(data) {
       console.log("data", data);
@@ -569,7 +655,8 @@ export default {
     },
     //   点击树
     clickTree(data, node, obj) {
-      if (node.level == 4) {
+      if (node.level == 4 && node.data.name !== "期末评语") {
+        this.isqm = false;
         let val = {
           schoolId: this.schoolId,
           xkName: node.data.name,
@@ -597,6 +684,22 @@ export default {
             this.DynamicColumn.map((item) => {
               this.ksOpt.push({ name: item.name, id: item.id });
             });
+          })
+          .catch((err) => {});
+      } else if (node.level == 4 && node.data.name == "期末评语") {
+        this.isqm = true;
+        let val = {
+          djxq: node.parent.parent.parent.data.id,
+          cjlbId: this.cjlbId,
+          classId: node.parent.data.id,
+          schoolId: this.schoolId,
+        };
+        this.djxq = node.parent.parent.parent.data.id;
+        this.classId = node.parent.data.id;
+        main1
+          .selectFinalEvaluate(val)
+          .then((res) => {
+            this.qmpyData = res.data;
           })
           .catch((err) => {});
       }
@@ -657,5 +760,11 @@ export default {
 .sel {
   display: flex;
   flex-direction: column;
+}
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
 }
 </style>

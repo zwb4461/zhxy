@@ -76,11 +76,18 @@
                 ></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="120">
+            <el-table-column label="操作" width="60">
               <template slot-scope="scope">
-                <el-button size="mini" type="danger" @click="del(scope.row)"
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  circle
+                  @click="del(scope.row)"
+                ></el-button>
+                <!-- <el-button size="mini" type="danger" @click="del(scope.row)"
                   >删除</el-button
-                >
+                > -->
               </template>
             </el-table-column>
           </el-table>
@@ -100,6 +107,7 @@
 
 <script>
 import main from "~/api/scoreEntry";
+import main1 from "~/api/examManage";
 export default {
   computed: {
     //学校id
@@ -116,6 +124,9 @@ export default {
       default: {},
     },
     getTable: {
+      type: Function,
+    },
+    reloadQmpyTable: {
       type: Function,
     },
   },
@@ -209,18 +220,20 @@ export default {
     //   提交
     submit() {
       console.log("this.commentRow", this.commentRow);
-      let val = {
-        id: this.commentRow.id,
-        classId: this.commentRow.classId,
-        comment: this.pyText,
-        createUser: this.unionid,
-      };
-      main
-        .edit(val)
+      //   let val = {
+      //     id: this.commentRow.id,
+      //     classId: this.commentRow.classId,
+      //     comment: this.pyText,
+      //     createUser: this.unionid,
+      //   };
+      this.commentRow.schoolId = this.schoolId;
+      this.commentRow.comment = this.pyText;
+      main1
+        .saveFinalEvaluate(this.commentRow)
         .then((res) => {
           this.$message.success(res.data);
           this.clearOy();
-          this.getTable();
+          this.reloadQmpyTable();
           this.showQmpyDia = false;
         })
         .catch((err) => {

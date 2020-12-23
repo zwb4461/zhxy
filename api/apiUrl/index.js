@@ -230,7 +230,9 @@ module.exports = {
     copyXueke: baseUrl + "/copyXueke",
     copyNj: baseUrl + "/copyNj",
     batchQc: baseUrl + "/batchQc",
-    batchHandle: baseUrl + "/batchHandle"
+    batchHandle: baseUrl + "/batchHandle",
+    selectFinalEvaluate: baseUrl + "/selectFinalEvaluate",
+    saveFinalEvaluate: baseUrl + "/saveFinalEvaluate"
   },
   jcManage: {
     add: baseUrl + "/insertPrizepunCate",
