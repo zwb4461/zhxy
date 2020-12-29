@@ -1,6 +1,6 @@
 <template>
   <div class="contain1">
-    <div style="width: 100%; min-height: 500px">
+    <div style="width: 100%; min-height: 100px">
       <el-table
         size="small"
         :header-cell-style="{ 'text-align': 'center' }"
@@ -52,6 +52,13 @@
         style="width: 100px"
         size="small"
       ></el-input>
+      <span>应出席(天):</span>
+      <el-input
+        @blur="editXz"
+        v-model="ycx"
+        style="width: 100px"
+        size="small"
+      ></el-input>
     </div>
   </div>
 </template>
@@ -75,6 +82,7 @@ export default {
       ksId: 0, //当前行的考试id
       xz: "",
       jdzr: "",
+      ycx: "",
     };
   },
   methods: {
@@ -89,6 +97,7 @@ export default {
         .then((res) => {
           this.jdzr = res.data.director;
           this.xz = res.data.principal;
+          this.ycx = res.data.ycx;
           // 获取表头
           this.bt = res.data.names;
           this.tableData = res.data.xkMap;
@@ -100,6 +109,7 @@ export default {
         id: this.cjlbId,
         director: this.jdzr,
         principal: this.xz,
+        ycx: this.ycx,
       };
       main1
         .edit(val)
@@ -152,7 +162,7 @@ export default {
 <style scoped>
 .contain1 {
   width: 100%;
-  min-height: 500px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
 }

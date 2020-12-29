@@ -101,7 +101,7 @@
             </el-table>
             <div class="add">
               <el-button
-                v-show="level == 3"
+                v-show="level == 4"
                 size="small"
                 style="width: 100%"
                 @click="addTable"
@@ -179,7 +179,7 @@
 import main from "~/api/jcManage";
 export default {
   props: {
-    jcId: {
+    cjlbId: {
       type: Number,
       default: 0,
     },
@@ -236,7 +236,7 @@ export default {
     //添加奖惩表格
     addTable() {
       let val = {
-        ppcateId: this.jcId,
+        cjlbId: this.cjlbId,
         studentId: this.studentId,
       };
       main
@@ -244,7 +244,7 @@ export default {
         .then((res) => {
           let val = {
             classId: this.classId,
-            ppcateId: this.jcId,
+            cjlbId: this.cjlbId,
             name: this.name,
           };
           this.getJcTable(val);
@@ -269,19 +269,19 @@ export default {
       //修改表格
       console.log(row);
       let val = row;
-      val.ppcateId = this.jcId;
+      val.cjlbId = this.cjlbId;
       main
         .saveMoralPrize(val)
         .then((res) => {
-          if (this.level == 2) {
+          if (this.level == 3) {
             let val = {
               classId: this.classId,
-              ppcateId: this.jcId,
+              cjlbId: this.cjlbId,
             };
             this.getJcTable(val);
-          } else if (this.level == 3) {
+          } else if (this.level == 4) {
             let val = {
-              ppcateId: this.jcId,
+              cjlbId: this.cjlbId,
               classId: this.classId,
               name: this.name,
             };
@@ -293,7 +293,7 @@ export default {
     //获取左侧树列表
     getTree() {
       let val = {
-        jcId: this.jcId,
+        cjlbId: this.cjlbId,
       };
       main
         .seeSanjiMeui(val)
@@ -317,41 +317,41 @@ export default {
     },
     //点击树
     clickTree(node, data) {
-      console.log(data);
       this.nrOpt = [];
       //根据不同level获取表格数据
-      if (data.level == 2) {
-        this.level = 2;
+      if (data.level == 3) {
+        console.log(2);
+        this.level = 3;
         this.classId = data.data.id;
         let val = {
           classId: data.data.id,
-          ppcateId: this.jcId,
+          cjlbId: this.cjlbId,
         };
         this.getJcTable(val);
-      } else if (data.level == 3) {
-        this.level = 3;
+      } else if (data.level == 4) {
+        console.log(3);
+        this.level = 4;
         this.classId = data.parent.data.id;
         this.name = data.data.name;
         this.studentId = data.data.id;
         let val = {
-          ppcateId: this.jcId,
+          cjlbId: this.cjlbId,
           classId: data.parent.data.id,
           name: data.data.name,
         };
         this.getJcTable(val);
       }
     },
-
     //获取奖惩设置表格
     getJcOptTable() {
       main
-        .seeJcsz({ isjc: 0, jcId: this.jcId })
+        .seeJcsz({ isjc: 0, cjlbId: this.cjlbId })
         .then((res) => {
           this.jTable = res.data;
         })
         .catch((err) => {});
       main
-        .seeJcsz({ isjc: 1, jcId: this.jcId })
+        .seeJcsz({ isjc: 1, cjlbId: this.cjlbId })
         .then((res) => {
           this.cTable = res.data;
         })
@@ -360,7 +360,7 @@ export default {
     //编辑奖励表格
     editJ(row) {
       let val = {
-        jcId: this.jcId,
+        cjlbId: this.cjlbId,
         isjc: 0,
         id: row.id,
         current: row.current,
@@ -380,7 +380,7 @@ export default {
     //编辑惩罚表格
     editC(row) {
       let val = {
-        jcId: this.jcId,
+        cjlbId: this.cjlbId,
         isjc: 1,
         id: row.id,
         current: row.current,

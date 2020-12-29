@@ -127,6 +127,73 @@
           >
         </div>
       </el-tab-pane>
+      <el-tab-pane label="体卫参考值" name="four">
+        <el-table
+          :header-cell-style="{ 'text-align': 'center' }"
+          size="small"
+          :data="twTableOpt"
+          border
+          style="width: 100%"
+        >
+          <el-table-column label="体卫参考值">
+            <el-table-column prop="gradeName" label="年级"> </el-table-column
+          ></el-table-column>
+          <el-table-column label="男">
+            <el-table-column prop="nantz" label="体重(千克)">
+              <template slot-scope="scope">
+                <el-input
+                  size="mini"
+                  v-model="scope.row.nantz"
+                  @blur="editTw(scope.row)"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="nansg" label="身高(厘米)">
+              <template slot-scope="scope">
+                <el-input
+                  size="mini"
+                  v-model="scope.row.nansg"
+                  @blur="editTw(scope.row)"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="nansl" label="视力范围">
+              <template slot-scope="scope">
+                <el-input
+                  size="mini"
+                  v-model="scope.row.nansl"
+                  @blur="editTw(scope.row)"
+                ></el-input> </template
+            ></el-table-column>
+          </el-table-column>
+          <el-table-column label="女">
+            <el-table-column prop="nvtz" label="体重(千克)"
+              ><template slot-scope="scope">
+                <el-input
+                  size="mini"
+                  v-model="scope.row.nvtz"
+                  @blur="editTw(scope.row)"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="nvsg" label="身高(厘米)">
+              <template slot-scope="scope">
+                <el-input
+                  size="mini"
+                  v-model="scope.row.nvsg"
+                  @blur="editTw(scope.row)"
+                ></el-input> </template
+            ></el-table-column>
+            <el-table-column prop="nvsl" label="视力范围">
+              <template slot-scope="scope">
+                <el-input
+                  size="mini"
+                  v-model="scope.row.nvsl"
+                  @blur="editTw(scope.row)"
+                ></el-input> </template></el-table-column
+          ></el-table-column>
+        </el-table>
+      </el-tab-pane>
     </el-tabs>
     <my-drawer-vue
       title="学期设置"
@@ -727,6 +794,7 @@ import main from "~/api/termManage";
 import main1 from "~/api/personalCenter";
 import main2 from "~/api/xkhz";
 import main3 from "~/api/cjdw";
+import main5 from "~/api/twManage";
 import myDrawerVue from "~/components/common/myDrawer.vue";
 export default {
   computed: {
@@ -740,6 +808,8 @@ export default {
   },
   data() {
     return {
+      //奖惩表格数据
+      twTableOpt: [],
       itemId: 0, //当前item的id
       isLock: 0,
       formType: 0, //0--新增，1--编辑
@@ -847,6 +917,25 @@ export default {
     };
   },
   methods: {
+    //编辑奖励表格
+    editTw(row) {
+      main5
+        .saveTwsz(row)
+        .then((res) => {
+          this.getTwTable();
+        })
+        .catch((err) => {});
+    },
+    //获取奖惩设置表格
+    getTwTable() {
+      console.log("体卫");
+      main5
+        .seeTwsz({})
+        .then((res) => {
+          this.twTableOpt = res.data;
+        })
+        .catch((err) => {});
+    },
     //   增加学科设置行
     addXkszRow() {
       this.xksztableData.push({});
@@ -989,21 +1078,6 @@ export default {
         })
         .catch((err) => {});
     },
-    //   获取所有学期
-    // getTermList() {
-    //   main
-    //     .find({ schoolId: sessionStorage.getItem("schoolId") })
-    //     .then((res) => {
-    //       this.termOpt = [];
-    //       res.data.list.map((item) => {
-    //         this.termOpt.push({
-    //           value: item.id,
-    //           label: item.year,
-    //         });
-    //       });
-    //     })
-    //     .catch((err) => {});
-    // },
     //   获取所有卡片列表
     getAllTerm() {
       main
@@ -1346,6 +1420,7 @@ export default {
     },
   },
   created() {
+    this.getTwTable();
     this.getAllTerm();
     // this.getTermList();
     this.getAllNj();

@@ -16,23 +16,13 @@
             @click="modelUpload"
             >模板下载</el-button
           >
-          <el-upload
-            style="margin-left: 10px"
-            action="http://103.219.33.112:10010/importStuScore"
-            :limit="1"
-            :show-file-list="false"
-            name="file"
-            :on-success="fileInSuccess"
-            :data="{
-              cjlbId: cjlbId,
-              classId: classId,
-              djxq: djxq,
-              schoolId: schoolId,
-              xkName: xkName,
-            }"
+          <el-button
+            size="small"
+            type="primary"
+            style="width: 108px"
+            @click="cjdr"
+            >成绩导入</el-button
           >
-            <el-button size="small" type="primary">成绩导入</el-button>
-          </el-upload>
         </div>
         <div class="contain">
           <div class="left">
@@ -44,7 +34,7 @@
               accordion
             ></el-tree>
           </div>
-          <div class="right" v-if="!isqm">
+          <div class="right" v-show="isqm == 1">
             <el-table
               :data="tableData"
               border
@@ -114,32 +104,9 @@
                   </el-table-column>
                 </template>
               </template>
-              <!-- <el-table-column prop="comment" label="期末评语" width="250">
-                <template slot-scope="scope">
-                  <div>
-                    <el-popover trigger="hover" placement="top">
-                      <div style="width: 380px">
-                        <p>{{ scope.row.comment }}</p>
-                      </div>
-                      <div
-                        slot="reference"
-                        style="
-                          display: inline-block;
-                          white-space: nowrap;
-                          width: 220px;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        "
-                      >
-                        <span size="medium">{{ scope.row.comment }}</span>
-                      </div>
-                    </el-popover>
-                  </div>
-                </template>
-              </el-table-column> -->
             </el-table>
           </div>
-          <div class="right" v-else-if="isqm">
+          <div class="right" v-show="isqm == 2">
             <el-table
               @cell-click="clickCell1"
               size="small"
@@ -187,6 +154,135 @@
                     @blur="editQmpy(scope.row)"
                     v-model="scope.row.hobby"
                     size="mini"
+                  ></el-input>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div class="right" v-show="isqm == 3">
+            <el-table :data="jcTable" size="small" border style="width: 100%">
+              <el-table-column prop="xh" label="学号"> </el-table-column>
+              <el-table-column prop="name" label="姓名"> </el-table-column>
+              <el-table-column prop="className" label="所在班级">
+              </el-table-column>
+              <el-table-column prop="djxq" label="学期">
+                <template slot-scope="scope">
+                  <el-select
+                    size="mini"
+                    v-model="scope.row.djxq"
+                    placeholder="请选择"
+                    @change="edit(scope.row)"
+                  >
+                    <el-option
+                      v-for="item in djxqOpt"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
+                    </el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="jc" label="奖励/惩罚">
+                <template slot-scope="scope">
+                  <el-select
+                    size="mini"
+                    v-model="scope.row.jc"
+                    placeholder="请选择"
+                    @change="edit(scope.row)"
+                  >
+                    <el-option
+                      v-for="item in jcOpt"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
+                    </el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="lrTime" label="日期">
+                <template slot-scope="scope">
+                  <el-date-picker
+                    style="width: 100%"
+                    size="mini"
+                    v-model="scope.row.lrTime"
+                    type="date"
+                    placeholder="选择日期"
+                    @change="edit(scope.row)"
+                  >
+                  </el-date-picker>
+                </template>
+              </el-table-column>
+              <el-table-column prop="current" label="内容">
+                <template slot-scope="scope">
+                  <el-select
+                    size="mini"
+                    v-model="scope.row.current"
+                    placeholder="请选择"
+                    @change="edit(scope.row)"
+                    @focus="setNrOpt(scope.row)"
+                  >
+                    <el-option
+                      v-for="item in nrOpt"
+                      :key="item.id"
+                      :label="item.current"
+                      :value="item.current"
+                    >
+                    </el-option>
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column prop="remark" label="备注">
+                <template slot-scope="scope">
+                  <div>
+                    <el-input
+                      size="mini"
+                      @blur="edit(scope.row)"
+                      v-model="scope.row.remark"
+                    ></el-input>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div class="right" v-show="isqm == 4">
+            <el-table size="small" :data="twTable" border style="width: 100%">
+              <el-table-column prop="xh" label="学号"> </el-table-column>
+              <el-table-column prop="name" label="姓名"> </el-table-column>
+              <el-table-column prop="tz" label="体重(千克)">
+                <template slot-scope="scope">
+                  <el-input
+                    size="mini"
+                    v-model="scope.row.tz"
+                    @blur="edit1(scope.row)"
+                  ></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="sg" label="身高(厘米)">
+                <template slot-scope="scope">
+                  <el-input
+                    size="mini"
+                    v-model="scope.row.sg"
+                    @blur="edit1(scope.row)"
+                  ></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="zsl" label="视力(左)">
+                <template slot-scope="scope">
+                  <el-input
+                    size="mini"
+                    v-model="scope.row.zsl"
+                    @blur="edit1(scope.row)"
+                  ></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ysl" label="视力(右)">
+                <template slot-scope="scope">
+                  <el-input
+                    size="mini"
+                    v-model="scope.row.ysl"
+                    @blur="edit1(scope.row)"
                   ></el-input>
                 </template>
               </el-table-column>
@@ -273,12 +369,43 @@
         <el-button type="primary" @click="submitPlcl">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="成绩导入" :visible.sync="showCjdr" width="30%">
+      <el-cascader
+        @change="handleChange"
+        size="small"
+        style="width: 95%"
+        :props="cascaderProp"
+        v-model="cjdrData"
+        :options="ClassData"
+      ></el-cascader>
+      <div class="cjdrBtn">
+        <el-upload
+          style="width: 100%"
+          action="http://103.219.33.112:10010/importStuScore"
+          :limit="1"
+          :show-file-list="false"
+          name="file"
+          :on-success="fileInSuccess"
+          :before-upload="befUp"
+          :data="cjdrValue"
+        >
+          <el-button size="small" style="width: 95%" type="primary"
+            >成绩导入</el-button
+          >
+        </el-upload>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showCjdr = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
+import main2 from "~/api/jcManage";
+import main3 from "~/api/twManage";
 import gradeTotal from "~/pages/index/gradeManagement/components/gradeTotal";
 import qmpy from "~/pages/index/gradeManagement/components/qmpy";
 export default {
@@ -317,8 +444,40 @@ export default {
   },
   data() {
     return {
+      twTable: [],
+      // ===========
+      //奖惩表格数据
+      jcTable: [],
+      jTable: [],
+      cTable: [],
+      nrOpt: [],
+      djxqOpt: [
+        {
+          name: "第一学期",
+          id: 1,
+        },
+        {
+          name: "第二学期",
+          id: 2,
+        },
+      ],
+      //奖惩选项列表
+      jcOpt: [
+        {
+          name: "奖励",
+          id: 0,
+        },
+        {
+          name: "惩罚",
+          id: 1,
+        },
+      ],
+      //   ========
+      cascaderProp: { value: "id", label: "name", children: "children" },
+      cjdrData: [],
       qmpyData: [],
-      isqm: false,
+      isqm: 1, //1--普通，2--期末评语，3--奖惩，4--体卫
+      showCjdr: false,
       ddScoreOpt: [{ name: "11" }, { name: "22" }],
       tabClickIndex: null, // 点击的单元格
       tabClickLabel: "", // 当前点击的列名
@@ -354,9 +513,97 @@ export default {
       ksId: 0,
       djxq: undefined,
       xkName: undefined,
+      cjdrValue: {
+        cjlbId: "",
+        classId: "",
+        djxq: "",
+        schoolId: "",
+        xkName: "",
+      },
     };
   },
   methods: {
+    //获取奖惩设置表格
+    getJcOptTable() {
+      main2
+        .seeJcsz({ isjc: 0, cjlbId: this.cjlbId })
+        .then((res) => {
+          this.jTable = res.data;
+        })
+        .catch((err) => {});
+      main2
+        .seeJcsz({ isjc: 1, cjlbId: this.cjlbId })
+        .then((res) => {
+          this.cTable = res.data;
+        })
+        .catch((err) => {});
+    },
+    //点击内容给内容选项列表赋值
+    setNrOpt(row) {
+      console.log("1313212");
+      this.changeNrOpt(row);
+    },
+    //赋值内容选项列表
+    changeNrOpt(row) {
+      if (row.jc == 0) {
+        this.nrOpt = this.jTable;
+      } else if (row.jc == 1) {
+        this.nrOpt = this.cTable;
+      }
+    },
+    edit(row) {
+      console.log("edit");
+      //根据选择奖励还是惩罚赋值给内容选项列表
+      this.changeNrOpt(row);
+      //修改表格
+      let val = row;
+      val.cjlbId = this.cjlbId;
+      main2
+        .saveMoralPrize(val)
+        .then((res) => {
+          let val = {
+            classId: this.classId,
+            cjlbId: this.cjlbId,
+            djxq: this.djxq,
+          };
+          this.getJcTable(val);
+        })
+        .catch((err) => {});
+    },
+    befUp(file) {
+      if (this.cjdrData.length == 0) {
+        this.$message.error("请选择导入学科!");
+        return false;
+      }
+    },
+    handleChange(value) {
+      this.cjdrValue = {
+        cjlbId: this.cjlbId,
+        classId: value[2],
+        djxq: value[0],
+        schoolId: this.schoolId,
+      };
+      this.ClassData.map((item) => {
+        if (item.id && item.id == value[0]) {
+          item.children.map((item1) => {
+            if (item1.id && item1.id == value[1]) {
+              item1.children.map((item2) => {
+                if (item2.id && item2.id == value[2]) {
+                  item2.children.map((item3) => {
+                    if (item3.id && item3.id == value[3]) {
+                      this.cjdrValue.xkName = item3.name;
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    },
+    cjdr() {
+      this.showCjdr = true;
+    },
     reloadQmpyTable() {
       let val = {
         djxq: this.djxq,
@@ -383,6 +630,7 @@ export default {
     //导入
     fileInSuccess() {
       this.$message.success("导入成功!");
+      this.showCjdr = false;
       this.reData();
     },
     //   模板下载
@@ -538,7 +786,6 @@ export default {
       this.tabClickIndex = null;
       this.tabClickLabel = "";
     },
-
     //单击单元格
     clickCell(row, column, cell, event) {
       console.log("rowrowrow", row);
@@ -627,8 +874,13 @@ export default {
     },
     //   点击树
     clickTree(data, node, obj) {
-      if (node.level == 4 && node.data.name !== "期末评语") {
-        this.isqm = false;
+      if (
+        node.level == 4 &&
+        node.data.name !== "期末评语" &&
+        node.data.name !== "奖惩信息" &&
+        node.data.name !== "体卫信息"
+      ) {
+        this.isqm = 1;
         let val = {
           schoolId: this.schoolId,
           xkName: node.data.name,
@@ -659,7 +911,7 @@ export default {
           })
           .catch((err) => {});
       } else if (node.level == 4 && node.data.name == "期末评语") {
-        this.isqm = true;
+        this.isqm = 2;
         let val = {
           djxq: node.parent.parent.parent.data.id,
           cjlbId: this.cjlbId,
@@ -674,7 +926,67 @@ export default {
             this.qmpyData = res.data;
           })
           .catch((err) => {});
+      } else if (node.level == 4 && node.data.name == "奖惩信息") {
+        console.log("奖惩信息");
+        this.isqm = 3;
+        this.nrOpt = [];
+        this.classId = node.parent.data.id;
+        let val = {
+          classId: node.parent.data.id,
+          cjlbId: this.cjlbId,
+          djxq: node.parent.parent.parent.data.id,
+        };
+        this.djxq = node.parent.parent.parent.data.id;
+        this.classId = node.parent.data.id;
+        this.getJcTable(val);
+      } else if (node.level == 4 && node.data.name == "体卫信息") {
+        console.log("体卫信息");
+        this.isqm = 4;
+        this.classId = node.parent.data.id;
+        this.djxq = node.parent.parent.parent.data.id;
+        let val = {
+          cjlbId: this.cjlbId,
+          classId: node.parent.data.id,
+          djxq: node.parent.parent.parent.data.id,
+        };
+        this.gettwTable(val);
       }
+    },
+    //获取奖惩表格
+    gettwTable(val) {
+      main3
+        .selectSport(val)
+        .then((res) => {
+          this.twTable = res.data;
+        })
+        .catch((err) => {});
+    },
+    edit1(row) {
+      //修改表格
+      console.log("edit1");
+      let val = row;
+      val.cjlbId = this.cjlbId;
+      val.djxq = this.djxq;
+      main3
+        .saveSport(val)
+        .then((res) => {
+          let val = {
+            cjlbId: this.cjlbId,
+            classId: this.classId,
+            djxq: this.djxq,
+          };
+          this.gettwTable(val);
+        })
+        .catch((err) => {});
+    },
+    //获取奖惩表格
+    getJcTable(val) {
+      main2
+        .findJc(val)
+        .then((res) => {
+          this.jcTable = res.data;
+        })
+        .catch((err) => {});
     },
     //获取树
     getClass() {
@@ -702,6 +1014,7 @@ export default {
     this.cjlbId = this.id;
     console.log("cjlbId", this.cjlbId);
     this.getClass();
+    this.getJcOptTable();
   },
 };
 </script>
@@ -729,5 +1042,16 @@ export default {
 .right {
   width: 100%;
   padding-left: 15px;
+}
+.cjdrBtn {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+/deep/.el-upload,
+/deep/.el-upload--text {
+  width: 100%;
+  text-align: left;
 }
 </style>

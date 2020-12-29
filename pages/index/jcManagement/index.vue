@@ -32,7 +32,7 @@
                 item.name
               }}</span>
               <span style="font-size: 16px; color: #c8c8c8"
-                >对应学期:{{ item.xueqiName }}</span
+                >对应学期:{{ item.xueqiname }}</span
               >
             </div>
             <div
@@ -78,7 +78,7 @@
         :key="index"
         :label="item"
         :name="item"
-        ><jcDetail :jcId="id"></jcDetail
+        ><jcDetail :cjlbId="id"></jcDetail
       ></el-tab-pane>
     </el-tabs>
     <my-drawer-vue
@@ -122,7 +122,7 @@
 <script>
 //Api
 import main from "~/api/termManage";
-import main1 from "~/api/jcManage";
+import main1 from "~/api/addGradeClass";
 //组件
 import myDrawerVue from "~/components/common/myDrawer.vue";
 import jcDetail from "./components/jcClassDetail.vue";

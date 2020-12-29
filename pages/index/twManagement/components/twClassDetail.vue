@@ -16,7 +16,7 @@
             :data="{
               classId: classId,
               djxq: djxq,
-              twId: twId,
+              cjlbId: cjlbId,
               schoolId: schoolId,
             }"
           >
@@ -76,7 +76,7 @@
             </el-table>
           </div></div
       ></el-tab-pane>
-      <el-tab-pane label="体卫设置" name="second">
+      <!-- <el-tab-pane label="体卫设置" name="second">
         <div class="optContain">
           <el-table
             :header-cell-style="{ 'text-align': 'center' }"
@@ -144,7 +144,7 @@
             ></el-table-column>
           </el-table>
         </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
   </div>
 </template>
@@ -154,7 +154,7 @@ import main from "~/api/jcManage";
 import main1 from "~/api/twManage";
 export default {
   props: {
-    twId: {
+    cjlbId: {
       type: Number,
       default: 0,
     },
@@ -220,7 +220,7 @@ export default {
     //导入
     fileInSuccess() {
       let val = {
-        twId: this.twId,
+        cjlbId: this.cjlbId,
         classId: this.classId,
         djxq: this.djxq,
       };
@@ -230,7 +230,7 @@ export default {
     //   模板下载
     modelUpload() {
       let val = {
-        twId: this.twId,
+        cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
       };
@@ -249,13 +249,13 @@ export default {
       //修改表格
       console.log(row);
       let val = row;
-      val.twId = this.twId;
+      val.cjlbId = this.cjlbId;
       val.djxq = this.djxq;
       main1
         .saveSport(val)
         .then((res) => {
           let val = {
-            twId: this.twId,
+            cjlbId: this.cjlbId,
             classId: this.classId,
             djxq: this.djxq,
           };
@@ -266,7 +266,7 @@ export default {
     //获取左侧树列表
     getTree() {
       let val = {
-        twId: this.twId,
+        cjlbId: this.cjlbId,
       };
       main
         .seeSanjiMeui(val)
@@ -293,7 +293,7 @@ export default {
         this.classId = data.data.id;
         this.djxq = data.parent.parent.data.id;
         let val = {
-          twId: this.twId,
+          cjlbId: this.cjlbId,
           classId: data.data.id,
           djxq: data.parent.parent.data.id,
         };
@@ -306,7 +306,7 @@ export default {
     //获取奖惩设置表格
     getTwTable() {
       main1
-        .seeTwsz({ twId: this.twId })
+        .seeTwsz({ cjlbId: this.cjlbId })
         .then((res) => {
           this.twTableOpt = res.data;
         })

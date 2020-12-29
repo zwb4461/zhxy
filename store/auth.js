@@ -65,6 +65,7 @@ const actions = {
   //登录
   Login(context, form) {
     //用户登录
+    //manager571
     return new Promise((resolve, reject) => {
       if (form.username === "admin" && form.password === "123456") {
         ddServer
