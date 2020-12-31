@@ -919,6 +919,7 @@ export default {
   methods: {
     //编辑奖励表格
     editTw(row) {
+      row.schoolId = this.schoolId;
       main5
         .saveTwsz(row)
         .then((res) => {
@@ -930,7 +931,7 @@ export default {
     getTwTable() {
       console.log("体卫");
       main5
-        .seeTwsz({})
+        .seeTwsz({ schoolId: this.schoolId })
         .then((res) => {
           this.twTableOpt = res.data;
         })

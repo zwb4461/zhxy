@@ -5,12 +5,12 @@
       <el-tab-pane label="获奖分类" name="hjfl">
         <div class="contain">
           <!-- 创建分类contain -->
-          <div class="gradeClass_contain" @click="addClass">
+          <!-- <div class="gradeClass_contain" @click="addClass">
             <div>
               <span class="createOneClassify">创建一个类别</span>
             </div>
             <div class="jia"><span>+</span></div>
-          </div>
+          </div> -->
           <!-- 列表 -->
           <div
             class="gradeClass_contain_list"

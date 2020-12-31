@@ -21,7 +21,7 @@
             type="primary"
             style="width: 108px"
             @click="cjdr"
-            >成绩导入</el-button
+            >选择文件</el-button
           >
         </div>
         <div class="contain">
@@ -369,30 +369,33 @@
         <el-button type="primary" @click="submitPlcl">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="成绩导入" :visible.sync="showCjdr" width="30%">
-      <el-cascader
-        @change="handleChange"
-        size="small"
-        style="width: 95%"
-        :props="cascaderProp"
-        v-model="cjdrData"
-        :options="ClassData"
-      ></el-cascader>
-      <div class="cjdrBtn">
-        <el-upload
-          style="width: 100%"
-          action="http://103.219.33.112:10010/importStuScore"
-          :limit="1"
-          :show-file-list="false"
-          name="file"
-          :on-success="fileInSuccess"
-          :before-upload="befUp"
-          :data="cjdrValue"
-        >
-          <el-button size="small" style="width: 95%" type="primary"
-            >成绩导入</el-button
+    <el-dialog title="选择文件" :visible.sync="showCjdr" width="30%">
+      <div v-loading="loading">
+        <el-cascader
+          @change="handleChange"
+          size="small"
+          style="width: 95%"
+          :props="cascaderProp"
+          v-model="cjdrData"
+          :options="ClassData"
+        ></el-cascader>
+        <div class="cjdrBtn">
+          <el-upload
+            style="width: 100%"
+            action="http://103.219.33.112:10010/importStuScore"
+            :limit="1"
+            :show-file-list="false"
+            name="file"
+            :on-success="fileInSuccess"
+            :before-upload="befUp"
+            :data="cjdrValue"
+            :on-progress="process"
           >
-        </el-upload>
+            <el-button size="small" style="width: 95%" type="primary"
+              >成绩导入</el-button
+            >
+          </el-upload>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showCjdr = false">关闭</el-button>
@@ -444,6 +447,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       twTable: [],
       // ===========
       //奖惩表格数据
@@ -523,6 +527,9 @@ export default {
     };
   },
   methods: {
+    process() {
+      this.loading = true;
+    },
     //获取奖惩设置表格
     getJcOptTable() {
       main2
@@ -631,6 +638,7 @@ export default {
     fileInSuccess() {
       this.$message.success("导入成功!");
       this.showCjdr = false;
+      this.loading = false;
       this.reData();
     },
     //   模板下载

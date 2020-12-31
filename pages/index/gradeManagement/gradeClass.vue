@@ -36,7 +36,7 @@
             type="primary"
             style="width: 108px"
             @click="cjdr"
-            >成绩导入</el-button
+            >选择文件</el-button
           >
         </div>
         <div class="contain">
@@ -263,30 +263,32 @@
         <el-button type="primary" @click="submitPlcl">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="成绩导入" :visible.sync="showCjdr" width="30%">
-      <el-cascader
-        @change="handleChange"
-        size="small"
-        style="width: 95%"
-        :props="cascaderProp"
-        v-model="cjdrData"
-        :options="ClassData"
-      ></el-cascader>
-      <div class="cjdrBtn">
-        <el-upload
-          style="width: 100%"
-          action="http://103.219.33.112:10010/importStuScore"
-          :limit="1"
-          :show-file-list="false"
-          name="file"
-          :on-success="fileInSuccess"
-          :before-upload="befUp"
-          :data="cjdrValue"
-        >
-          <el-button size="small" style="width: 95%" type="primary"
-            >成绩导入</el-button
+    <el-dialog title="选择文件" :visible.sync="showCjdr" width="30%">
+      <div v-loading="loading">
+        <el-cascader
+          @change="handleChange"
+          size="small"
+          style="width: 95%"
+          :props="cascaderProp"
+          v-model="cjdrData"
+          :options="xkOpt"
+        ></el-cascader>
+        <div class="cjdrBtn">
+          <el-upload
+            style="width: 100%"
+            action="http://103.219.33.112:10010/importStuScore"
+            :show-file-list="false"
+            name="file"
+            :on-success="fileInSuccess"
+            :on-progress="process"
+            :before-upload="befUp"
+            :data="cjdrValue"
           >
-        </el-upload>
+            <el-button size="small" style="width: 95%" type="primary"
+              >选择文件</el-button
+            >
+          </el-upload>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showCjdr = false">关闭</el-button>
@@ -343,6 +345,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       cascaderProp: { value: "id", label: "name", children: "children" },
       cjdrData: [],
       qmpyData: [],
@@ -383,6 +386,7 @@ export default {
       ksId: 0,
       djxq: undefined,
       xkName: undefined,
+      xkOpt: [],
       cjdrValue: {
         cjlbId: "",
         classId: "",
@@ -423,6 +427,7 @@ export default {
           });
         }
       });
+      console.log(this.cjdrValue);
     },
     cjdr() {
       this.showCjdr = true;
@@ -452,9 +457,13 @@ export default {
     },
     //导入
     fileInSuccess() {
+      this.loading = false;
       this.$message.success("导入成功!");
       this.showCjdr = false;
       this.reData();
+    },
+    process() {
+      this.loading = true;
     },
     //   模板下载
     modelUpload() {
@@ -755,8 +764,31 @@ export default {
       main
         .seeSiji(val)
         .then((res) => {
-          console.log("21313311323232323", res.data);
           this.ClassData = res.data;
+        })
+        .catch((err) => {});
+    },
+    getClass1() {
+      let val = {
+        cjlbId: this.cjlbId,
+      };
+      main
+        .seeSiji(val)
+        .then((res) => {
+          let array = res.data;
+          this.xkOpt = array.map((item, index1) => {
+            item.children.map((item2, index2) => {
+              item2.children.map((item3, index3) => {
+                item3.children.map((item4, index4) => {
+                  if (item4.id == -1) {
+                    delete item3.children[index4];
+                  }
+                });
+              });
+            });
+            return item;
+          });
+          console.log("this.ClassData", this.xkOpt);
         })
         .catch((err) => {});
     },
@@ -773,6 +805,7 @@ export default {
     this.cjlbId = this.id;
     console.log("cjlbId", this.cjlbId);
     this.getClass();
+    this.getClass1();
   },
 };
 </script>

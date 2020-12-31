@@ -178,6 +178,12 @@
 <script>
 import main from "~/api/jcManage";
 export default {
+  computed: {
+    //学校id
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
+  },
   props: {
     cjlbId: {
       type: Number,
@@ -345,13 +351,13 @@ export default {
     //获取奖惩设置表格
     getJcOptTable() {
       main
-        .seeJcsz({ isjc: 0, cjlbId: this.cjlbId })
+        .seeJcsz({ isjc: 0, cjlbId: this.cjlbId, schoolId: this.schoolId })
         .then((res) => {
           this.jTable = res.data;
         })
         .catch((err) => {});
       main
-        .seeJcsz({ isjc: 1, cjlbId: this.cjlbId })
+        .seeJcsz({ isjc: 1, cjlbId: this.cjlbId, schoolId: this.schoolId })
         .then((res) => {
           this.cTable = res.data;
         })
@@ -361,6 +367,7 @@ export default {
     editJ(row) {
       let val = {
         cjlbId: this.cjlbId,
+        schoolId: this.schoolId,
         isjc: 0,
         id: row.id,
         current: row.current,
@@ -381,6 +388,7 @@ export default {
     editC(row) {
       let val = {
         cjlbId: this.cjlbId,
+        schoolId: this.schoolId,
         isjc: 1,
         id: row.id,
         current: row.current,

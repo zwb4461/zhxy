@@ -14,23 +14,9 @@
         @click="modelUpload"
         >模板下载</el-button
       >
-      <el-upload
-        style="margin-left: 10px"
-        action="http://103.219.33.112:10010/importStuScore"
-        :limit="1"
-        :show-file-list="false"
-        name="file"
-        :on-success="fileInSuccess"
-        :data="{
-          cjlbId: cjlbId,
-          classId: classId,
-          djxq: djxq,
-          schoolId: schoolId,
-          xkName: xkName,
-        }"
+      <el-button size="small" type="primary" style="width: 108px" @click="cjdr"
+        >选择文件</el-button
       >
-        <el-button size="small" type="primary">成绩导入</el-button>
-      </el-upload>
     </div>
     <div class="contain">
       <div class="left">
@@ -107,30 +93,6 @@
               </el-table-column>
             </template>
           </template>
-
-          <!-- <el-table-column prop="comment" label="期末评语" width="250">
-            <template slot-scope="scope">
-              <div>
-                <el-popover trigger="hover" placement="top">
-                  <div style="width: 380px">
-                    <p>{{ scope.row.comment }}</p>
-                  </div>
-                  <div
-                    slot="reference"
-                    style="
-                      display: inline-block;
-                      white-space: nowrap;
-                      width: 220px;
-                      overflow: hidden;
-                      text-overflow: ellipsis;
-                    "
-                  >
-                    <span size="medium">{{ scope.row.comment }}</span>
-                  </div>
-                </el-popover>
-              </div>
-            </template>
-          </el-table-column> -->
         </el-table>
       </div>
     </div>
@@ -209,6 +171,37 @@
       :commentRow="commentRow"
       :getTable="reData"
     ></qmpy>
+    <el-dialog title="选择文件" :visible.sync="showCjdr" width="30%">
+      <div v-loading="loading">
+        <el-cascader
+          @change="handleChange"
+          size="small"
+          style="width: 95%"
+          :props="cascaderProp"
+          v-model="cjdrData"
+          :options="ClassData"
+        ></el-cascader>
+        <div class="cjdrBtn">
+          <el-upload
+            style="width: 100%"
+            action="http://103.219.33.112:10010/importStuScore"
+            :show-file-list="false"
+            :on-progress="process"
+            name="file"
+            :on-success="fileInSuccess"
+            :before-upload="befUp"
+            :data="cjdrValue"
+          >
+            <el-button size="small" style="width: 95%" type="primary"
+              >成绩导入</el-button
+            >
+          </el-upload>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showCjdr = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -256,6 +249,17 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      cjdrValue: {
+        cjlbId: "",
+        classId: "",
+        djxq: "",
+        schoolId: "",
+        xkName: "",
+      },
+      cascaderProp: { value: "id", label: "name", children: "children" },
+      cjdrData: [],
+      showCjdr: false,
       ddScoreOpt: [{ name: "11" }, { name: "22" }],
       tabClickIndex: null, // 点击的单元格
       tabClickLabel: "", // 当前点击的列名
@@ -295,11 +299,51 @@ export default {
     };
   },
   methods: {
+    process() {
+      this.loading = true;
+    },
+    cjdr() {
+      this.showCjdr = true;
+    },
+    befUp(file) {
+      if (this.cjdrData.length == 0) {
+        this.$message.error("请选择导入学科!");
+        return false;
+      }
+    },
     //导入
     fileInSuccess() {
       this.$message.success("导入成功!");
+      this.showCjdr = false;
+      this.loading = false;
       this.reData();
     },
+    handleChange(value) {
+      this.cjdrValue = {
+        cjlbId: this.cjlbId,
+        classId: value[2],
+        djxq: value[0],
+        schoolId: this.schoolId,
+      };
+      this.ClassData.map((item) => {
+        if (item.id && item.id == value[0]) {
+          item.children.map((item1) => {
+            if (item1.id && item1.id == value[1]) {
+              item1.children.map((item2) => {
+                if (item2.id && item2.id == value[2]) {
+                  item2.children.map((item3) => {
+                    if (item3.id && item3.id == value[3]) {
+                      this.cjdrValue.xkName = item3.name;
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    },
+
     modelUpload() {
       let val = {
         cjlbId: this.cjlbId,
@@ -621,5 +665,22 @@ export default {
 .sel {
   display: flex;
   flex-direction: column;
+}
+.cjdrBtn {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+/deep/.el-upload,
+/deep/.el-upload--text {
+  width: 100%;
+  text-align: left;
+}
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
 }
 </style>
