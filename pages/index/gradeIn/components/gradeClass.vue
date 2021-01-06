@@ -47,7 +47,10 @@
               <template slot-scope="scope">
                 <div v-show="scope.row.showExam[index].lrfs == 0">
                   <el-input
-                    :disabled="scope.row.showExam[index].islock"
+                    :disabled="
+                      scope.row.showExam[index].islock ||
+                      scope.row.showExam[index].lrqx == '任课老师'
+                    "
                     type="number"
                     v-model="scope.row.showExam[index].score"
                     max-length="300"
@@ -57,6 +60,10 @@
                 </div>
                 <div v-show="scope.row.showExam[index].lrfs == 1">
                   <el-select
+                    :disabled="
+                      scope.row.showExam[index].islock ||
+                      scope.row.showExam[index].lrqx == '任课老师'
+                    "
                     max-length="300"
                     size="mini"
                     v-model="scope.row.showExam[index].score"
@@ -387,11 +394,12 @@ export default {
           classId: this.classId,
           ksId: this.ksId,
           schoolId: this.schoolId,
-          xuekeName: this.xueke,
+          xuekeName: this.xkName,
         };
         main1
           .batchQc(val)
           .then((res) => {
+            this.reData();
             this.showPlcl = false;
             this.$message.success(res.data);
             this.plclRadio = 0;
@@ -408,11 +416,12 @@ export default {
           ksId: this.ksId,
           schoolId: this.schoolId,
           score: this.ddName ? this.ddName : this.plfz,
-          xuekeName: this.xueke,
+          xuekeName: this.xkName,
         };
         main1
           .batchHandle(val)
           .then((res) => {
+            this.reData();
             this.showPlcl = false;
             this.$message.success(res.data);
             this.plclRadio = 0;
@@ -593,15 +602,18 @@ export default {
           .then((res) => {
             this.xueke = "";
             this.tableData = res.data.list;
-            res.data2.xuekes.map((item) => {
-              this.xuekeOpt.push({
-                label: item.name,
-                value: item.name,
-              });
-            });
+            // res.data2.xuekes.map((item) => {
+            //   this.xuekeOpt.push({
+            //     label: item.name,
+            //     value: item.name,
+            //   });
+            // });
             this.ksOpt = [];
+            console.log(this.DynamicColumn);
             this.DynamicColumn.map((item) => {
-              this.ksOpt.push({ name: item.name, id: item.id });
+              if (item.lrqx == "账号密码登录") {
+                this.ksOpt.push({ name: item.name, id: item.id });
+              }
             });
           })
           .catch((err) => {});

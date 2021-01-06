@@ -509,11 +509,12 @@ export default {
           classId: this.classId,
           ksId: this.ksId,
           schoolId: this.schoolId,
-          xuekeName: this.xueke,
+          xuekeName: this.xkName,
         };
         main1
           .batchQc(val)
           .then((res) => {
+            this.reData();
             this.showPlcl = false;
             this.$message.success(res.data);
             this.plclRadio = 0;
@@ -530,11 +531,12 @@ export default {
           ksId: this.ksId,
           schoolId: this.schoolId,
           score: this.ddName ? this.ddName : this.plfz,
-          xuekeName: this.xueke,
+          xuekeName: this.xkName,
         };
         main1
           .batchHandle(val)
           .then((res) => {
+            this.reData();
             this.showPlcl = false;
             this.$message.success(res.data);
             this.plclRadio = 0;
@@ -720,22 +722,24 @@ export default {
         this.classId = node.parent.data.id;
         this.djxq = node.parent.parent.parent.data.id;
         this.xkName = node.data.name;
-        console.log(val);
         main
           .find(val)
           .then((res) => {
             this.xueke = "";
             this.tableData = res.data.list;
-            res.data2.xuekes.map((item) => {
-              this.xuekeOpt.push({
-                label: item.name,
-                value: item.name,
-              });
-            });
+
+            // res.data2.xuekes.map((item) => {
+            //   this.xuekeOpt.push({
+            //     label: item.name,
+            //     value: item.name,
+            //   });
+            // });
             this.ksOpt = [];
+            console.log("1111111111");
             this.DynamicColumn.map((item) => {
               this.ksOpt.push({ name: item.name, id: item.id });
             });
+            console.log("22222222222222----------", this.ksOpt);
           })
           .catch((err) => {});
       } else if (node.level == 4 && node.data.name == "期末评语") {
