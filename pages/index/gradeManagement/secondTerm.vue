@@ -22,7 +22,7 @@
         style="width: 108px"
         @click="lrsz"
         :disabled="isLock == 1"
-        >录入设置</el-button
+        >录入账号</el-button
       >
       <el-button
         size="small"

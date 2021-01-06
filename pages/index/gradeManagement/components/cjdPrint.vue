@@ -15,10 +15,7 @@
       >
     </div>
     <div class="right" v-if="cjd" id="printTest">
-      <div
-        class="info1"
-        style="font-size: 23px; height: 28px; font-weight: none"
-      >
+      <div class="info1" style="height: 100px; font-weight: none">
         <span>{{ tableData.title }}</span>
       </div>
       <div class="info1">
@@ -34,7 +31,7 @@
       <div class="kaoshi_contain">
         <div
           class="kaoshi"
-          :style="{ width: xkWid + '%' }"
+          :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
           v-for="(item, index) in xkNum"
           :key="index"
         >
@@ -42,7 +39,7 @@
         </div>
         <div
           class="kaoshi"
-          :style="{ width: xkWid + '%' }"
+          :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
           v-for="(item, index) in xkNum"
           :key="index"
         >
@@ -50,7 +47,7 @@
         </div>
         <div
           class="kaoshi"
-          :style="{ width: xkWid + '%' }"
+          :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
           v-for="(item, index) in xkNum"
           :key="index"
         >
@@ -58,7 +55,8 @@
         </div>
       </div>
       <!-- 成绩部分 -->
-      <div class="kaoshi_contain" v-if="gradeRowNum >= 1">
+      <!--  v-if="gradeRowNum >= 1" -->
+      <div class="kaoshi_contain">
         <div
           class="kaoshi"
           :style="{ width: xkWid + '%' }"
@@ -66,32 +64,6 @@
           :key="index"
         >
           <span v-if="tableData.xkMap[0]">{{ tableData.xkMap[0][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[1]">{{ tableData.xkMap[1][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[2]">{{ tableData.xkMap[2][index] }}</span>
-        </div>
-      </div>
-      <div class="kaoshi_contain" v-if="gradeRowNum >= 2">
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[3]">{{ tableData.xkMap[3][index] }}</span>
         </div>
         <div
           class="kaoshi"
@@ -107,10 +79,46 @@
           v-for="(item, index) in xkNum"
           :key="index"
         >
-          <span v-if="tableData.xkMap[5]">{{ tableData.xkMap[5][index] }}</span>
+          <span v-if="tableData.xkMap[8]">{{ tableData.xkMap[8][index] }}</span>
         </div>
       </div>
-      <div class="kaoshi_contain" v-if="gradeRowNum >= 3">
+      <!-- v-if="gradeRowNum >= 2" -->
+      <div class="kaoshi_contain">
+        <div
+          class="kaoshi"
+          :style="{ width: xkWid + '%' }"
+          v-for="(item, index) in xkNum"
+          :key="index"
+        >
+          <span v-if="tableData.xkMap[1]">{{ tableData.xkMap[1][index] }}</span>
+        </div>
+        <div
+          class="kaoshi"
+          :style="{ width: xkWid + '%' }"
+          v-for="(item, index) in xkNum"
+          :key="index"
+        >
+          <span v-if="tableData.xkMap[5]">{{ tableData.xkMap[5][index] }}</span>
+        </div>
+        <div
+          class="kaoshi"
+          :style="{ width: xkWid + '%' }"
+          v-for="(item, index) in xkNum"
+          :key="index"
+        >
+          <span v-if="tableData.xkMap[9]">{{ tableData.xkMap[9][index] }}</span>
+        </div>
+      </div>
+      <!--  v-if="gradeRowNum >= 3" -->
+      <div class="kaoshi_contain">
+        <div
+          class="kaoshi"
+          :style="{ width: xkWid + '%' }"
+          v-for="(item, index) in xkNum"
+          :key="index"
+        >
+          <span v-if="tableData.xkMap[2]">{{ tableData.xkMap[2][index] }}</span>
+        </div>
         <div
           class="kaoshi"
           :style="{ width: xkWid + '%' }"
@@ -125,35 +133,28 @@
           v-for="(item, index) in xkNum"
           :key="index"
         >
-          <span v-if="tableData.xkMap[7]">{{ tableData.xkMap[7][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[8]">{{ tableData.xkMap[8][index] }}</span>
-        </div>
-      </div>
-      <div class="kaoshi_contain" v-if="gradeRowNum >= 4">
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[9]">{{ tableData.xkMap[9][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
           <span v-if="tableData.xkMap[10]">{{
             tableData.xkMap[10][index]
           }}</span>
+        </div>
+      </div>
+      <!-- v-if="gradeRowNum >= 4" -->
+      <div class="kaoshi_contain">
+        <div
+          class="kaoshi"
+          :style="{ width: xkWid + '%' }"
+          v-for="(item, index) in xkNum"
+          :key="index"
+        >
+          <span v-if="tableData.xkMap[3]">{{ tableData.xkMap[3][index] }}</span>
+        </div>
+        <div
+          class="kaoshi"
+          :style="{ width: xkWid + '%' }"
+          v-for="(item, index) in xkNum"
+          :key="index"
+        >
+          <span v-if="tableData.xkMap[7]">{{ tableData.xkMap[7][index] }}</span>
         </div>
         <div
           class="kaoshi"
@@ -173,7 +174,11 @@
         </div>
         <div
           class="jc"
-          :style="{ width: 4 * xkWid + '%', 'flex-direction': 'column' }"
+          :style="{
+            width: 4 * xkWid + '%',
+            'flex-direction': 'column',
+            height: '105px',
+          }"
         >
           <span v-for="(item, index) in tableData.prizes" :key="index">
             {{ item.current }}
@@ -198,7 +203,7 @@
       <!-- 品德评语 -->
       <div class="pdpy_contain">
         <div class="pdpy" :style="{ width: xkWid + '%' }">
-          <span>品德评语</span>
+          <span style="width: 15px">品德评语</span>
         </div>
         <div class="jc" :style="{ width: 100 - xkWid + '%' }">
           <span>{{ tableData.comment }}</span>
@@ -271,10 +276,10 @@
       <div class="info2">
         <span>下学期报到时间:{{ tableData.nextxsarrive2 }}</span>
       </div>
-      <div class="info">
-        <span>校长:{{ tableData.principal }}</span>
-        <span>教导主任:{{ tableData.director }}</span>
-        <span>班主任:{{ tableData.headmaster }}</span>
+      <div class="info5">
+        <span>校长: {{ tableData.principal }}</span>
+        <span>教导主任: {{ tableData.director }}</span>
+        <span>班主任: {{ tableData.headmaster }}</span>
       </div>
     </div>
   </div>
@@ -383,11 +388,19 @@ export default {
   width: 100%;
   min-height: 500px;
   margin-left: 50px;
-  margin-top: 100px;
+  margin-top: 20px;
+}
+.info5 {
+  width: 85%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 }
 .info {
   width: 85%;
-  height: 60px;
+  height: 30px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -421,14 +434,14 @@ export default {
 }
 .kaoshi_contain {
   width: 85%;
-  height: 50px;
+  height: 37px;
   border: 1px solid #000000;
   border-top: none;
   display: flex;
   flex-direction: row;
 }
 .kaoshi {
-  height: 50px;
+  height: 37px;
   border: 1px solid #000000;
   border-top: none;
   border-left: none;
@@ -464,7 +477,7 @@ export default {
   border-left: none;
 }
 .jc {
-  height: 105px;
+  height: 155px;
   border: 1px solid #000000;
   border-top: none;
   border-left: none;
@@ -488,7 +501,7 @@ export default {
   align-items: center;
 }
 .pdpy_contain {
-  height: 105px;
+  height: 155px;
   width: 85%;
   border: 1px solid #000000;
   border-top: none;
@@ -496,7 +509,7 @@ export default {
   flex-direction: row;
 }
 .pdpy {
-  height: 105px;
+  height: 155px;
   border: 1px solid #000000;
   border-top: none;
   border-left: none;
