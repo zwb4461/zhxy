@@ -163,6 +163,10 @@ export default {
         },
 
         {
+          title: "代调课管理",
+          key: "m-9",
+        },
+        {
           title: "学籍管理",
           key: "m-4-4-4",
         },

@@ -283,5 +283,12 @@ module.exports = {
     seeDedis: baseUrl + "/seeDedis",
     saveAchimodule: baseUrl + "/saveAchimodule",
     seeAchimodule: baseUrl + "/seeAchimodule"
+  },
+  dtk: {
+    find: baseUrl + "/selectTakeTran",
+    add: baseUrl + "/insertTakeTran",
+    del: baseUrl + "/deleteTakeTran",
+    edit: baseUrl + "/updateTakeTran",
+    selectTakeStanza: baseUrl + "/selectTakeStanza"
   }
 };

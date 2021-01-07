@@ -202,6 +202,16 @@ const getNewMenu = power => {
     //   }
     // },
     {
+      key: "changingCourse",
+      title: "代调课管理",
+      icon: "user-add",
+      hide: true,
+      power: "m-9",
+      meta: {
+        title: "代调课管理"
+      }
+    },
+    {
       key: "studentStatus-copy",
       title: "学籍管理",
       icon: "user-add",

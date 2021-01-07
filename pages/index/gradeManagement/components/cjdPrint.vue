@@ -15,17 +15,20 @@
       >
     </div>
     <div class="right" v-if="cjd" id="printTest">
-      <div class="info1" style="height: 100px; font-weight: none">
+      <div
+        class="info1"
+        style="height: 100px; font-weight: none; font-size: 18px"
+      >
         <span>{{ tableData.title }}</span>
       </div>
       <div class="info1">
         <span>小 学 生 全 面 素 质 报 告 单</span>
       </div>
       <div class="info">
-        <span>姓名:{{ tableData.name }}</span>
-        <span>性别:{{ tableData.sex == 1 ? "男" : "女" }}</span>
-        <span>班级:{{ tableData.className }}</span>
-        <span>学号:{{ tableData.xh }}</span>
+        <span>姓名：{{ tableData.name }}</span>
+        <span>性别：{{ tableData.sex == 1 ? "男" : "女" }}</span>
+        <span>班级：{{ tableData.className }}</span>
+        <span>学号：{{ tableData.xh }}</span>
       </div>
       <div class="topTitle"><span>一、学科基础知识和能力</span></div>
       <div class="kaoshi_contain">
@@ -277,9 +280,9 @@
         <span>下学期报到时间:{{ tableData.nextxsarrive2 }}</span>
       </div>
       <div class="info5">
-        <span>校长: {{ tableData.principal }}</span>
-        <span>教导主任: {{ tableData.director }}</span>
-        <span>班主任: {{ tableData.headmaster }}</span>
+        <span>校长： {{ tableData.principal }}</span>
+        <span>教导主任： {{ tableData.director }}</span>
+        <span>班主任： {{ tableData.headmaster }}</span>
       </div>
     </div>
   </div>

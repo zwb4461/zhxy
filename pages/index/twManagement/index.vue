@@ -4,13 +4,6 @@
     <el-tabs v-model="gradeClass" type="card">
       <el-tab-pane label="体卫分类" name="hjfl">
         <div class="contain">
-          <!-- 创建分类contain -->
-          <!-- <div class="gradeClass_contain" @click="addClass">
-            <div>
-              <span class="createOneClassify">创建一个类别</span>
-            </div>
-            <div class="jia"><span>+</span></div>
-          </div> -->
           <!-- 列表 -->
           <div
             class="gradeClass_contain_list"
@@ -169,7 +162,6 @@ export default {
     toJcClass(item) {
       this.locked = item.locked;
       this.id = item.id;
-      console.log("this.id", this.id);
       if (!this.tabList.includes(item.name)) {
         this.tabList.push(item.name);
       }
