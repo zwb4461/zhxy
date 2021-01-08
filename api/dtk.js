@@ -15,6 +15,20 @@ const selectTakeStanza = query => {
     data: query
   });
 };
+const selectSetTake = query => {
+  return request({
+    url: Api.dtk.selectSetTake,
+    method: "post",
+    data: query
+  });
+};
+const deleteSetTake = query => {
+  return request({
+    url: Api.dtk.deleteSetTake,
+    method: "post",
+    data: query
+  });
+};
 const add = query => {
   return request({
     url: Api.dtk.add,
@@ -36,11 +50,21 @@ const find = query => {
     data: query
   });
 };
+const saveSetTake = query => {
+  return request({
+    url: Api.dtk.saveSetTake,
+    method: "post-json",
+    data: query
+  });
+};
 
 export default {
   find,
   del,
   edit,
   add,
-  selectTakeStanza
+  selectTakeStanza,
+  saveSetTake,
+  selectSetTake,
+  deleteSetTake
 };

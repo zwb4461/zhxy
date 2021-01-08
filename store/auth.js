@@ -171,12 +171,15 @@ const actions = {
   //设置学校信息(管理员账号登录)
   setSchoolIdAuth(context, id) {
     return new Promise((resolve, reject) => {
+      console.log(id, "id------");
       school
         .list({
           pagenum: 1,
-          pagesize: 100
+          pagesize: 100,
+          schoolId: id
         })
         .then(res => {
+          console.log(res, "res---");
           let schoolList = res.data.schools.filter(j => j.valid === 0);
           let mySchool = schoolList.find(j => j.id == id);
           if (mySchool) {

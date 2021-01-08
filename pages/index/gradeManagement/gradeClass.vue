@@ -363,7 +363,7 @@ export default {
         { label: "第一学期", value: 1 },
         { label: "第二学期", value: 2 },
       ],
-      xueke: "", //下拉框-学科-绑定值
+      xkName: "", //下拉框-学科-绑定值
       xuekeOpt: [
         //下拉框-学科-选项
       ],
@@ -487,9 +487,10 @@ export default {
       this.ksId = val;
       let data = {
         classId: this.classId,
-        name: this.xueke,
+        name: this.xkName,
         ksId: val,
       };
+      console.log(this.xkName);
       main1
         .sel(data)
         .then((res) => {
@@ -650,7 +651,7 @@ export default {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
-        xkName: this.xueke,
+        xkName: this.xkName,
         djxq: this.xueqi ? this.xueqi : data,
       };
       console.log("val11111", val);
@@ -663,12 +664,12 @@ export default {
     },
     //下拉框--学科
     changeXk() {
-      console.log("xueke", this.xueke);
+      console.log("xkName", this.xkName);
       let val = {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
-        xkName: this.xueke,
+        xkName: this.xkName,
         djxq: this.xueqi,
         unionid: this.unionid,
       };
@@ -692,7 +693,6 @@ export default {
       main
         .find(val)
         .then((res) => {
-          this.xueke = "";
           this.tableData = res.data.list;
           res.data2.xuekes.map((item) => {
             this.xuekeOpt.push({
@@ -722,10 +722,10 @@ export default {
         this.classId = node.parent.data.id;
         this.djxq = node.parent.parent.parent.data.id;
         this.xkName = node.data.name;
+        console.log(this.xkName);
         main
           .find(val)
           .then((res) => {
-            this.xueke = "";
             this.tableData = res.data.list;
 
             // res.data2.xuekes.map((item) => {
@@ -799,6 +799,7 @@ export default {
     // 批量处理
     plDeal() {
       this.showPlcl = true;
+      console.log(this.xkName);
     },
     //点击顶部tabs
     clickTab(tab, event) {

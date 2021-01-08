@@ -289,6 +289,9 @@ module.exports = {
     add: baseUrl + "/insertTakeTran",
     del: baseUrl + "/deleteTakeTran",
     edit: baseUrl + "/updateTakeTran",
-    selectTakeStanza: baseUrl + "/selectTakeStanza"
+    selectTakeStanza: baseUrl + "/selectTakeStanza",
+    selectSetTake: baseUrl + "/selectSetTake",
+    saveSetTake: baseUrl + "/saveSetTake",
+    deleteSetTake: baseUrl + "/deleteSetTake"
   }
 };

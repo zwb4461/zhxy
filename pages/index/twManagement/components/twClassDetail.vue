@@ -266,7 +266,7 @@ export default {
     //获取左侧树列表
     getTree() {
       let val = {
-        cjlbId: this.cjlbId,
+        twId: this.cjlbId,
       };
       main
         .seeSanjiMeui(val)

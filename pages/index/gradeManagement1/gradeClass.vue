@@ -922,6 +922,7 @@ export default {
             //   });
             // });
             this.ksOpt = [];
+            console.log(this.DynamicColumn);
             this.DynamicColumn.map((item) => {
               if (item.lrqx == "任课老师") {
                 this.ksOpt.push({ name: item.name, id: item.id });
