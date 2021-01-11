@@ -29,6 +29,13 @@ const deleteSetTake = query => {
     data: query
   });
 };
+const seeTakeTJ = query => {
+  return request({
+    url: Api.dtk.seeTakeTJ,
+    method: "post",
+    data: query
+  });
+};
 const add = query => {
   return request({
     url: Api.dtk.add,
@@ -66,5 +73,6 @@ export default {
   selectTakeStanza,
   saveSetTake,
   selectSetTake,
-  deleteSetTake
+  deleteSetTake,
+  seeTakeTJ
 };

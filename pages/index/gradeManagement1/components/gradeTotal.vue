@@ -134,11 +134,7 @@
           >
             <template slot-scope="scope">
               <div>
-                <span v-show="index == 0"> {{ scope.row.score }} </span>
-
-                <span v-show="index != 0">
-                  {{ scope.row.scores[index - 1] }}</span
-                >
+                {{ scope.row.scores[index] }}
               </div>
             </template>
           </el-table-column>
@@ -161,6 +157,9 @@ export default {
     //学校id
     schoolId() {
       return this.$store.state.auth.schoolId;
+    },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
     },
   },
   props: {
@@ -250,7 +249,7 @@ export default {
       ]);
     },
     getMenu() {
-      let val = { cjlbId: this.cjlbId };
+      let val = { cjlbId: this.cjlbId, unionid: this.unionid };
       main
         .seeScore(val)
         .then((res) => {

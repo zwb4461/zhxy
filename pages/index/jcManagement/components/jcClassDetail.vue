@@ -101,7 +101,7 @@
             </el-table>
             <div class="add">
               <el-button
-                v-show="level == 4"
+                v-show="level == 3"
                 size="small"
                 style="width: 100%"
                 @click="addTable"
@@ -279,13 +279,13 @@ export default {
       main
         .saveMoralPrize(val)
         .then((res) => {
-          if (this.level == 3) {
+          if (this.level == 2) {
             let val = {
               classId: this.classId,
               cjlbId: this.cjlbId,
             };
             this.getJcTable(val);
-          } else if (this.level == 4) {
+          } else if (this.level == 3) {
             let val = {
               cjlbId: this.cjlbId,
               classId: this.classId,
@@ -325,18 +325,16 @@ export default {
     clickTree(node, data) {
       this.nrOpt = [];
       //根据不同level获取表格数据
-      if (data.level == 3) {
-        console.log(2);
-        this.level = 3;
+      if (data.level == 2) {
+        this.level = 2;
         this.classId = data.data.id;
         let val = {
           classId: data.data.id,
           cjlbId: this.cjlbId,
         };
         this.getJcTable(val);
-      } else if (data.level == 4) {
-        console.log(3);
-        this.level = 4;
+      } else if (data.level == 3) {
+        this.level = 3;
         this.classId = data.parent.data.id;
         this.name = data.data.name;
         this.studentId = data.data.id;

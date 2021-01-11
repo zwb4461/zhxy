@@ -58,6 +58,13 @@ const getNewMenu = power => {
             title: "成绩管理"
           }
         },
+        {
+          key: "repairEquipment",
+          title: "设备报修",
+          meta: {
+            title: "设备报修"
+          }
+        },
         // {
         //   key: "personal-center/class",
         //   title: "我的班级",
@@ -209,6 +216,26 @@ const getNewMenu = power => {
       power: "m-9",
       meta: {
         title: "代调课管理"
+      }
+    },
+    // {
+    //   key: "changingCourse",
+    //   title: "代调课管理",
+    //   icon: "user-add",
+    //   hide: true,
+    //   power: "m-9",
+    //   meta: {
+    //     title: "代调课管理"
+    //   }
+    // },
+    {
+      key: "repairManagement",
+      title: "报修管理",
+      icon: "user-add",
+      hide: true,
+      power: "m-10",
+      meta: {
+        title: "报修管理"
       }
     },
     {

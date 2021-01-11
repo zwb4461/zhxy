@@ -1,174 +1,140 @@
 <template>
   <div>
-    <el-table
-      :data="tableData"
-      border
-      size="small"
-      style="width: 100%; margin-top: 20px"
-      :span-method="objectSpanMethod"
-    >
-      <el-table-column prop="time" width="100"></el-table-column>
-      <el-table-column type="index" width="100"></el-table-column>
-      <el-table-column prop="one" label="星期一"> </el-table-column>
-      <el-table-column prop="two" label="星期二"> </el-table-column>
-      <el-table-column prop="three" label="星期三"> </el-table-column>
-      <el-table-column prop="four" label="星期四"> </el-table-column>
-      <el-table-column prop="five" label="星期五"> </el-table-column>
-    </el-table>
+    <el-tabs v-model="gradeClass" type="card">
+      <el-tab-pane label="课表分类" name="1">
+        <div class="contain">
+          <!-- 列表 -->
+          <div
+            class="gradeClass_contain_list"
+            v-for="(item, index) in dtkList"
+            :key="index"
+            @click="toDtkClass(item)"
+          >
+            <div class="contain_top">
+              <span style="font-size: 28px; color: #646464">{{
+                item.name
+              }}</span>
+              <span style="font-size: 16px; color: #c8c8c8"
+                >对应学期:{{ item.xueqiname }}</span
+              >
+            </div>
+            <!-- <div
+              class="item_bottom_btn"
+              v-show="item.locked == 0 || item.locked == null"
+            >
+              <img
+                src="../../../../assets/img/lock.svg"
+                @click.stop="lock(item)"
+                style="cursor: pointer"
+              />
+            </div>
+            <div class="item_bottom_btn" v-show="item.locked == 1">
+              <img
+                src="../../../../assets/img/lockOn.svg"
+                style="cursor: pointer"
+              />
+            </div>-->
+          </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane
+        v-for="(item, index) in tabList"
+        :key="index"
+        :label="item"
+        :name="item"
+        ><DtkDetail :dtkId="id"></DtkDetail
+      ></el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
-import main from "~/api/courseManagement";
+//接口
+import main from "~/api/addGradeClass";
+//组件
+import DtkDetail from "./components";
 export default {
-  computed: {
-    //学校id
-    schoolId() {
-      return this.$store.state.auth.schoolId;
-    },
-    unionid() {
-      return this.$store.state.auth.userInfo.unionid;
-    },
-  },
+  components: { DtkDetail },
+  computed: {},
   data() {
     return {
-      tableData: [
-        { time: "上午", one: "", two: "", three: "", four: "", five: "" },
-        { one: "", two: "", three: "", four: "", five: "" },
-        { one: "", two: "", three: "", four: "", five: "" },
-        { time: "下午", one: "", two: "", three: "", four: "", five: "" },
-        { one: "", two: "", three: "", four: "", five: "" },
-        { one: "", two: "", three: "", four: "", five: "" },
-      ],
+      gradeClass: "1",
+      tabList: [],
+      dtkList: [],
+      //是否锁定。0--未锁定，1--锁定
+      locked: 0,
+      //当前类别的id
+      id: 0,
     };
   },
   methods: {
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0) {
-        if (rowIndex % 3 === 0) {
-          return {
-            rowspan: 3,
-            colspan: 1,
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0,
-          };
-        }
+    //!点击分类跳转对应代调课
+    toDtkClass(item) {
+      this.locked = item.locked;
+      this.id = item.id;
+      if (!this.tabList.includes(item.name)) {
+        this.tabList.push(item.name);
       }
+      this.gradeClass = item.name;
+      console.log(this.tabList);
     },
-    getTable() {
+    //!获取排课分类列表
+    getDtkList() {
       main
-        .seeOwnerHour({ schoolId: this.schoolId, unionid: this.unionid })
+        .find({ schoolId: this.schoolId })
         .then((res) => {
-          res.data.stanzas.map((item) => {
-            if (item.weekName == "星期一" && item.sort == 1) {
-              this.tableData[0].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 1) {
-              this.tableData[0].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 1) {
-              this.tableData[0].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 1) {
-              this.tableData[0].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 1) {
-              this.tableData[0].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 2) {
-              this.tableData[1].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 2) {
-              this.tableData[1].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 2) {
-              this.tableData[1].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 2) {
-              this.tableData[1].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 2) {
-              this.tableData[1].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 3) {
-              this.tableData[2].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 3) {
-              this.tableData[2].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 3) {
-              this.tableData[2].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 3) {
-              this.tableData[2].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 3) {
-              this.tableData[2].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 4) {
-              this.tableData[3].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 4) {
-              this.tableData[3].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 4) {
-              this.tableData[3].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 4) {
-              this.tableData[3].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 4) {
-              this.tableData[3].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 5) {
-              this.tableData[4].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 5) {
-              this.tableData[4].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 5) {
-              this.tableData[4].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 5) {
-              this.tableData[4].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 5) {
-              this.tableData[4].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 6) {
-              this.tableData[5].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 6) {
-              this.tableData[5].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 6) {
-              this.tableData[5].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 6) {
-              this.tableData[5].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 6) {
-              this.tableData[5].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-          });
-          console.log("tableData", this.tableData);
+          this.dtkList = res.data;
         })
         .catch((err) => {});
     },
+    //!锁定分类
+    lock() {},
   },
   created() {
-    this.getTable();
+    this.getDtkList();
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.contain {
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.gradeClass_contain_list {
+  width: 300px;
+  height: 200px;
+  border: 1px solid #c8c8c8;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  position: relative;
+}
+.contain_top {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.item_bottom_btn {
+  border-top: 1px solid #e6e6e6;
+  border-radius: 0 0 20px 20px;
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  bottom: 0;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+</style> 

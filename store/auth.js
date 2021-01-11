@@ -120,7 +120,7 @@ const actions = {
             let power = [];
             if (auth === 2) {
               let jurisdiction =
-                "m-9,m-2-5,m-18-4,m-18-3,m-18-2,m-18-1,m-18，m-6,m-5,m-5-5,m-1,m-1-1,p-1-t,p-1-t-add,p-1-t-edit,p-1-t-del,p-1-l-add,p-1-l-edit,p-1-l-del,p-1-l-upload,p-1-r-add,p-1-r-edit,p-1-r-del,p-1-f,p-1-f-add,p-1-f-edit,p-1-f-del,p-1-s,p-1-close,m-1-2,m-4,m-4-4,m-4-4-4,m-2,m-2-2,m-2-3,m-2-4,m-3,m-3-1,m-3-2,p-1-l,p-1-r,p-1-h,p-1-x,m-7,m-7-1,m-7-2,m-7-3,m-7-4,m-8";
+                "m-10,m-9,m-2-5,m-18-4,m-18-3,m-18-2,m-18-1,m-18，m-6,m-5,m-5-5,m-1,m-1-1,p-1-t,p-1-t-add,p-1-t-edit,p-1-t-del,p-1-l-add,p-1-l-edit,p-1-l-del,p-1-l-upload,p-1-r-add,p-1-r-edit,p-1-r-del,p-1-f,p-1-f-add,p-1-f-edit,p-1-f-del,p-1-s,p-1-close,m-1-2,m-4,m-4-4,m-4-4-4,m-2,m-2-2,m-2-3,m-2-4,m-3,m-3-1,m-3-2,p-1-l,p-1-r,p-1-h,p-1-x,m-7,m-7-1,m-7-2,m-7-3,m-7-4,m-8";
               power = jurisdiction
                 .split(",")
                 .filter(item => item.indexOf("m-") > -1);

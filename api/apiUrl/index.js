@@ -292,6 +292,12 @@ module.exports = {
     selectTakeStanza: baseUrl + "/selectTakeStanza",
     selectSetTake: baseUrl + "/selectSetTake",
     saveSetTake: baseUrl + "/saveSetTake",
-    deleteSetTake: baseUrl + "/deleteSetTake"
+    deleteSetTake: baseUrl + "/deleteSetTake",
+    seeTakeTJ: baseUrl + "/seeTakeTJ"
+  },
+  baoxiu: {
+    find: baseUrl + "/repair/list",
+    edit: baseUrl + "/repair/edit",
+    del: baseUrl + "/repair/delete"
   }
 };

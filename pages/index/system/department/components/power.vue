@@ -167,6 +167,10 @@ export default {
           key: "m-9",
         },
         {
+          title: "报修管理",
+          key: "m-10",
+        },
+        {
           title: "学籍管理",
           key: "m-4-4-4",
         },

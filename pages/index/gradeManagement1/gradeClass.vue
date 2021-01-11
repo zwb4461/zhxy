@@ -43,9 +43,9 @@
               @cell-click="clickCell"
               :row-class-name="tableRowClassName"
             >
-              <el-table-column prop="xh" label="学号" width="180">
+              <el-table-column prop="xh" label="学号" width="80">
               </el-table-column>
-              <el-table-column prop="name" label="姓名" width="180">
+              <el-table-column prop="name" label="姓名" width="80">
               </el-table-column>
 
               <template v-for="(item, index) in DynamicColumn">
@@ -59,7 +59,8 @@
                       <el-input
                         :disabled="
                           scope.row.showExam[index].islock ||
-                          scope.row.showExam[index].lrqx == '账号密码登录'
+                          scope.row.showExam[index].lrqx == '账号密码登录' ||
+                          scope.row.showExam[index].havelr != 1
                         "
                         type="number"
                         v-model="scope.row.showExam[index].score"
@@ -72,7 +73,8 @@
                       <el-select
                         :disabled="
                           scope.row.showExam[index].islock ||
-                          scope.row.showExam[index].lrqx == '账号密码登录'
+                          scope.row.showExam[index].lrqx == '账号密码登录' ||
+                          scope.row.showExam[index].havelr != 1
                         "
                         max-length="300"
                         size="mini"
@@ -416,7 +418,7 @@ import main from "~/api/scoreEntry";
 import main1 from "~/api/examManage";
 import main2 from "~/api/jcManage";
 import main3 from "~/api/twManage";
-import gradeTotal from "~/pages/index/gradeManagement/components/gradeTotal";
+import gradeTotal from "./components/gradeTotal";
 import qmpy from "~/pages/index/gradeManagement/components/qmpy";
 export default {
   components: {
@@ -501,7 +503,7 @@ export default {
         { label: "第一学期", value: 1 },
         { label: "第二学期", value: 2 },
       ],
-      xueke: "", //下拉框-学科-绑定值
+      xkName: "", //下拉框-学科-绑定值
       xuekeOpt: [
         //下拉框-学科-选项
       ],
@@ -670,7 +672,7 @@ export default {
       this.ksId = val;
       let data = {
         classId: this.classId,
-        name: this.xueke,
+        name: this.xkName,
         ksId: val,
       };
       main1
@@ -692,7 +694,7 @@ export default {
           classId: this.classId,
           ksId: this.ksId,
           schoolId: this.schoolId,
-          xuekeName: this.xkName,
+          xkName: this.xkName,
         };
         main1
           .batchQc(val)
@@ -714,7 +716,7 @@ export default {
           ksId: this.ksId,
           schoolId: this.schoolId,
           score: this.ddName ? this.ddName : this.plfz,
-          xuekeName: this.xkName,
+          xkName: this.xkName,
         };
         main1
           .batchHandle(val)
@@ -832,7 +834,7 @@ export default {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
-        xkName: this.xueke,
+        xkName: this.xkName,
         djxq: this.xueqi ? this.xueqi : data,
       };
       console.log("val11111", val);
@@ -845,12 +847,11 @@ export default {
     },
     //下拉框--学科
     changeXk() {
-      console.log("xueke", this.xueke);
       let val = {
         cjlbId: this.cjlbId,
         schoolId: this.schoolId,
         classId: this.classId,
-        xkName: this.xueke,
+        xkName: this.xkName,
         djxq: this.xueqi,
         unionid: this.unionid,
       };
@@ -874,7 +875,6 @@ export default {
       main
         .find(val)
         .then((res) => {
-          this.xueke = "";
           this.tableData = res.data.list;
           res.data2.xuekes.map((item) => {
             this.xuekeOpt.push({
@@ -913,7 +913,6 @@ export default {
         main
           .find(val)
           .then((res) => {
-            this.xueke = "";
             this.tableData = res.data.list;
             // res.data2.xuekes.map((item) => {
             //   this.xuekeOpt.push({

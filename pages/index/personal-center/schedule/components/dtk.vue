@@ -1,56 +1,6 @@
 <template>
   <div>
     <div class="search">
-      <el-cascader
-        clearable
-        size="small"
-        class="input"
-        :show-all-levels="false"
-        :props="{ children: 'children', label: 'name', value: 'id' }"
-        @focus="getXqNj"
-        v-model="search.classId"
-        :options="xqNjOpt"
-      ></el-cascader>
-      <el-date-picker
-        class="input"
-        style="width: 365px"
-        size="small"
-        v-model="search.createTime"
-        type="daterange"
-        format="yyyy-MM-dd"
-        value-format="yyyy-MM-dd"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      >
-      </el-date-picker>
-      <el-input
-        size="small"
-        class="input"
-        v-model="search.oldTeaname"
-        placeholder="原授课人"
-      ></el-input>
-      <el-select
-        clearable
-        size="small"
-        v-model="search.status"
-        placeholder="审核状态"
-        class="input"
-      >
-        <el-option
-          v-for="item in statusOpt"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        >
-        </el-option>
-      </el-select>
-      <el-button size="small" type="primary" @click="searchTable"
-        >查询</el-button
-      >
-      <el-button size="small" icon="el-icon-setting" @click="csOpt"
-        >参数设置</el-button
-      >
       <el-button size="small" type="primary" icon="el-icon-plus" @click="add"
         >新增</el-button
       >
@@ -123,15 +73,8 @@
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" align="center">
       </el-table-column>
-      <el-table-column label="操作" width="180" align="center">
+      <el-table-column label="操作" width="150" align="center">
         <template slot-scope="scope">
-          <a-button
-            size="small"
-            type="waring"
-            style="color: #fff; background-color: #ffba00"
-            @click="pz(scope.row)"
-            >批准</a-button
-          >
           <a-button size="small" type="waring" @click="edit(scope.row)"
             >编辑</a-button
           >
@@ -198,7 +141,6 @@
           </el-form-item>
           <el-form-item label="代课课次:">
             <el-select
-              clearable
               size="small"
               class="inp"
               v-model="showDiaData.form.stanza"
@@ -214,7 +156,6 @@
           </el-form-item>
           <el-form-item label="代课学科:">
             <el-select
-              clearable
               @focus="getOpt(1)"
               size="small"
               class="inp"
@@ -231,34 +172,33 @@
           </el-form-item>
           <el-form-item label="原授课人:">
             <el-select
-              clearable
+              disabled
               @focus="getOpt(2)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.oldTeaId"
+              v-model="showDiaData.form.oldTeaname"
             >
               <el-option
                 v-for="item in oldTeanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherUnionid"
+                :value="item.teacherName"
               >
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="现授课人:">
             <el-select
-              clearable
               @focus="getOpt(3)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.teaId"
+              v-model="showDiaData.form.teaname"
             >
               <el-option
                 v-for="item in teanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherUnionid"
+                :value="item.teacherName"
               >
               </el-option>
             </el-select>
@@ -277,9 +217,8 @@
               v-model="showDiaData.form.reason"
             ></el-input>
           </el-form-item>
-          <el-form-item label="状态:">
+          <!-- <el-form-item label="状态:">
             <el-select
-              clearable
               size="small"
               class="inp"
               v-model="showDiaData.form.status"
@@ -293,7 +232,7 @@
               >
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </div>
       <!-- 调课 -->
@@ -324,7 +263,6 @@
           </el-form-item>
           <el-form-item label="调课课次:">
             <el-select
-              clearable
               size="small"
               class="inp"
               v-model="showDiaData.form.stanza"
@@ -340,7 +278,6 @@
           </el-form-item>
           <el-form-item label="调课学科:">
             <el-select
-              clearable
               @focus="getOpt(1)"
               size="small"
               class="inp"
@@ -357,17 +294,17 @@
           </el-form-item>
           <el-form-item label="原授课人:">
             <el-select
-              clearable
+              disabled
               @focus="getOpt(2)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.oldTeaId"
+              v-model="showDiaData.form.oldTeaname"
             >
               <el-option
                 v-for="item in oldTeanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherUnionid"
+                :value="item.teacherName"
               >
               </el-option>
             </el-select>
@@ -397,7 +334,6 @@
           </el-form-item>
           <el-form-item label="互调课次:">
             <el-select
-              clearable
               size="small"
               class="inp"
               v-model="showDiaData.form.oldStanza"
@@ -413,7 +349,6 @@
           </el-form-item>
           <el-form-item label="互调学科:">
             <el-select
-              clearable
               @focus="getOpt(1)"
               size="small"
               class="inp"
@@ -430,17 +365,16 @@
           </el-form-item>
           <el-form-item label="现授课人:">
             <el-select
-              clearable
               @focus="getOpt(3)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.teaId"
+              v-model="showDiaData.form.teaname"
             >
               <el-option
                 v-for="item in teanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherUnionid"
+                :value="item.teacherName"
               >
               </el-option>
             </el-select>
@@ -453,9 +387,8 @@
               v-model="showDiaData.form.reason"
             ></el-input>
           </el-form-item>
-          <el-form-item label="状态:">
+          <!-- <el-form-item label="状态:">
             <el-select
-              clearable
               size="small"
               class="inp"
               v-model="showDiaData.form.status"
@@ -469,124 +402,12 @@
               >
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showDiaData.showDia = false">取 消</el-button>
         <el-button type="primary" @click="submit">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="参数设置"
-      :visible.sync="showCsOptData.showCsOpt"
-      width="50%"
-      :close-on-click-modal="false"
-    >
-      <el-row style="margin-bottom: 20px">
-        <el-col :span="6">
-          <div class="csTop">
-            <span>代课自动审核:</span>
-            <el-switch
-              style="margin-left: 10px"
-              v-model="csData.dkzdsh"
-              :active-value="1"
-              :inactive-value="0"
-            >
-            </el-switch>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="csTop">
-            <span>调课自动审核:</span>
-            <el-switch
-              style="margin-left: 10px"
-              v-model="csData.tkzdsh"
-              :active-value="1"
-              :inactive-value="0"
-            >
-            </el-switch></div
-        ></el-col>
-        <el-col :span="6">
-          <div class="csTop">
-            <span>所有教师查看统计:</span>
-            <el-switch
-              style="margin-left: 10px"
-              v-model="csData.syjscktj"
-              :active-value="1"
-              :inactive-value="0"
-            >
-            </el-switch></div
-        ></el-col>
-        <el-col :span="6">
-          <div class="csTop">
-            <span>调课算积分:</span>
-            <el-switch
-              style="margin-left: 10px"
-              v-model="csData.tksjf"
-              :active-value="1"
-              :inactive-value="0"
-            >
-            </el-switch></div
-        ></el-col>
-      </el-row>
-      <el-row class="csTop" style="justify-content: space-between">
-        <el-col :span="11" style="text-align: center">
-          <span>课次自定义</span>
-        </el-col>
-        <el-col :span="11" style="text-align: center">
-          <span>代课节次转积分</span>
-        </el-col>
-      </el-row>
-      <el-row class="csTop" style="justify-content: space-between">
-        <el-col :span="11">
-          <el-table size="mini" border :data="kcTable" style="width: 100%">
-            <el-table-column label="序" type="index"> </el-table-column>
-            <el-table-column prop="name" label="自定义课次">
-              <template slot-scope="scope">
-                <el-input size="mini" v-model="scope.row.name"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="value" label="节数">
-              <template slot-scope="scope">
-                <el-input size="mini" v-model="scope.row.value"></el-input>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-button style="width: 100%" size="mini" @click="addKcRow"
-            >+</el-button
-          >
-        </el-col>
-        <el-col :span="11">
-          <el-table size="mini" border :data="dkTable" style="width: 100%">
-            <el-table-column label="序" type="index"> </el-table-column>
-            <el-table-column prop="节数" label="节数">
-              <template slot-scope="scope">
-                <div class="csTop">
-                  <el-input size="mini" v-model="scope.row.bescore"></el-input>
-                  <span>~</span>
-                  <el-input
-                    size="mini"
-                    v-model="scope.row.afterscore"
-                  ></el-input>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="score" label="每节积分">
-              <template slot-scope="scope">
-                <el-input size="mini" v-model="scope.row.score"></el-input>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-button style="width: 100%" size="mini" @click="addDkRow"
-            >+</el-button
-          >
-        </el-col>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showCsOptData.showCsOpt = false">取 消</el-button>
-        <el-button type="primary" @click="submitCs">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -605,6 +426,13 @@ export default {
       let data = new Date(this.showDiaData.form.olddate).getDay();
       return this.getZj(data);
     },
+    //用户id
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
+    },
+    userName() {
+      return this.$store.state.auth.userInfo.name;
+    },
   },
   props: {
     dtkId: {
@@ -618,13 +446,6 @@ export default {
       pageNum: 1,
       totalDataNum: 0,
       pageSize: 20,
-      //搜索相关
-      search: {
-        classId: [],
-        createTime: [],
-        oldTeaname: "",
-        status: undefined,
-      },
       //
       tableData: [],
       xqNjOpt: [],
@@ -667,44 +488,17 @@ export default {
           status: "",
           reason: "",
           must: "",
-          oldTeaId: "",
-          teaId: "",
+          oldTeaname: "",
+          teaname: "",
           oldclassId: "",
           olddate: "",
           oldStanza: "",
           oldxkname: "",
         },
       },
-      //参数设置字段
-      csData: {
-        changeTakes: [],
-        cjlbId: 0,
-        id: 0,
-        dkzdsh: 0, //
-        syjscktj: 0, //
-        tksjf: 0, //
-        tkzdsh: 0, //
-      },
     };
   },
   methods: {
-    searchTable() {
-      let val = {
-        cjlbId: this.dtkId,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize,
-      };
-      let data = this.search;
-      data.classId = this.search.classId ? this.search.classId[2] : "";
-      let obj = Object.assign(val, data);
-      main
-        .find(obj)
-        .then((res) => {
-          this.tableData = res.data.list;
-          this.totalDataNum = res.data.total;
-        })
-        .catch((err) => {});
-    },
     changePageSize(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -715,37 +509,12 @@ export default {
       this.pageNum = val;
       this.getTable(val, this.pageSize);
     },
-    //提交参数设置
-    submitCs() {
-      let data = this.csData;
-      let arr = this.kcTable.concat(this.dkTable);
-      data.changeTakes = arr;
-      data.cjlbId = this.dtkId;
-      main
-        .saveSetTake(data)
-        .then((res) => {
-          this.$message.success("设置成功!");
-          this.showCsOptData.showCsOpt = false;
-          this.getTable(this.pageNum, this.pageSize);
-        })
-        .catch((err) => {});
-    },
+
     //提交新增和编辑
     submit() {
-      //! 0：匹配中，1：待审核，2：审核通过，3：审核不通过，4：自动通过
       let data = this.showDiaData.form;
       data.cjlbId = this.dtkId;
-      //不选状态就是匹配中
-      if (!data.status) {
-        data.status = undefined;
-      }
-      //如果删除了原/现授课人，同时删除name
-      if (!data.oldTeaId) {
-        data.oldTeaname = "";
-      }
-      if (!data.teaId) {
-        data.teaname = "";
-      }
+      data.status = undefined;
       if (this.showDiaData.formType == 1) {
         main
           .add(data)
@@ -826,6 +595,8 @@ export default {
         cjlbId: this.dtkId,
         pageNum: pageNum,
         pageSize: pageSize,
+        unionid: this.unionid,
+        isowner: 1,
       };
       main
         .find(val)
@@ -853,41 +624,16 @@ export default {
     add() {
       this.showDiaData.formType = 1;
       this.clearForm();
+      this.showDiaData.form.oldTeaname = this.userName;
       this.showDiaData.showDia = true;
-    },
-    pz(row) {
-      console.log(row);
-      this.$confirm({
-        title: "确认批准吗",
-        cancelText: "取消",
-        okText: "确定",
-        okType: "danger",
-        centered: true,
-        onOk: () => {
-          let data = row;
-          data.cjlbId = this.dtkId;
-          data.status = 2;
-          main
-            .edit(data)
-            .then((res) => {
-              this.$message.success("批准成功!");
-              this.getTable(this.pageNum, this.pageSize);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        },
-      });
     },
     chgang1(val) {
       console.log(this.showDiaData.form.classId);
     },
     edit(row) {
       console.log(row);
-      this.setFrom(row);
       this.getXqNj();
-      this.getOpt(2);
-      this.getOpt(3);
+      this.setFrom(row);
       this.showDiaData.formType = 2;
       this.showDiaData.showDia = true;
     },
@@ -969,6 +715,7 @@ export default {
   },
   created() {
     this.getTable(1, 20);
+    this.showDiaData.form.oldTeaname = this.userName;
   },
 };
 </script>
@@ -1030,9 +777,5 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
-.input {
-  width: 180px;
-  margin-right: 15px;
 }
 </style>
