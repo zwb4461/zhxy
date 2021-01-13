@@ -49,14 +49,17 @@
               accordion
             ></el-tree>
           </div>
-          <div class="right" v-if="!isqm">
+          <div class="right" v-if="!isqm" style="width: calc(100% - 100px)">
             <el-table
               :data="tableData"
               border
-              style="width: 100%"
+              style="width: calc(85% - 20px)"
+              max-height="600px"
               size="small"
               @cell-click="clickCell"
               :row-class-name="tableRowClassName"
+              v-loading="tableLoading"
+              element-loading-text="数据加载中..."
             >
               <el-table-column prop="xh" label="学号" width="180">
               </el-table-column>
@@ -121,13 +124,13 @@
               </template>
             </el-table>
           </div>
-          <div class="right" v-else-if="isqm">
+          <div class="right" v-else-if="isqm" style="width: calc(100% - 100px)">
             <el-table
               @cell-click="clickCell1"
               size="small"
               :data="qmpyData"
               border
-              style="width: 100%"
+              style="width: calc(85% - 20px)"
             >
               <el-table-column prop="xh" label="学号" width="100">
               </el-table-column>
@@ -345,6 +348,7 @@ export default {
   },
   data() {
     return {
+      tableLoading: false,
       loading: false,
       cascaderProp: { value: "id", label: "name", children: "children" },
       cjdrData: [],
@@ -710,6 +714,7 @@ export default {
     //   点击树
     clickTree(data, node, obj) {
       if (node.level == 4 && node.data.name !== "期末评语") {
+        this.tableLoading = true;
         this.isqm = false;
         let val = {
           schoolId: this.schoolId,
@@ -722,24 +727,15 @@ export default {
         this.classId = node.parent.data.id;
         this.djxq = node.parent.parent.parent.data.id;
         this.xkName = node.data.name;
-        console.log(this.xkName);
         main
           .find(val)
           .then((res) => {
             this.tableData = res.data.list;
-
-            // res.data2.xuekes.map((item) => {
-            //   this.xuekeOpt.push({
-            //     label: item.name,
-            //     value: item.name,
-            //   });
-            // });
+            this.tableLoading = false;
             this.ksOpt = [];
-            console.log("1111111111");
             this.DynamicColumn.map((item) => {
               this.ksOpt.push({ name: item.name, id: item.id });
             });
-            console.log("22222222222222----------", this.ksOpt);
           })
           .catch((err) => {});
       } else if (node.level == 4 && node.data.name == "期末评语") {

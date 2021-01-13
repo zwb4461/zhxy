@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="contain">
-      <div class="left">
+      <el-card class="left">
         <el-tree
           :data="Menu"
           :props="ClassProps"
@@ -9,10 +9,17 @@
           highlight-current
           accordion
         ></el-tree>
-      </div>
+      </el-card>
       <div class="right">
-        <div v-if="TotalName == '总统计表'">
-          <el-table size="small" :data="totalTable" border style="width: 100%">
+        <div v-if="TotalName == '总统计表'" style="width: calc(100% - 100px)">
+          <el-table
+            v-loading="tjLoading"
+            element-loading-text="数据加载中..."
+            size="small"
+            :data="totalTable"
+            border
+            style="width: calc(85% - 20px)"
+          >
             <el-table-column prop="ranking" label="排名"> </el-table-column>
             <el-table-column prop="xh" label="学号"> </el-table-column>
             <el-table-column prop="name" label="姓名"> </el-table-column>
@@ -32,13 +39,15 @@
             <el-table-column prop="score" label="总分"> </el-table-column>
           </el-table>
         </div>
-        <div v-else>
+        <div v-else style="width: calc(100% - 80px)">
           <el-table
+            v-loading="tjLoading"
+            style="width: calc(85% - 10px)"
+            element-loading-text="数据加载中..."
             size="small"
             :render-header="labelHead"
             :data="tableData"
             border
-            style="width: 100%"
             @header-click="headClick"
           >
             <el-table-column
@@ -53,7 +62,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="btn_contain">
+          <div class="btn_contain" style="width: calc(85% - 10px)">
             <div
               v-for="(item, index) in colList"
               :key="index"
@@ -134,11 +143,14 @@
           >
             <template slot-scope="scope">
               <div>
-                {{ scope.row.scores[index] }}
+                <span v-show="index == 0"> {{ scope.row.score }} </span>
+                <span v-show="index != 0">
+                  {{ scope.row.scores[index - 1] }}</span
+                >
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="njPm" label="全年级排名"> </el-table-column>
+          <!-- <el-table-column prop="njPm" label="全年级排名"> </el-table-column> -->
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -170,6 +182,7 @@ export default {
   },
   data() {
     return {
+      tjLoading: false,
       showDetail: false,
       Menu: [],
       colList: [],
@@ -264,6 +277,7 @@ export default {
         //判断是否是总统计表
         this.TotalName = node.data.name;
         if (this.TotalName != "总统计表") {
+          this.tjLoading = true;
           let val = {
             schoolId: this.schoolId,
             ksxkId: node.data.id,
@@ -275,11 +289,14 @@ export default {
           main
             .ksSeeScore(val)
             .then((res) => {
+              this.tjLoading = false;
               this.colList = res.data.data2;
               this.tableData = res.data.data;
             })
             .catch((err) => {});
         } else {
+          this.tjLoading = true;
+
           let val = {
             schoolId: this.schoolId,
             ksxkId: node.data.id,
@@ -291,6 +308,7 @@ export default {
           main
             .ztjSeeScore(val)
             .then((res) => {
+              this.tjLoading = false;
               this.totalTable = res.data.data;
               this.totalColName = res.data.data2;
             })
@@ -364,5 +382,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
 }
 </style>

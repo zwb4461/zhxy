@@ -25,23 +25,32 @@
           >
         </div>
         <div class="contain">
-          <div class="left">
+          <el-card class="left">
             <el-tree
+              v-loading="treeLoading"
+              element-loading-text="菜单加载中..."
               :data="ClassData"
               :props="ClassProps"
               @node-click="clickTree"
               highlight-current
               accordion
             ></el-tree>
-          </div>
-          <div class="right" v-show="isqm == 1">
+          </el-card>
+          <div
+            class="right"
+            v-show="isqm == 1"
+            style="width: calc(100% - 100px)"
+          >
             <el-table
               :data="tableData"
               border
-              style="width: 100%"
+              style="width: calc(85% - 20px)"
+              max-height="600px"
               size="small"
               @cell-click="clickCell"
               :row-class-name="tableRowClassName"
+              v-loading="tableLoading"
+              element-loading-text="数据加载中..."
             >
               <el-table-column prop="xh" label="学号" width="80">
               </el-table-column>
@@ -115,13 +124,20 @@
               </template>
             </el-table>
           </div>
-          <div class="right" v-show="isqm == 2">
+          <div
+            class="right"
+            v-show="isqm == 2"
+            style="width: calc(100% - 100px)"
+          >
             <el-table
               @cell-click="clickCell1"
               size="small"
               :data="qmpyData"
               border
-              style="width: 100%"
+              max-height="600px"
+              style="width: calc(85% - 20px)"
+              v-loading="tableLoading"
+              element-loading-text="数据加载中..."
             >
               <el-table-column prop="xh" label="学号"> </el-table-column>
               <el-table-column prop="name" label="姓名"> </el-table-column>
@@ -168,8 +184,20 @@
               </el-table-column>
             </el-table>
           </div>
-          <div class="right" v-show="isqm == 3">
-            <el-table :data="jcTable" size="small" border style="width: 100%">
+          <div
+            class="right"
+            v-show="isqm == 3"
+            style="width: calc(100% - 100px)"
+          >
+            <el-table
+              :data="jcTable"
+              size="small"
+              border
+              max-height="600px"
+              style="width: calc(85% - 20px)"
+              v-loading="tableLoading"
+              element-loading-text="数据加载中..."
+            >
               <el-table-column prop="xh" label="学号"> </el-table-column>
               <el-table-column prop="name" label="姓名"> </el-table-column>
               <el-table-column prop="className" label="所在班级">
@@ -255,8 +283,20 @@
               </el-table-column>
             </el-table>
           </div>
-          <div class="right" v-show="isqm == 4">
-            <el-table size="small" :data="twTable" border style="width: 100%">
+          <div
+            class="right"
+            v-show="isqm == 4"
+            style="width: calc(100% - 100px)"
+          >
+            <el-table
+              size="small"
+              :data="twTable"
+              border
+              max-height="600px"
+              style="width: calc(85% - 20px)"
+              v-loading="tableLoading"
+              element-loading-text="数据加载中..."
+            >
               <el-table-column prop="xh" label="学号"> </el-table-column>
               <el-table-column prop="name" label="姓名"> </el-table-column>
               <el-table-column prop="tz" label="体重(千克)">
@@ -457,6 +497,8 @@ export default {
   data() {
     return {
       loading: false,
+      treeLoading: false,
+      tableLoading: false,
       twTable: [],
       // ===========
       //奖惩表格数据
@@ -898,6 +940,7 @@ export default {
         node.data.name !== "体卫信息"
       ) {
         this.isqm = 1;
+        this.tableLoading = true;
         let val = {
           schoolId: this.schoolId,
           xkName: node.data.name,
@@ -914,12 +957,7 @@ export default {
           .find(val)
           .then((res) => {
             this.tableData = res.data.list;
-            // res.data2.xuekes.map((item) => {
-            //   this.xuekeOpt.push({
-            //     label: item.name,
-            //     value: item.name,
-            //   });
-            // });
+            this.tableLoading = false;
             this.ksOpt = [];
             console.log(this.DynamicColumn);
             this.DynamicColumn.map((item) => {
@@ -930,6 +968,7 @@ export default {
           })
           .catch((err) => {});
       } else if (node.level == 4 && node.data.name == "期末评语") {
+        this.tableLoading = true;
         this.isqm = 2;
         let val = {
           djxq: node.parent.parent.parent.data.id,
@@ -942,10 +981,12 @@ export default {
         main1
           .selectFinalEvaluate(val)
           .then((res) => {
+            this.tableLoading = false;
             this.qmpyData = res.data;
           })
           .catch((err) => {});
       } else if (node.level == 4 && node.data.name == "奖惩信息") {
+        this.tableLoading = true;
         console.log("奖惩信息");
         this.isqm = 3;
         this.nrOpt = [];
@@ -959,6 +1000,7 @@ export default {
         this.classId = node.parent.data.id;
         this.getJcTable(val);
       } else if (node.level == 4 && node.data.name == "体卫信息") {
+        this.tableLoading = true;
         console.log("体卫信息");
         this.isqm = 4;
         this.classId = node.parent.data.id;
@@ -976,6 +1018,7 @@ export default {
       main3
         .selectSport(val)
         .then((res) => {
+          this.tableLoading = false;
           this.twTable = res.data;
         })
         .catch((err) => {});
@@ -1004,11 +1047,13 @@ export default {
         .findJc(val)
         .then((res) => {
           this.jcTable = res.data;
+          this.tableLoading = false;
         })
         .catch((err) => {});
     },
     //获取树
     getClass() {
+      this.treeLoading = true;
       let val = {
         cjlbId: this.cjlbId,
         unionid: this.unionid,
@@ -1016,6 +1061,7 @@ export default {
       main
         .seeSiji(val)
         .then((res) => {
+          this.treeLoading = false;
           this.ClassData = res.data;
         })
         .catch((err) => {});
@@ -1072,5 +1118,11 @@ export default {
 /deep/.el-upload--text {
   width: 100%;
   text-align: left;
+}
+/deep/.el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: #dcdcdc;
+  color: #2f4f4f;
 }
 </style>

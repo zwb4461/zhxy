@@ -296,8 +296,13 @@ module.exports = {
     seeTakeTJ: baseUrl + "/seeTakeTJ"
   },
   baoxiu: {
-    find: baseUrl + "/repair/list",
-    edit: baseUrl + "/repair/edit",
-    del: baseUrl + "/repair/delete"
+    find: baseUrl + "/repairList",
+    edit: baseUrl + "/repairSave",
+    del: baseUrl + "/repairDelete"
+  },
+  baoxiuCs: {
+    findCs: baseUrl + "/selectRepairCanshu",
+    saveRepairCanshu: baseUrl + "/saveRepairCanshu",
+    selectDdUsers: baseUrl + "/dd-user/selectDdUsers"
   }
 };

@@ -44,6 +44,8 @@
       </div>
       <div class="right">
         <el-table
+          v-loading="tableLoading"
+          element-loading-text="数据加载中..."
           :data="tableData"
           border
           style="width: 100%"
@@ -623,6 +625,7 @@ export default {
   },
   data() {
     return {
+      tableLoading: false,
       showDelExam: false,
       examId: undefined,
       examIdOpt: [],
@@ -1414,6 +1417,7 @@ export default {
     },
     //点击左侧树
     clickTree(data, Node) {
+      this.tableLoading = true;
       this.ksId = Node.parent.data.id;
       this.gradeId = data.id;
       let val = {
@@ -1425,6 +1429,7 @@ export default {
       main
         .find(val)
         .then((res) => {
+          this.tableLoading = false;
           this.tableData = res.data.list[0].xuekes;
           res.data.list[0].showNj.map((item) => {
             if (item.id == this.gradeId) {

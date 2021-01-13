@@ -86,7 +86,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
+    <!-- <el-pagination
       @size-change="changePageSize"
       @current-change="changePageNum"
       :current-page="pageNum"
@@ -95,7 +95,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="totalDataNum"
     >
-    </el-pagination>
+    </el-pagination> -->
     <el-dialog
       :close-on-click-modal="false"
       title="报修"
@@ -276,7 +276,7 @@ export default {
       main
         .find(val)
         .then((res) => {
-          this.tableData = res.data;
+          this.tableData = res.data.record;
         })
         .catch((err) => {});
     },

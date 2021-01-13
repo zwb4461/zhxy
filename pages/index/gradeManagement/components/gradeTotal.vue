@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="contain">
-      <div class="left">
+      <el-card class="left">
         <el-tree
           :data="Menu"
           :props="ClassProps"
@@ -9,10 +9,18 @@
           highlight-current
           accordion
         ></el-tree>
-      </div>
+      </el-card>
       <div class="right">
-        <div v-if="TotalName == '总统计表'">
-          <el-table size="small" :data="totalTable" border style="width: 100%">
+        <div v-if="TotalName == '总统计表'" style="width: calc(100% - 100px)">
+          <el-table
+            v-loading="tjLoading"
+            element-loading-text="数据加载中..."
+            size="small"
+            :data="totalTable"
+            border
+            max-height="600px"
+            style="width: calc(85% - 20px)"
+          >
             <el-table-column prop="ranking" label="排名"> </el-table-column>
             <el-table-column prop="xh" label="学号"> </el-table-column>
             <el-table-column prop="name" label="姓名"> </el-table-column>
@@ -29,9 +37,11 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="score" label="总分"> </el-table-column>
+            <el-table-column prop="score" label="总分" fixed="right">
+            </el-table-column>
           </el-table>
         </div>
+
         <div v-else>
           <el-table
             size="small"
@@ -171,6 +181,7 @@ export default {
   },
   data() {
     return {
+      tjLoading: false,
       showDetail: false,
       Menu: [],
       colList: [],
@@ -281,6 +292,7 @@ export default {
             })
             .catch((err) => {});
         } else {
+          this.tjLoading = true;
           let val = {
             schoolId: this.schoolId,
             ksxkId: node.data.id,
@@ -292,6 +304,7 @@ export default {
           main
             .ztjSeeScore(val)
             .then((res) => {
+              this.tjLoading = false;
               this.totalTable = res.data.data;
               this.totalColName = res.data.data2;
             })
