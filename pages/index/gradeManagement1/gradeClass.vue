@@ -21,7 +21,7 @@
             type="primary"
             style="width: 108px"
             @click="cjdr"
-            >选择文件</el-button
+            >成绩导入</el-button
           >
         </div>
         <div class="contain">
@@ -36,15 +36,11 @@
               accordion
             ></el-tree>
           </el-card>
-          <div
-            class="right"
-            v-show="isqm == 1"
-            style="width: calc(100% - 100px)"
-          >
+          <div class="right" v-show="isqm == 1" style="width: 100%">
             <el-table
               :data="tableData"
               border
-              style="width: calc(85% - 20px)"
+              style="width: calc(100% - 20px)"
               max-height="600px"
               size="small"
               @cell-click="clickCell"
@@ -124,24 +120,22 @@
               </template>
             </el-table>
           </div>
-          <div
-            class="right"
-            v-show="isqm == 2"
-            style="width: calc(100% - 100px)"
-          >
+          <div class="right" v-show="isqm == 2" style="width: 100%">
             <el-table
               @cell-click="clickCell1"
               size="small"
               :data="qmpyData"
               border
               max-height="600px"
-              style="width: calc(85% - 20px)"
+              style="width: calc(100% - 20px)"
               v-loading="tableLoading"
               element-loading-text="数据加载中..."
             >
-              <el-table-column prop="xh" label="学号"> </el-table-column>
-              <el-table-column prop="name" label="姓名"> </el-table-column>
-              <el-table-column prop="illness" label="病事假天数">
+              <el-table-column prop="xh" label="学号" width="80">
+              </el-table-column>
+              <el-table-column prop="name" label="姓名" width="80">
+              </el-table-column>
+              <el-table-column prop="illness" label="病事假天数" width="100">
                 <template slot-scope="scope">
                   <el-input
                     @blur="editQmpy(scope.row)"
@@ -154,7 +148,7 @@
                 <template slot-scope="scope">
                   <div>
                     <el-popover trigger="hover" placement="top">
-                      <div style="width: 380px">
+                      <div style="width: 100%">
                         <p>{{ scope.row.comment }}</p>
                       </div>
                       <div
@@ -162,7 +156,7 @@
                         style="
                           display: inline-block;
                           white-space: nowrap;
-                          width: 220px;
+                          width: 100%;
                           overflow: hidden;
                           text-overflow: ellipsis;
                         "
@@ -184,17 +178,13 @@
               </el-table-column>
             </el-table>
           </div>
-          <div
-            class="right"
-            v-show="isqm == 3"
-            style="width: calc(100% - 100px)"
-          >
+          <div class="right" v-show="isqm == 3" style="width: 100%">
             <el-table
               :data="jcTable"
               size="small"
               border
               max-height="600px"
-              style="width: calc(85% - 20px)"
+              style="width: calc(100% - 20px)"
               v-loading="tableLoading"
               element-loading-text="数据加载中..."
             >
@@ -282,18 +272,19 @@
                 </template>
               </el-table-column>
             </el-table>
+            <div class="add">
+              <el-button size="small" style="width: 100%" @click="addTable"
+                >+</el-button
+              >
+            </div>
           </div>
-          <div
-            class="right"
-            v-show="isqm == 4"
-            style="width: calc(100% - 100px)"
-          >
+          <div class="right" v-show="isqm == 4" style="width: 100%">
             <el-table
               size="small"
               :data="twTable"
               border
               max-height="600px"
-              style="width: calc(85% - 20px)"
+              style="width: calc(100% - 20px)"
               v-loading="tableLoading"
               element-loading-text="数据加载中..."
             >
@@ -418,7 +409,7 @@
         <el-button type="primary" @click="submitPlcl">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="选择文件" :visible.sync="showCjdr" width="30%">
+    <el-dialog title="成绩导入" :visible.sync="showCjdr" width="30%">
       <div v-loading="loading">
         <el-cascader
           @change="handleChange"
@@ -426,13 +417,12 @@
           style="width: 95%"
           :props="cascaderProp"
           v-model="cjdrData"
-          :options="ClassData"
+          :options="TreeData"
         ></el-cascader>
         <div class="cjdrBtn">
           <el-upload
             style="width: 100%"
             action="http://103.219.33.112:10010/importStuScore"
-            :limit="1"
             :show-file-list="false"
             name="file"
             :on-success="fileInSuccess"
@@ -496,6 +486,8 @@ export default {
   },
   data() {
     return {
+      studentId: undefined,
+      jcName: "",
       loading: false,
       treeLoading: false,
       tableLoading: false,
@@ -551,6 +543,7 @@ export default {
       ],
       tableData: [], //表格数据
       ClassData: [], //班级树形数据
+      TreeData: [], //班级树形数据
       ClassProps: {
         //班级-树形的默认设置
         children: "children",
@@ -610,7 +603,6 @@ export default {
       }
     },
     edit(row) {
-      console.log("edit");
       //根据选择奖励还是惩罚赋值给内容选项列表
       this.changeNrOpt(row);
       //修改表格
@@ -623,6 +615,7 @@ export default {
             classId: this.classId,
             cjlbId: this.cjlbId,
             djxq: this.djxq,
+            name: this.jcName,
           };
           this.getJcTable(val);
         })
@@ -931,8 +924,30 @@ export default {
         })
         .catch((err) => {});
     },
+    //添加奖惩表格
+    addTable() {
+      let val = {
+        cjlbId: this.cjlbId,
+        studentId: this.studentId,
+        djxq: this.djxq,
+      };
+      main2
+        .saveMoralPrize(val)
+        .then((res) => {
+          let val = {
+            classId: this.classId,
+            cjlbId: this.cjlbId,
+            name: this.jcName,
+            djxq: this.djxq,
+          };
+          console.log(val);
+          this.getJcTable(val);
+        })
+        .catch((err) => {});
+    },
     //   点击树
     clickTree(data, node, obj) {
+      console.log(node);
       if (
         node.level == 4 &&
         node.data.name !== "期末评语" &&
@@ -961,7 +976,7 @@ export default {
             this.ksOpt = [];
             console.log(this.DynamicColumn);
             this.DynamicColumn.map((item) => {
-              if (item.lrqx == "任课老师") {
+              if (item.lrqx == "任课老师" && item.havelr == 1) {
                 this.ksOpt.push({ name: item.name, id: item.id });
               }
             });
@@ -985,19 +1000,21 @@ export default {
             this.qmpyData = res.data;
           })
           .catch((err) => {});
-      } else if (node.level == 4 && node.data.name == "奖惩信息") {
+      } else if (node.level == 5) {
         this.tableLoading = true;
-        console.log("奖惩信息");
         this.isqm = 3;
         this.nrOpt = [];
         this.classId = node.parent.data.id;
         let val = {
-          classId: node.parent.data.id,
+          classId: node.parent.parent.data.id,
           cjlbId: this.cjlbId,
-          djxq: node.parent.parent.parent.data.id,
+          djxq: node.parent.parent.parent.parent.data.id,
+          name: node.data.name,
         };
-        this.djxq = node.parent.parent.parent.data.id;
-        this.classId = node.parent.data.id;
+        this.djxq = node.parent.parent.parent.parent.data.id;
+        this.classId = node.parent.parent.data.id;
+        this.jcName = node.data.name;
+        this.studentId = node.data.id;
         this.getJcTable(val);
       } else if (node.level == 4 && node.data.name == "体卫信息") {
         this.tableLoading = true;
@@ -1066,6 +1083,20 @@ export default {
         })
         .catch((err) => {});
     },
+    //获取导入菜单
+    getTree() {
+      let val = {
+        cjlbId: this.cjlbId,
+        unionid: this.unionid,
+        type: 2,
+      };
+      main
+        .seeSiji(val)
+        .then((res) => {
+          this.TreeData = res.data;
+        })
+        .catch((err) => {});
+    },
     // 批量处理
     plDeal() {
       this.showPlcl = true;
@@ -1080,6 +1111,7 @@ export default {
     console.log("cjlbId", this.cjlbId);
     this.getClass();
     this.getJcOptTable();
+    this.getTree();
   },
 };
 </script>
@@ -1088,7 +1120,6 @@ export default {
 .condition {
   width: 100%;
   height: 50px;
-  /* border: 1px solid red; */
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -1124,5 +1155,9 @@ export default {
   > .el-tree-node__content {
   background-color: #dcdcdc;
   color: #2f4f4f;
+}
+.add {
+  width: 100%;
+  height: 50px;
 }
 </style>

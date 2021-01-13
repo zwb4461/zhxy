@@ -148,12 +148,13 @@ const getNewMenu = power => {
         }
       ]
     },
+    //暂去
     {
       key: "15",
       title: "成绩管理",
       icon: "file",
-      hide: true,
-      power: "m-18",
+      //   hide: true,
+      //   power: "m-18",
       meta: {
         title: "成绩管理"
         // affix: true,
@@ -171,8 +172,8 @@ const getNewMenu = power => {
         {
           key: "gradeIn",
           title: "成绩录入",
-          hide: true,
-          power: "m-18-4",
+          //   hide: true,
+          //   power: "m-18-4",
           meta: {
             title: "成绩录入"
           }

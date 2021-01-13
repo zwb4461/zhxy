@@ -15,31 +15,35 @@
         >模板下载</el-button
       >
       <el-button size="small" type="primary" style="width: 108px" @click="cjdr"
-        >选择文件</el-button
+        >成绩导入</el-button
       >
     </div>
     <div class="contain">
-      <div class="left">
+      <el-card class="left">
         <el-tree
+          v-loading="treeLoading"
+          element-loading-text="菜单加载中..."
           :data="ClassData"
           :props="ClassProps"
           @node-click="clickTree"
           highlight-current
           accordion
         ></el-tree>
-      </div>
-      <div class="right">
+      </el-card>
+      <div class="right" style="width: 100%">
         <el-table
+          v-loading="tableLoading"
+          element-loading-text="数据加载中..."
           :data="tableData"
           border
-          style="width: 100%"
+          style="width: calc(100% - 20px)"
+          max-height="600px"
           size="small"
           @cell-click="clickCell"
           :row-class-name="tableRowClassName"
         >
-          <el-table-column prop="xh" label="学号" width="180">
-          </el-table-column>
-          <el-table-column prop="name" label="姓名" width="180">
+          <el-table-column prop="xh" label="学号" width="80"> </el-table-column>
+          <el-table-column prop="name" label="姓名" width="80">
           </el-table-column>
 
           <template v-for="(item, index) in DynamicColumn">
@@ -178,7 +182,7 @@
       :commentRow="commentRow"
       :getTable="reData"
     ></qmpy>
-    <el-dialog title="选择文件" :visible.sync="showCjdr" width="30%">
+    <el-dialog title="成绩导入" :visible.sync="showCjdr" width="30%">
       <div v-loading="loading">
         <el-cascader
           @change="handleChange"
@@ -256,6 +260,8 @@ export default {
   },
   data() {
     return {
+      tableLoading: false,
+      treeLoading: false,
       loading: false,
       cjdrValue: {
         cjlbId: "",
@@ -394,7 +400,7 @@ export default {
           classId: this.classId,
           ksId: this.ksId,
           schoolId: this.schoolId,
-          xuekeName: this.xkName,
+          xkName: this.xkName,
         };
         main1
           .batchQc(val)
@@ -416,7 +422,7 @@ export default {
           ksId: this.ksId,
           schoolId: this.schoolId,
           score: this.ddName ? this.ddName : this.plfz,
-          xuekeName: this.xkName,
+          xkName: this.xkName,
         };
         main1
           .batchHandle(val)
@@ -585,6 +591,7 @@ export default {
     //   点击树
     clickTree(data, node, obj) {
       if (node.level == 4) {
+        this.tableLoading = true;
         let val = {
           schoolId: this.schoolId,
           xkName: node.data.name,
@@ -599,13 +606,8 @@ export default {
         main
           .find(val)
           .then((res) => {
+            this.tableLoading = false;
             this.tableData = res.data.list;
-            // res.data2.xuekes.map((item) => {
-            //   this.xuekeOpt.push({
-            //     label: item.name,
-            //     value: item.name,
-            //   });
-            // });
             this.ksOpt = [];
             console.log(this.DynamicColumn);
             this.DynamicColumn.map((item) => {
@@ -619,6 +621,7 @@ export default {
     },
     //获取树
     getClass() {
+      this.treeLoading = true;
       let val = {
         cjlbId: this.cjlbId,
         gradeId: this.njId,
@@ -628,6 +631,7 @@ export default {
         .seeSiji(val)
         .then((res) => {
           this.ClassData = res.data;
+          this.treeLoading = false;
         })
         .catch((err) => {});
     },

@@ -9,7 +9,6 @@
           <el-upload
             style="margin-left: 10px"
             action="http://103.219.33.112:10010/importTwsz"
-            :limit="1"
             :show-file-list="false"
             name="uploadFile"
             :on-success="fileInSuccess"

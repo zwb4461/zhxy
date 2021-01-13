@@ -11,14 +11,14 @@
         ></el-tree>
       </el-card>
       <div class="right">
-        <div v-if="TotalName == '总统计表'" style="width: calc(100% - 100px)">
+        <div v-if="TotalName == '总统计表'" style="width: 100%">
           <el-table
             v-loading="tjLoading"
             element-loading-text="数据加载中..."
             size="small"
             :data="totalTable"
             border
-            style="width: calc(85% - 20px)"
+            style="width: calc(100% - 20px)"
           >
             <el-table-column prop="ranking" label="排名"> </el-table-column>
             <el-table-column prop="xh" label="学号"> </el-table-column>
@@ -39,10 +39,10 @@
             <el-table-column prop="score" label="总分"> </el-table-column>
           </el-table>
         </div>
-        <div v-else style="width: calc(100% - 80px)">
+        <div v-else style="width: 100%">
           <el-table
             v-loading="tjLoading"
-            style="width: calc(85% - 10px)"
+            style="width: calc(100% - 20px)"
             element-loading-text="数据加载中..."
             size="small"
             :render-header="labelHead"
@@ -62,7 +62,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="btn_contain" style="width: calc(85% - 10px)">
+          <div class="btn_contain" style="width: calc(100% - 20px)">
             <div
               v-for="(item, index) in colList"
               :key="index"
@@ -81,7 +81,7 @@
         </div>
       </div>
     </div>
-    <el-dialog title="统计" :visible.sync="showDetail" width="40%">
+    <el-dialog title="统计" :visible.sync="showDetail" width="50%">
       <el-button
         @click="exportExcel"
         style="margin-bottom: 15px"
@@ -143,8 +143,8 @@
           >
             <template slot-scope="scope">
               <div>
-                <span v-show="index == 0"> {{ scope.row.score }} </span>
-                <span v-show="index != 0">
+                <span v-if="index == 0"> {{ scope.row.score }} </span>
+                <span v-if="index != 0">
                   {{ scope.row.scores[index - 1] }}</span
                 >
               </div>
@@ -247,7 +247,6 @@ export default {
           this.detailData = res.data.data;
           this.DetailTable = res.data.data.seeScoreList;
           this.detailDataCol = res.data.data2;
-          console.log("this.DetailTable", this.DetailTable);
           this.showDetail = true;
         })
         .catch((err) => {});
@@ -282,6 +281,7 @@ export default {
             schoolId: this.schoolId,
             ksxkId: node.data.id,
             gradeId: node.parent.parent.data.id,
+            unionid: this.unionid,
           };
           console.log(val);
           this.ksxkId = node.data.id;

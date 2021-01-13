@@ -33,29 +33,31 @@
       >
     </div>
     <div class="contain">
-      <div class="left">
+      <el-card class="left">
         <el-tree
+          v-loading="treeLoading"
+          element-loading-text="菜单加载中..."
           :data="treeData"
           :props="defaultProps"
           @node-click="clickTree"
           default-expand-all
           highlight-current
         ></el-tree>
-      </div>
-      <div class="right">
+      </el-card>
+      <div class="right" style="width: 100%">
         <el-table
           v-loading="tableLoading"
           element-loading-text="数据加载中..."
           :data="tableData"
           border
-          style="width: 100%"
+          style="width: calc(100%-20px)"
           size="small"
           @cell-click="clickCell"
           @header-click="addColumn"
           :header-cell-style="{ 'text-align': 'center' }"
         >
           >
-          <el-table-column prop="name" label="学科/设置" width="180">
+          <el-table-column prop="name" label="学科/设置" width="120">
             <template slot-scope="scope">
               <el-select
                 :disabled="isLock == 1"
@@ -77,7 +79,7 @@
           <el-table-column
             prop="islock"
             label="录入锁定"
-            width="120"
+            width="100"
             align="center"
           >
             <template slot-scope="scope">
@@ -87,12 +89,12 @@
               ></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column prop="kssj" label="考试时间" width="180">
+          <el-table-column prop="kssj" label="考试时间" width="160">
             <template slot-scope="scope">
               <el-date-picker
                 :disabled="isLock == 1"
                 @change="kssjChange(scope)"
-                style="width: 150px"
+                style="width: 100%"
                 size="small"
                 v-model="scope.row.kssj"
                 type="date"
@@ -625,6 +627,7 @@ export default {
   },
   data() {
     return {
+      treeLoading: false,
       tableLoading: false,
       showDelExam: false,
       examId: undefined,
@@ -1393,6 +1396,7 @@ export default {
     },
     //获取左侧树形列表
     getTreeData() {
+      this.treeLoading = true;
       let val = {
         cjlbId: this.cjlbId,
         djxq: parseInt(this.djxq),
@@ -1400,8 +1404,8 @@ export default {
       main
         .find(val)
         .then((res) => {
+          this.treeLoading = false;
           this.treeData = res.data.list;
-          console.log("  this.treeData-------", this.treeData);
           let arr = [];
           res.data.list.map((item) => {
             arr.push({
@@ -1522,25 +1526,6 @@ export default {
         })
         .catch((err) => {});
     },
-    // zhLrqx(lrqx) {
-    //   if (lrqx) {
-    //     if (lrqx == "任课老师") {
-    //       return "任课老师";
-    //     } else {
-    //       let arr = [];
-    //       let str = [];
-    //       arr = lrqx.split(",");
-    //       this.zdjsOpt.map((item) => {
-    //         arr.map((subItem) => {
-    //           if (item.teacherUnionid == subItem) {
-    //             str.push(item.teacherName);
-    //           }
-    //         });
-    //       });
-    //       return str.join(",");
-    //     }
-    //   }
-    // },
   },
   created() {
     this.getTreeData();
@@ -1561,19 +1546,19 @@ export default {
   align-items: center;
 }
 .contain {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
 }
 .left {
   width: 250px;
-  min-height: 500px;
+  min-width: 250px;
+  min-height: 250px;
   border: 1px solid #eeeeee;
 }
 .right {
   width: 100%;
-  min-height: 500px;
-  margin-left: 15px;
+  padding-left: 15px;
 }
 .addRow {
   width: 100%;

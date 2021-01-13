@@ -33,7 +33,7 @@
       >
     </div>
     <div class="contain">
-      <div class="left">
+      <el-card class="left">
         <el-tree
           :data="treeData"
           :props="defaultProps"
@@ -41,19 +41,19 @@
           default-expand-all
           highlight-current
         ></el-tree>
-      </div>
-      <div class="right">
+      </el-card>
+      <div class="right" style="width: 100%">
         <el-table
           :data="tableData"
           border
-          style="width: 100%"
+          style="width: calc(100%-20px)"
           size="small"
           @cell-click="clickCell"
           @header-click="addColumn"
           :header-cell-style="{ 'text-align': 'center' }"
         >
           >
-          <el-table-column prop="name" label="学科/设置" width="180">
+          <el-table-column prop="name" label="学科/设置" width="120">
             <template slot-scope="scope">
               <el-select
                 :disabled="isLock == 1"
@@ -72,12 +72,25 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="kssj" label="考试时间" width="180">
+          <el-table-column
+            prop="islock"
+            label="录入锁定"
+            width="100"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <el-checkbox
+                @change="lrsdChange(scope)"
+                v-model="scope.row.islock"
+              ></el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column prop="kssj" label="考试时间" width="160">
             <template slot-scope="scope">
               <el-date-picker
                 :disabled="isLock == 1"
                 @change="kssjChange(scope)"
-                style="width: 150px"
+                style="width: 100%"
                 size="small"
                 v-model="scope.row.kssj"
                 type="date"
@@ -1184,6 +1197,20 @@ export default {
     zhChang(val) {
       console.log(val);
     },
+    lrsdChange(scope) {
+      let val = {
+        id: scope.row.id,
+        gradeId: this.gradeId,
+        ksId: this.ksId,
+        islock: scope.row.islock,
+      };
+      main
+        .editXk(val)
+        .then((res) => {
+          this.hxTabel();
+        })
+        .catch((err) => {});
+    },
     //改变数据来源
     changSjly(val) {
       console.log("val", val);
@@ -1536,19 +1563,19 @@ export default {
   align-items: center;
 }
 .contain {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
 }
 .left {
   width: 250px;
+  min-width: 250px;
   min-height: 500px;
   border: 1px solid #eeeeee;
 }
 .right {
   width: 100%;
-  min-height: 500px;
-  margin-left: 15px;
+  padding-left: 15px;
 }
 .addRow {
   width: 100%;

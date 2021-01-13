@@ -16,13 +16,13 @@ export default {
   name: "ScrollPane",
   data() {
     return {
-      left: 0
+      left: 0,
     };
   },
   computed: {
     scrollWrapper() {
       return this.$refs.scrollContainer.$refs.wrap;
-    }
+    },
   },
   methods: {
     handleScroll(e) {
@@ -52,7 +52,7 @@ export default {
           $scrollWrapper.scrollWidth - $containerWidth;
       } else {
         // find preTag and nextTag
-        const currentIndex = tagList.findIndex(item => item === currentTag);
+        const currentIndex = tagList.findIndex((item) => item === currentTag);
         const prevTag = tagList[currentIndex - 1];
         const nextTag = tagList[currentIndex + 1];
 
@@ -73,8 +73,8 @@ export default {
           $scrollWrapper.scrollLeft = beforePrevTagOffsetLeft;
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

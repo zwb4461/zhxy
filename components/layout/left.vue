@@ -83,8 +83,8 @@ export default {
 }
 /deep/ .ant-layout-sider-trigger,
 .ant-layout-sider {
-  overflow-x: hidden !important;
-  overflow-y: hidden !important;
+  //   overflow-x: hidden !important;
+  //   overflow-y: hidden !important;
   background: #fafafa;
 }
 // /deep/.ant-menu-item{

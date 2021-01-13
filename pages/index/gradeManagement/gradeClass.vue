@@ -36,11 +36,11 @@
             type="primary"
             style="width: 108px"
             @click="cjdr"
-            >选择文件</el-button
+            >成绩导入</el-button
           >
         </div>
         <div class="contain">
-          <div class="left">
+          <el-card class="left">
             <el-tree
               :data="ClassData"
               :props="ClassProps"
@@ -48,12 +48,12 @@
               highlight-current
               accordion
             ></el-tree>
-          </div>
-          <div class="right" v-if="!isqm" style="width: calc(100% - 100px)">
+          </el-card>
+          <div class="right" v-if="!isqm" style="width: 100%">
             <el-table
               :data="tableData"
               border
-              style="width: calc(85% - 20px)"
+              style="width: calc(100% - 20px)"
               max-height="600px"
               size="small"
               @cell-click="clickCell"
@@ -61,9 +61,9 @@
               v-loading="tableLoading"
               element-loading-text="数据加载中..."
             >
-              <el-table-column prop="xh" label="学号" width="180">
+              <el-table-column prop="xh" label="学号" width="80">
               </el-table-column>
-              <el-table-column prop="name" label="姓名" width="180">
+              <el-table-column prop="name" label="姓名" width="80">
               </el-table-column>
 
               <template v-for="(item, index) in DynamicColumn">
@@ -124,13 +124,13 @@
               </template>
             </el-table>
           </div>
-          <div class="right" v-else-if="isqm" style="width: calc(100% - 100px)">
+          <div class="right" v-else-if="isqm" style="width: 100%">
             <el-table
               @cell-click="clickCell1"
               size="small"
               :data="qmpyData"
               border
-              style="width: calc(85% - 20px)"
+              style="width: calc(100% - 20px)"
             >
               <el-table-column prop="xh" label="学号" width="100">
               </el-table-column>
@@ -266,7 +266,7 @@
         <el-button type="primary" @click="submitPlcl">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="选择文件" :visible.sync="showCjdr" width="30%">
+    <el-dialog title="成绩导入" :visible.sync="showCjdr" width="30%">
       <div v-loading="loading">
         <el-cascader
           @change="handleChange"
@@ -514,7 +514,7 @@ export default {
           classId: this.classId,
           ksId: this.ksId,
           schoolId: this.schoolId,
-          xuekeName: this.xkName,
+          xkName: this.xkName,
         };
         main1
           .batchQc(val)
@@ -536,7 +536,7 @@ export default {
           ksId: this.ksId,
           schoolId: this.schoolId,
           score: this.ddName ? this.ddName : this.plfz,
-          xuekeName: this.xkName,
+          xkName: this.xkName,
         };
         main1
           .batchHandle(val)

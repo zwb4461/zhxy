@@ -1,6 +1,6 @@
 <template>
   <div class="contain">
-    <div class="left">
+    <el-card class="left">
       <el-tree
         :data="treeData"
         :props="defaultProps"
@@ -8,7 +8,7 @@
         highlight-current
         accordion
       ></el-tree>
-    </div>
+    </el-card>
     <div style="margin-left: 15px">
       <el-button v-if="cjd" type="primary" size="small" v-print="'#printTest'"
         >打印</el-button

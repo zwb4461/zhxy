@@ -11,7 +11,7 @@
         ></el-tree>
       </el-card>
       <div class="right">
-        <div v-if="TotalName == '总统计表'" style="width: calc(100% - 100px)">
+        <div v-if="TotalName == '总统计表'" style="width: 100%">
           <el-table
             v-loading="tjLoading"
             element-loading-text="数据加载中..."
@@ -19,7 +19,7 @@
             :data="totalTable"
             border
             max-height="600px"
-            style="width: calc(85% - 20px)"
+            style="width: calc(78% - 20px)"
           >
             <el-table-column prop="ranking" label="排名"> </el-table-column>
             <el-table-column prop="xh" label="学号"> </el-table-column>
@@ -82,7 +82,7 @@
         </div>
       </div>
     </div>
-    <el-dialog title="统计" :visible.sync="showDetail" width="40%">
+    <el-dialog title="统计" :visible.sync="showDetail" width="50%">
       <el-button
         @click="exportExcel"
         style="margin-bottom: 15px"
