@@ -303,6 +303,7 @@ module.exports = {
   baoxiuCs: {
     findCs: baseUrl + "/selectRepairCanshu",
     saveRepairCanshu: baseUrl + "/saveRepairCanshu",
-    selectDdUsers: baseUrl + "/dd-user/selectDdUsers"
+    selectDdUsers: baseUrl + "/dd-user/selectDdUsers",
+    getNjBj: baseUrl + "/getNjBj"
   }
 };

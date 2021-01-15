@@ -14,275 +14,279 @@
         >打印</el-button
       >
     </div>
-    <div class="right" v-if="cjd" id="printTest">
-      <div
-        class="info1"
-        style="height: 100px; font-weight: none; font-size: 18px"
-      >
-        <span>{{ tableData.title }}</span>
-      </div>
-      <div class="info1">
-        <span>小 学 生 全 面 素 质 报 告 单</span>
-      </div>
-      <div class="info">
-        <span>姓名：{{ tableData.name }}</span>
-        <span>性别：{{ tableData.sex == 1 ? "男" : "女" }}</span>
-        <span>班级：{{ tableData.className }}</span>
-        <span>学号：{{ tableData.xh }}</span>
-      </div>
-      <div class="topTitle"><span>一、学科基础知识和能力</span></div>
-      <div class="kaoshi_contain">
+    <!-- v-if="cjd" -->
+    <div
+      class="grade_contain"
+      id="printTest"
+      v-loading="loading"
+      element-loading-text="成绩单加载中..."
+    >
+      <div class="right" v-for="(XkItem, index) in tableData" :key="index">
         <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
+          class="info1"
+          style="height: 100px; font-weight: none; font-size: 18px"
         >
-          <span>{{ tableData.names[index] }}</span>
+          <span>{{ XkItem.title }}</span>
         </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span>{{ tableData.names[index] }}</span>
+        <div class="info1">
+          <span>小 学 生 全 面 素 质 报 告 单</span>
         </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span>{{ tableData.names[index] }}</span>
+        <div class="info">
+          <span>姓名：{{ XkItem.name }}</span>
+          <span>性别：{{ XkItem.sex == 1 ? "男" : "女" }}</span>
+          <span>班级：{{ XkItem.className }}</span>
+          <span>学号：{{ XkItem.xh }}</span>
         </div>
-      </div>
-      <!-- 成绩部分 -->
-      <!--  v-if="gradeRowNum >= 1" -->
-      <div class="kaoshi_contain">
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[0]">{{ tableData.xkMap[0][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[4]">{{ tableData.xkMap[4][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[8]">{{ tableData.xkMap[8][index] }}</span>
-        </div>
-      </div>
-      <!-- v-if="gradeRowNum >= 2" -->
-      <div class="kaoshi_contain">
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[1]">{{ tableData.xkMap[1][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[5]">{{ tableData.xkMap[5][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[9]">{{ tableData.xkMap[9][index] }}</span>
-        </div>
-      </div>
-      <!--  v-if="gradeRowNum >= 3" -->
-      <div class="kaoshi_contain">
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[2]">{{ tableData.xkMap[2][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[6]">{{ tableData.xkMap[6][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[10]">{{
-            tableData.xkMap[10][index]
-          }}</span>
-        </div>
-      </div>
-      <!-- v-if="gradeRowNum >= 4" -->
-      <div class="kaoshi_contain">
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[3]">{{ tableData.xkMap[3][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[7]">{{ tableData.xkMap[7][index] }}</span>
-        </div>
-        <div
-          class="kaoshi"
-          :style="{ width: xkWid + '%' }"
-          v-for="(item, index) in xkNum"
-          :key="index"
-        >
-          <span v-if="tableData.xkMap[11]">{{
-            tableData.xkMap[11][index]
-          }}</span>
-        </div>
-      </div>
-      <!-- 奖惩和出勤 -->
-      <div class="jccq">
-        <div class="jcText" :style="{ width: xkWid + '%' }">
-          <span>奖惩</span>
-        </div>
-        <div
-          class="jc"
-          :style="{
-            width: 4 * xkWid + '%',
-            'flex-direction': 'column',
-            height: '105px',
-          }"
-        >
-          <span v-for="(item, index) in tableData.prizes" :key="index">
-            {{ item.current }}
-          </span>
-        </div>
-        <div class="jcText" :style="{ width: xkWid + '%' }">
-          <span>出勤</span>
-        </div>
-        <div class="jcText1" :style="{ width: (100 - 6 * xkWid) / 2 + '%' }">
-          <div class="one"><span>应出席（天）</span></div>
-          <div class="two">
-            <span>{{ tableData.ycx }}</span>
+        <div class="topTitle"><span>一、学科基础知识和能力</span></div>
+        <div class="kaoshi_contain">
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span>{{ XkItem.names[index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span>{{ XkItem.names[index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%', 'font-weight': 'bold' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span>{{ XkItem.names[index] }}</span>
           </div>
         </div>
-        <div class="jcText1" :style="{ width: (100 - 6 * xkWid) / 2 + '%' }">
-          <div class="one"><span>病事假（天）</span></div>
-          <div class="two">
-            <span>{{ tableData.illness }}</span>
+        <!-- 成绩部分 -->
+        <!--  v-if="gradeRowNum >= 1" -->
+        <div class="kaoshi_contain">
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[0]">{{ XkItem.xkMap[0][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[4]">{{ XkItem.xkMap[4][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[8]">{{ XkItem.xkMap[8][index] }}</span>
           </div>
         </div>
-      </div>
-      <!-- 品德评语 -->
-      <div class="pdpy_contain">
-        <div class="pdpy" :style="{ width: xkWid + '%' }">
-          <span style="width: 15px">品德评语</span>
+        <!-- v-if="gradeRowNum >= 2" -->
+        <div class="kaoshi_contain">
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[1]">{{ XkItem.xkMap[1][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[5]">{{ XkItem.xkMap[5][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[9]">{{ XkItem.xkMap[9][index] }}</span>
+          </div>
         </div>
-        <div class="jc" :style="{ width: 100 - xkWid + '%' }">
-          <span>{{ tableData.comment }}</span>
+        <!--  v-if="gradeRowNum >= 3" -->
+        <div class="kaoshi_contain">
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[2]">{{ XkItem.xkMap[2][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[6]">{{ XkItem.xkMap[6][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[10]">{{ XkItem.xkMap[10][index] }}</span>
+          </div>
         </div>
-      </div>
-      <div class="bottom">
-        <div class="bottom_one">
-          <span>二、课外兴趣、爱好和特长</span>
+        <!-- v-if="gradeRowNum >= 4" -->
+        <div class="kaoshi_contain">
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[3]">{{ XkItem.xkMap[3][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[7]">{{ XkItem.xkMap[7][index] }}</span>
+          </div>
+          <div
+            class="kaoshi"
+            :style="{ width: xkWid + '%' }"
+            v-for="(item, index) in xkNum"
+            :key="index"
+          >
+            <span v-if="XkItem.xkMap[11]">{{ XkItem.xkMap[11][index] }}</span>
+          </div>
         </div>
-        <div class="bottom_two">
-          <span>三、身体形态、机能、素质</span>
-        </div>
-      </div>
-      <div class="final">
-        <div class="finalLeft">{{ tableData.hobby }}</div>
-        <div class="finalRight">
-          <div class="finalRightTop">
-            <div class="xb">
-              <span>项别</span>
+        <!-- 奖惩和出勤 -->
+        <div class="jccq">
+          <div class="jcText" :style="{ width: xkWid + '%' }">
+            <span>奖惩</span>
+          </div>
+          <div
+            class="jc"
+            :style="{
+              width: 4 * xkWid + '%',
+              'flex-direction': 'column',
+              height: '105px',
+            }"
+          >
+            <span v-for="(item, index) in XkItem.prizes" :key="index">
+              {{ item.current }}
+            </span>
+          </div>
+          <div class="jcText" :style="{ width: xkWid + '%' }">
+            <span>出勤</span>
+          </div>
+          <div class="jcText1" :style="{ width: (100 - 6 * xkWid) / 2 + '%' }">
+            <div class="one"><span>应出席（天）</span></div>
+            <div class="two">
+              <span>{{ XkItem.ycx }}</span>
             </div>
-            <div class="xb">
-              <span>体重（千克）</span>
+          </div>
+          <div class="jcText1" :style="{ width: (100 - 6 * xkWid) / 2 + '%' }">
+            <div class="one"><span>病事假（天）</span></div>
+            <div class="two">
+              <span>{{ XkItem.illness }}</span>
             </div>
-            <div class="xb">
-              <span>身高（厘米）</span>
+          </div>
+        </div>
+        <!-- 品德评语 -->
+        <div class="pdpy_contain">
+          <div class="pdpy" :style="{ width: xkWid + '%' }">
+            <span style="width: 15px">品德评语</span>
+          </div>
+          <div class="jc" :style="{ width: 100 - xkWid + '%' }">
+            <span>{{ XkItem.comment }}</span>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="bottom_one">
+            <span>二、课外兴趣、爱好和特长</span>
+          </div>
+          <div class="bottom_two">
+            <span>三、身体形态、机能、素质</span>
+          </div>
+        </div>
+        <div class="final">
+          <div class="finalLeft">{{ XkItem.hobby }}</div>
+          <div class="finalRight">
+            <div class="finalRightTop">
+              <div class="xb">
+                <span>项别</span>
+              </div>
+              <div class="xb">
+                <span>体重（千克）</span>
+              </div>
+              <div class="xb">
+                <span>身高（厘米）</span>
+              </div>
+              <div class="xb11">
+                <div class="slt1"><span>视力</span></div>
+                <div class="slt">
+                  <div class="slTop"><span>左</span></div>
+                  <div class="slTop"><span>右</span></div>
+                </div>
+              </div>
             </div>
-            <div class="xb11">
-              <div class="slt1"><span>视力</span></div>
-              <div class="slt">
-                <div class="slTop"><span>左</span></div>
-                <div class="slTop"><span>右</span></div>
+            <div class="finalRightBottom">
+              <div class="ckz">
+                <span>参考值</span>
+              </div>
+              <div class="ckz">
+                <span v-if="XkItem.twszs">{{ XkItem.twszs[1].tz }}</span>
+              </div>
+              <div class="ckz">
+                <span v-if="XkItem.twszs">{{ XkItem.twszs[1].sg }}</span>
+              </div>
+              <div class="ckz">
+                <span v-if="XkItem.twszs">{{ XkItem.twszs[1].zsl }}</span>
+              </div>
+            </div>
+            <div class="finalRightBottom">
+              <div class="ckz">
+                <span>数值</span>
+              </div>
+              <div class="ckz">
+                <span v-if="XkItem.twszs">{{ XkItem.twszs[0].tz }}</span>
+              </div>
+              <div class="ckz">
+                <span v-if="XkItem.twszs">{{ XkItem.twszs[0].sg }}</span>
+              </div>
+              <div class="ckz">
+                <div class="slTop">
+                  <span v-if="XkItem.twszs">{{ XkItem.twszs[0].zsl }}</span>
+                </div>
+                <div class="slTop">
+                  <span v-if="XkItem.twszs">{{ XkItem.twszs[0].ysl }}</span>
+                </div>
               </div>
             </div>
           </div>
-          <div class="finalRightBottom">
-            <div class="ckz">
-              <span>参考值</span>
-            </div>
-            <div class="ckz">
-              <span v-if="tableData.twszs">{{ tableData.twszs[1].tz }}</span>
-            </div>
-            <div class="ckz">
-              <span v-if="tableData.twszs">{{ tableData.twszs[1].sg }}</span>
-            </div>
-            <div class="ckz">
-              <span v-if="tableData.twszs">{{ tableData.twszs[1].zsl }}</span>
-            </div>
-          </div>
-          <div class="finalRightBottom">
-            <div class="ckz">
-              <span>数值</span>
-            </div>
-            <div class="ckz">
-              <span v-if="tableData.twszs">{{ tableData.twszs[0].tz }}</span>
-            </div>
-            <div class="ckz">
-              <span v-if="tableData.twszs">{{ tableData.twszs[0].sg }}</span>
-            </div>
-            <div class="ckz">
-              <div class="slTop">
-                <span v-if="tableData.twszs">{{ tableData.twszs[0].zsl }}</span>
-              </div>
-              <div class="slTop">
-                <span v-if="tableData.twszs">{{ tableData.twszs[0].ysl }}</span>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="info2">
-        <span>下学期报到时间:{{ tableData.nextxsarrive2 }}</span>
-      </div>
-      <div class="info5">
-        <span>校长： {{ tableData.principal }}</span>
-        <span>教导主任： {{ tableData.director }}</span>
-        <span>班主任： {{ tableData.headmaster }}</span>
+        <div class="info2">
+          <span>下学期报到时间:{{ XkItem.nextxsarrive2 }}</span>
+        </div>
+        <div class="info5">
+          <span>校长： {{ XkItem.principal }}</span>
+          <span>教导主任： {{ XkItem.director }}</span>
+          <span>班主任： {{ XkItem.headmaster }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -309,6 +313,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       cjd: false,
       xkWid: "",
       treeData: [],
@@ -343,6 +348,7 @@ export default {
     },
     clickTree(data, Node) {
       if (Node.level == 4) {
+        this.loading = true;
         let val = {
           cjlbId: this.cjlbId,
           schoolId: this.schoolId,
@@ -353,7 +359,8 @@ export default {
         main
           .seeAchimodule(val)
           .then((res) => {
-            this.tableData = res.data[0];
+            this.loading = false;
+            this.tableData = res.data;
             //学科div循环次数
             this.xkNum = res.data[0].names.length;
             //学科div宽度
@@ -653,5 +660,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.grade_contain {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

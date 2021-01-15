@@ -157,6 +157,10 @@ export default {
       type: Number,
       default: 0,
     },
+    djxq: {
+      type: Number,
+      default: 0,
+    },
   },
   computed: {
     //学校id
@@ -270,7 +274,12 @@ export default {
       main
         .seeSanjiMeui(val)
         .then((res) => {
-          this.treeData = res.data;
+          console.log(this.djxq, "this.djxq");
+          this.treeData = res.data.filter((item) => {
+            return item.id == this.djxq;
+          });
+          console.log(this.treeData, "this.treeData");
+          //   this.treeData = res.data;
         })
         .catch((err) => {});
     },

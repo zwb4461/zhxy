@@ -15,6 +15,13 @@ const findCs = query => {
     data: query
   });
 };
+const getNjBj = query => {
+  return request({
+    url: Api.baoxiuCs.getNjBj,
+    method: "post",
+    data: query
+  });
+};
 const selectDdUsers = query => {
   return request({
     url: Api.baoxiuCs.selectDdUsers,
@@ -26,5 +33,6 @@ const selectDdUsers = query => {
 export default {
   findCs,
   saveRepairCanshu,
-  selectDdUsers
+  selectDdUsers,
+  getNjBj
 };

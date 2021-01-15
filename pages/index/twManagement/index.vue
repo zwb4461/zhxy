@@ -71,7 +71,7 @@
         :key="index"
         :label="item"
         :name="item"
-        ><twDetail :cjlbId="id"></twDetail
+        ><twDetail :cjlbId="id" :djxq="form1.djxq"></twDetail
       ></el-tab-pane>
     </el-tabs>
     <my-drawer-vue
@@ -109,6 +109,36 @@
         </el-form>
       </template>
     </my-drawer-vue>
+    <el-dialog
+      :close-on-click-modal="false"
+      title="登录"
+      :visible.sync="showLogin"
+      width="30%"
+    >
+      <el-form label-width="80px">
+        <el-form-item label="账号:">
+          <el-input v-model="form1.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码:">
+          <el-input v-model="form1.password"></el-input>
+        </el-form-item>
+        <el-form-item label="学期:">
+          <el-select v-model="form1.djxq" placeholder="请选择">
+            <el-option
+              v-for="item in djxqOpt"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showLogin = false">取 消</el-button>
+        <el-button type="primary" @click="login">登录</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -134,10 +164,26 @@ export default {
   },
   data() {
     return {
+      djxqOpt: [
+        {
+          name: "第一学期",
+          id: 1,
+        },
+        {
+          name: "第二学期",
+          id: 2,
+        },
+      ],
+      form1: {
+        username: "",
+        password: "",
+        djxq: "",
+      },
       //当前活动的tab
       gradeClass: "hjfl",
       //控制表单的显示隐藏
       showAddClassDia: false,
+      showLogin: false,
       //0--新增，1--编辑
       formType: 0,
       //体卫列表
@@ -155,17 +201,43 @@ export default {
       options: [],
       //当前类别的id
       id: 0,
+      gradeClass1: "",
     };
   },
   methods: {
+    //!登录
+    login() {
+      let val = {
+        cjlbId: this.id,
+        djxq: this.form1.djxq,
+        username: this.form1.username,
+        password: this.form1.password,
+        type: 1,
+      };
+      main1
+        .loginScore(val)
+        .then((res) => {
+          if (res.code == 200) {
+            this.showLogin = false;
+            this.$message.success(res.msg);
+            if (!this.tabList.includes(this.gradeClass1)) {
+              this.tabList.push(this.gradeClass1);
+            }
+            this.gradeClass = this.gradeClass1;
+          }
+          if (res.code == 500) {
+            console.log("13132121");
+            this.$message.error("账号密码错误!");
+          }
+        })
+        .catch((err) => {});
+    },
     //!点击体卫分类跳转该分类
     toJcClass(item) {
+      this.showLogin = true;
       this.locked = item.locked;
       this.id = item.id;
-      if (!this.tabList.includes(item.name)) {
-        this.tabList.push(item.name);
-      }
-      this.gradeClass = item.name;
+      this.gradeClass1 = item.name;
     },
     //!删除体卫分类
     del(item) {

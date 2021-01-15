@@ -370,6 +370,26 @@
             </div> </template
         ></el-table-column>
       </el-table>
+      <el-table
+        size="mini"
+        :data="twPasswordTable"
+        border
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="username" label="体卫账号" width="180">
+          <template slot-scope="scope">
+            <div>
+              <el-input size="mini" v-model="scope.row.username"></el-input>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="password" label="体卫密码">
+          <template slot-scope="scope">
+            <div>
+              <el-input size="mini" v-model="scope.row.password"></el-input>
+            </div> </template
+        ></el-table-column>
+      </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeLrsz">关闭</el-button>
         <el-button type="primary" @click="submitLrsz">确定</el-button>
@@ -695,6 +715,7 @@ export default {
       showPlfz: false,
       plfzType: 0, //0--学科复制,1--年级复制,2--考试复制
       cascaderKey: 1,
+      twPasswordTable: [],
     };
   },
   methods: {
@@ -750,6 +771,7 @@ export default {
       let val = {
         id: this.cjlbId,
         setNjList: this.passwordTable,
+        setTwsTwo: this.twPasswordTable[0],
       };
       main3
         .edit(val)
@@ -771,6 +793,7 @@ export default {
           res.data.map((item) => {
             if (item.id == this.cjlbId) {
               obj = item.setNjList;
+              this.twPasswordTable = [item.setTwsTwo];
             }
           });
           this.passwordTable = obj.filter((item) => {

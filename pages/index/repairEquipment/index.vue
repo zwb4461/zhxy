@@ -111,7 +111,7 @@
     <el-dialog
       title="报修"
       :visible.sync="showBx"
-      width="30%"
+      width="40%"
       :close-on-click-modal="false"
     >
       <div>
@@ -120,7 +120,12 @@
             <span>{{ form.bxTime }}</span>
           </el-form-item>
           <el-form-item label="报修大类:">
-            <el-select @change="changeBxDl" size="small" v-model="form.maxCate">
+            <el-select
+              :disabled="formType == 3"
+              @change="changeBxDl"
+              size="small"
+              v-model="form.maxCate"
+            >
               <el-option
                 v-for="item in maxCateOpt"
                 :key="item.id"
@@ -131,7 +136,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="报修小类:">
-            <el-select @change="changeBxXl" size="small" v-model="form.minCate">
+            <el-select
+              :disabled="formType == 3"
+              @change="changeBxXl"
+              size="small"
+              v-model="form.minCate"
+            >
               <el-option
                 v-for="item in minCateOpt"
                 :key="item.id"
@@ -142,21 +152,42 @@
             </el-select>
           </el-form-item>
           <el-form-item label="物品名称:">
-            <el-select size="small" v-model="form.name">
+            <el-select
+              :disabled="formType == 3"
+              size="small"
+              v-model="form.name"
+            >
               <el-option
                 v-for="item in nameOpt"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id"
+                :value="item.name"
               >
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="报修地点:">
-            <el-input size="small" v-model="form.address"></el-input>
+            <el-select
+              :disabled="formType == 3"
+              v-model="form.address"
+              size="small"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择报修地点"
+            >
+              <el-option
+                v-for="item in tableData_right"
+                :key="item.id"
+                :label="item.address"
+                :value="item.address"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="情况说明:">
             <el-input
+              :disabled="formType == 3"
               size="small"
               type="textarea"
               :autosize="{ minRows: 4, maxRows: 10 }"
@@ -164,22 +195,39 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="报修图片:">
-            <span>{{ form.bxImg }}</span>
+            <el-upload
+              action="http://103.219.33.112:10010/upload"
+              list-type="picture-card"
+              :limit="9"
+              :on-preview="pictureYl"
+              :on-remove="handleRemove"
+              :on-success="uploadPictureSuccess"
+              name="imgFile"
+              :file-list="form.bxImg"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="showPictureYl">
+              <img width="130px" style="height: 80px" :src="dialogImageUrl" />
+            </el-dialog>
+            <!-- <span>{{ form.bxImg }}</span> -->
           </el-form-item>
           <el-form-item label="报修教师:">
-            <span>{{ form.bxTeaid }}</span>
+            <span>{{ userName }}</span>
           </el-form-item>
           <el-form-item label="处理状态:">
-            <span>{{ form.status }}</span>
+            <el-tag v-show="form.status == 0">待处理</el-tag>
           </el-form-item>
           <el-form-item label="处理教师:">
-            <span>{{ form.clTeaid }}</span>
+            <span>{{ form.clTeaname }}</span>
           </el-form-item>
         </el-form>
       </div>
       <div slot="footer">
         <el-button @click="showBx = false">取 消</el-button>
-        <el-button type="primary" @click="submitBx">确 定</el-button>
+        <el-button v-show="formType != 3" type="primary" @click="submitBx"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>
@@ -189,6 +237,18 @@
 import main from "~/api/baoxiu";
 import main1 from "~/api/baoxiuCs";
 export default {
+  computed: {
+    //学校id
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
+    userName() {
+      return this.$store.state.auth.userInfo.name;
+    },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
+    },
+  },
   data() {
     return {
       gettime: "",
@@ -212,25 +272,49 @@ export default {
         name: "",
         address: "",
         explaion: "",
-        bxImg: "",
+        bxImg: [],
         bxTeaid: "",
         clTeaid: "",
+        clTeaname: "",
         status: 0,
       },
       showBx: false,
+      showPictureYl: false,
       tableData_left: [],
       tableData_center: [],
       tableData_right: [],
+      dialogImageUrl: "",
     };
   },
   methods: {
-    //!改变报修大类获取报修小类
+    //!图片预览
+    pictureYl(file) {
+      this.dialogImageUrl = file.url;
+      this.showPictureYl = true;
+    },
+    //!移除图片
+    handleRemove(file, fileList) {
+      this.form.bxImg = [];
+      fileList.map((item) => {
+        this.form.bxImg.push(item.response.data);
+      });
+    },
+    //!图片上传成功
+    uploadPictureSuccess(res, file, fileList) {
+      console.log(fileList, "图片上传成功");
+      this.form.bxImg.push(res.data);
+    },
+    //!改变报修大类获取报修小类和报修大类负责人
     changeBxDl(val) {
       this.minCateOpt = [];
       this.nameOpt = [];
       this.form.minCate = "";
       this.form.name = "";
       this.tableData_left.map((item) => {
+        if (item.name == val) {
+          this.form.clTeaname = item.owner;
+          this.form.clTeaid = item.ownerId;
+        }
         if (item.children && item.name == val) {
           item.children.map((subItem) => {
             this.minCateOpt.push({
@@ -281,31 +365,21 @@ export default {
     },
     //!提交报修
     submitBx() {
+      let val = this.form;
       if (this.formType == 1) {
         //新增
-        let val = {
-          bxTime: "2021-01-12 10:37",
-          maxCate: "报修大类",
-          minCate: "报修小类",
-          name: "物品名称",
-          address: "报修地点",
-          explaion: "情况说明",
-          bxImg: "",
-          bxTeaid: "1",
-          clTeaid: "2",
-          status: 0,
-        };
-        main
-          .edit(val)
-          .then((res) => {
-            this.$message.success("新增成功!");
-            this.getTable(20, 1);
-            this.showBx = false;
-          })
-          .catch((err) => {});
+        val.bxTeaid = this.unionid;
       } else if (this.formType == 2) {
         //编辑
       }
+      main
+        .edit(val)
+        .then((res) => {
+          this.$message.success("新增成功!");
+          this.getTable(20, 1);
+          this.showBx = false;
+        })
+        .catch((err) => {});
     },
     //!获取数据
     getTable(pageNum, pageSize) {
@@ -329,7 +403,7 @@ export default {
         name: "",
         address: "",
         explaion: "",
-        bxImg: "",
+        bxImg: [],
         bxTeaid: "",
         clTeaid: "",
         status: 0,
@@ -362,15 +436,44 @@ export default {
           : new Date().getSeconds();
       this.form.bxTime = yy + "-0" + mm + "-" + dd + " " + hh + ":" + mf;
     },
+    //!赋值表单
+    setForm(row) {
+      this.form = row;
+    },
     //!查看
-    see() {},
+    see(row) {
+      this.formType = 3;
+      this.setForm(row);
+      this.showBx = true;
+    },
     //!编辑
-    edit() {
+    edit(row) {
+      console.log(row);
+      this.getBxDl();
       this.formType = 2;
+      this.setForm(row);
       this.showBx = true;
     },
     //!删除
-    del() {},
+    del(row) {
+      this.$confirm({
+        title: "确定删除吗?",
+        content: "该数据将永久删除",
+        cancelText: "取消",
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .del({ id: row.id })
+            .then((res) => {
+              this.getTable(20, 1);
+              this.$message.success("删除成功!");
+            })
+            .catch((err) => {});
+        },
+      });
+    },
   },
   created() {
     this.getTable(20, 1);
@@ -389,5 +492,28 @@ export default {
 .inp {
   width: 180px;
   margin-right: 15px;
+}
+/deep/ .el-upload--picture-card {
+  width: 120px;
+  height: 80px;
+}
+/deep/ .el-upload {
+  width: 120px;
+  height: 80px;
+  line-height: 80px;
+}
+/deep/ .el-upload-list--picture-card .el-upload-list__item {
+  width: 120px;
+  height: 80px;
+  line-height: 80px;
+}
+/deep/ .el-upload-list--picture-card .el-upload-list__item-thumbnail {
+  width: 120px;
+  height: 80px;
+  line-height: 80px;
+}
+/deep/ .avatar {
+  width: 120px;
+  height: 80px;
 }
 </style>

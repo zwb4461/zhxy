@@ -331,47 +331,40 @@
       width="30%"
       :before-close="closeLrsz"
     >
-      <!-- <el-form ref="form3" label-width="80px">
-        <el-form-item
-          :label="item.name + ':'"
-          v-for="(item, index) in lrszList"
-          :key="index"
-        >
-          <el-date-picker
-            @change="lrszChange(item)"
-            :clearable="false"
-            size="small"
-            v-model="item.date"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          >
-          </el-date-picker>
-        </el-form-item>
-      </el-form> -->
       <el-table size="mini" :data="passwordTable" border style="width: 100%">
         <el-table-column prop="njname" label="年级" width="180">
         </el-table-column>
         <el-table-column prop="username" label="账号" width="180">
           <template slot-scope="scope">
             <div>
-              <el-input
-                size="mini"
-                v-model="scope.row.username"
-                placeholder=""
-              ></el-input>
+              <el-input size="mini" v-model="scope.row.username"></el-input>
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="password" label="密码">
           <template slot-scope="scope">
             <div>
-              <el-input
-                size="mini"
-                v-model="scope.row.password"
-                placeholder=""
-              ></el-input>
+              <el-input size="mini" v-model="scope.row.password"></el-input>
+            </div> </template
+        ></el-table-column>
+      </el-table>
+      <el-table
+        size="mini"
+        :data="twPasswordTable"
+        border
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="username" label="体卫账号" width="180">
+          <template slot-scope="scope">
+            <div>
+              <el-input size="mini" v-model="scope.row.username"></el-input>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="password" label="体卫密码">
+          <template slot-scope="scope">
+            <div>
+              <el-input size="mini" v-model="scope.row.password"></el-input>
             </div> </template
         ></el-table-column>
       </el-table>
@@ -693,6 +686,7 @@ export default {
       showPlfz: false,
       plfzType: 0, //0--学科复制,1--年级复制,2--考试复制
       cascaderKey: 1,
+      twPasswordTable: [],
     };
   },
   methods: {
@@ -717,8 +711,6 @@ export default {
         .del({ id: row.id })
         .then((res) => {
           this.getTreeData();
-          //   this.$message.success("删除成功!");
-          //   this.showDelExam = false;
           this.examId = undefined;
         })
         .catch((err) => {});
@@ -748,6 +740,7 @@ export default {
       let val = {
         id: this.cjlbId,
         setNjList: this.passwordTable,
+        setTwsOne: this.twPasswordTable[0],
       };
       main3
         .edit(val)
@@ -769,8 +762,10 @@ export default {
           res.data.map((item) => {
             if (item.id == this.cjlbId) {
               obj = item.setNjList;
+              this.twPasswordTable = [item.setTwsOne];
             }
           });
+          console.log(this.twPasswordTable);
           this.passwordTable = obj.filter((item) => {
             return item.djxq == 1;
           });

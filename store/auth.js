@@ -66,10 +66,12 @@ const actions = {
   Login(context, form) {
     //用户登录
     //manager571
+    //2239564521643510
+
     return new Promise((resolve, reject) => {
       if (form.username === "admin" && form.password === "123456") {
         ddServer
-          .findUser({ unionid: "manager571" })
+          .findUser({ unionid: "2239564521643510" })
           .then(res => {
             let info = res.data[0];
             let auth = 1;
