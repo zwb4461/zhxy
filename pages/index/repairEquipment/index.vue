@@ -247,7 +247,7 @@ export default {
     },
     unionid() {
       return this.$store.state.auth.userInfo.unionid;
-    },
+    }
   },
   data() {
     return {
@@ -260,7 +260,7 @@ export default {
         sbdl: "",
         sbzl: "",
         dataTime: "",
-        status: "",
+        status: ""
       },
       maxCateOpt: [],
       minCateOpt: [],
@@ -276,14 +276,14 @@ export default {
         bxTeaid: "",
         clTeaid: "",
         clTeaname: "",
-        status: 0,
+        status: 0
       },
       showBx: false,
       showPictureYl: false,
       tableData_left: [],
       tableData_center: [],
       tableData_right: [],
-      dialogImageUrl: "",
+      dialogImageUrl: ""
     };
   },
   methods: {
@@ -295,14 +295,19 @@ export default {
     //!移除图片
     handleRemove(file, fileList) {
       this.form.bxImg = [];
-      fileList.map((item) => {
-        this.form.bxImg.push(item.response.data);
+      fileList.map(item => {
+        this.form.bxImg.push({
+          url: item.response.data
+        });
       });
     },
     //!图片上传成功
     uploadPictureSuccess(res, file, fileList) {
       console.log(fileList, "图片上传成功");
-      this.form.bxImg.push(res.data);
+      this.form.bxImg.push({
+        url: res.data
+      });
+      console.log(this.form);
     },
     //!改变报修大类获取报修小类和报修大类负责人
     changeBxDl(val) {
@@ -310,16 +315,16 @@ export default {
       this.nameOpt = [];
       this.form.minCate = "";
       this.form.name = "";
-      this.tableData_left.map((item) => {
+      this.tableData_left.map(item => {
         if (item.name == val) {
           this.form.clTeaname = item.owner;
           this.form.clTeaid = item.ownerId;
         }
         if (item.children && item.name == val) {
-          item.children.map((subItem) => {
+          item.children.map(subItem => {
             this.minCateOpt.push({
               name: subItem.name,
-              id: subItem.id,
+              id: subItem.id
             });
           });
         }
@@ -329,14 +334,14 @@ export default {
     changeBxXl(val) {
       this.nameOpt = [];
       this.form.name = "";
-      this.tableData_left.map((item) => {
+      this.tableData_left.map(item => {
         if (item.children) {
-          item.children.map((subItem) => {
+          item.children.map(subItem => {
             if (subItem.children && subItem.name == val) {
-              subItem.children.map((subItem1) => {
+              subItem.children.map(subItem1 => {
                 this.nameOpt.push({
                   name: subItem1.name,
-                  id: subItem1.id,
+                  id: subItem1.id
                 });
               });
             }
@@ -348,20 +353,20 @@ export default {
     getBxDl() {
       main1
         .findCs({})
-        .then((res) => {
+        .then(res => {
           this.tableData_left = res.data.setRepcates;
           this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
           //?赋值报修大类数据源
           this.maxCateOpt = [];
-          this.tableData_left.map((item) => {
+          this.tableData_left.map(item => {
             this.maxCateOpt.push({
               name: item.name,
-              id: item.id,
+              id: item.id
             });
           });
         })
-        .catch((err) => {});
+        .catch(err => {});
     },
     //!提交报修
     submitBx() {
@@ -374,12 +379,12 @@ export default {
       }
       main
         .edit(val)
-        .then((res) => {
+        .then(res => {
           this.$message.success("新增成功!");
           this.getTable(20, 1);
           this.showBx = false;
         })
-        .catch((err) => {});
+        .catch(err => {});
     },
     //!获取数据
     getTable(pageNum, pageSize) {
@@ -389,10 +394,10 @@ export default {
       };
       main
         .find(val)
-        .then((res) => {
+        .then(res => {
           this.tableData = res.data.records;
         })
-        .catch((err) => {});
+        .catch(err => {});
     },
     //!重置表单
     clearForm() {
@@ -406,7 +411,7 @@ export default {
         bxImg: [],
         bxTeaid: "",
         clTeaid: "",
-        status: 0,
+        status: 0
       };
       this.minCateOpt = [];
       this.nameOpt = [];
@@ -439,6 +444,14 @@ export default {
     //!赋值表单
     setForm(row) {
       this.form = row;
+      // this.form.bxImg = [
+      //   {
+      //     status: "success",
+      //     uid: 1610805388809,
+      //     url:
+      //       "http://103.219.33.112:10010/uploadpic/ad82e017-3726-44af-a71a-e7dfb2d8bd2e.jpg"
+      //   }
+      // ];
     },
     //!查看
     see(row) {
@@ -466,18 +479,18 @@ export default {
         onOk: () => {
           main
             .del({ id: row.id })
-            .then((res) => {
+            .then(res => {
               this.getTable(20, 1);
               this.$message.success("删除成功!");
             })
-            .catch((err) => {});
-        },
+            .catch(err => {});
+        }
       });
-    },
+    }
   },
   created() {
     this.getTable(20, 1);
-  },
+  }
 };
 </script>
 

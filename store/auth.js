@@ -71,7 +71,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       if (form.username === "admin" && form.password === "123456") {
         ddServer
-          .findUser({ unionid: "2239564521643510" })
+          .findUser({ unionid: "manager571" })
           .then(res => {
             let info = res.data[0];
             let auth = 1;
