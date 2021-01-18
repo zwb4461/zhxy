@@ -27,6 +27,18 @@
 <script>
 import main from "~/api/baoxiu";
 export default {
+  computed: {
+    //学校id
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
+    userName() {
+      return this.$store.state.auth.userInfo.name;
+    },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
+    },
+  },
   props: {
     status: {
       type: Number,
@@ -39,10 +51,10 @@ export default {
     };
   },
   methods: {
-    //!跳转编辑
+    //!跳转编辑-负责人
     toEdit(item) {
       this.$router.push({
-        path: "/Phone/bxPhone/components/dealEdit",
+        path: "/Phone/bxPhone/components/fzr/dealEdit",
         query: {
           data: item,
         },
@@ -51,6 +63,7 @@ export default {
     getTable() {
       let val = {
         status: this.status,
+        unionid: this.unionid,
       };
       main
         .find(val)

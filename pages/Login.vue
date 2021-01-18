@@ -37,49 +37,51 @@
 
 <script>
 export default {
-  data: function() {
+  data: function () {
     return {
       loading: false,
       param: {
         username: "admin",
-        password: "123456"
+        password: "123456",
       },
       rules: {
         username: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
+          { required: true, message: "请输入用户名", trigger: "blur" },
         ],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      }
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+      },
     };
   },
   methods: {
     submitForm() {
+      let type = this.$route.query.type; //进入的类型
       let schoolId = this.$route.query.id;
-      this.$refs.login.validate(valid => {
+      this.$refs.login.validate((valid) => {
         if (valid) {
           this.loading = true;
           this.$store
             .dispatch("auth/setSchoolIdAuth", schoolId)
-            .then(res => {
+            .then((res) => {
               // // console.log("res------", res);
               // // console.log("企业id是----", res.cropId);
               // // console.log("钉钉服务端口是----", res.port);
               return this.$store.dispatch("auth/Login", this.param);
             })
-            .then(res => {
+            .then((res) => {
               let power = res.power;
               // // console.log("获得到的权限是----", power);
 
               return this.$store.dispatch("layout/getUserMenu", power);
             })
-            .then(res => {
+            .then((res) => {
               this.loading = false;
               //  // console.log(res);
-              // this.$router.push("/");
-              this.$router.push("/Phone/bxPhone");
+
+              this.$router.push("/");
+              //   this.$router.push("/Phone/bxPhone");
               //   sessionStorage.setItem("name", this.param.username);
             })
-            .catch(err => {
+            .catch((err) => {
               this.loading = false;
               this.$message.error(err);
             });
@@ -89,12 +91,12 @@ export default {
           return false;
         }
       });
-    }
+    },
   },
   mounted() {
     let url = window.location.href;
     // // console.log("url是--------", url);
-  }
+  },
 };
 </script>
 

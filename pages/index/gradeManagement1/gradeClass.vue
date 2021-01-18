@@ -567,6 +567,7 @@ export default {
         djxq: "",
         schoolId: "",
         xkName: "",
+        unionid: "",
       },
     };
   },
@@ -622,6 +623,7 @@ export default {
         .catch((err) => {});
     },
     befUp(file) {
+      this.cjdrValue.unionid = this.unionid;
       if (this.cjdrData.length == 0) {
         this.$message.error("请选择导入学科!");
         return false;

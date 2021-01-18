@@ -304,6 +304,7 @@ module.exports = {
     findCs: baseUrl + "/selectRepairCanshu",
     saveRepairCanshu: baseUrl + "/saveRepairCanshu",
     selectDdUsers: baseUrl + "/dd-user/selectDdUsers",
-    getNjBj: baseUrl + "/getNjBj"
+    getNjBj: baseUrl + "/getNjBj",
+    reflushXh: baseUrl + "/reflushXh"
   }
 };

@@ -13,6 +13,7 @@
         ></el-tree>
       </el-card>
       <div class="right">
+        <el-button type="primary" size="small" @click="save">保存</el-button>
         <el-table
           height="500"
           v-loading="tableLoading"
@@ -67,6 +68,14 @@ export default {
     };
   },
   methods: {
+    save() {
+      main
+        .reflushXh({})
+        .then((res) => {
+          this.$message.success("保存成功");
+        })
+        .catch((err) => {});
+    },
     //!修改学号
     edit(row) {
       let val = {

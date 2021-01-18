@@ -196,6 +196,7 @@
           </el-form-item>
           <el-form-item label="报修图片:">
             <el-upload
+              :disabled="formType == 3"
               action="http://103.219.33.112:10010/upload"
               list-type="picture-card"
               :limit="9"
@@ -210,13 +211,14 @@
             <el-dialog :visible.sync="showPictureYl">
               <img width="130px" style="height: 80px" :src="dialogImageUrl" />
             </el-dialog>
-            <!-- <span>{{ form.bxImg }}</span> -->
           </el-form-item>
           <el-form-item label="报修教师:">
             <span>{{ userName }}</span>
           </el-form-item>
           <el-form-item label="处理状态:">
             <el-tag v-show="form.status == 0">待处理</el-tag>
+            <el-tag type="warning" v-show="form.status == 1">处理中</el-tag>
+            <el-tag type="success" v-show="form.status == 2">已处理</el-tag>
           </el-form-item>
           <el-form-item label="处理教师:">
             <span>{{ form.clTeaname }}</span>
@@ -247,7 +249,7 @@ export default {
     },
     unionid() {
       return this.$store.state.auth.userInfo.unionid;
-    }
+    },
   },
   data() {
     return {
@@ -260,7 +262,7 @@ export default {
         sbdl: "",
         sbzl: "",
         dataTime: "",
-        status: ""
+        status: "",
       },
       maxCateOpt: [],
       minCateOpt: [],
@@ -276,14 +278,14 @@ export default {
         bxTeaid: "",
         clTeaid: "",
         clTeaname: "",
-        status: 0
+        status: 0,
       },
       showBx: false,
       showPictureYl: false,
       tableData_left: [],
       tableData_center: [],
       tableData_right: [],
-      dialogImageUrl: ""
+      dialogImageUrl: "",
     };
   },
   methods: {
@@ -295,9 +297,9 @@ export default {
     //!移除图片
     handleRemove(file, fileList) {
       this.form.bxImg = [];
-      fileList.map(item => {
+      fileList.map((item) => {
         this.form.bxImg.push({
-          url: item.response.data
+          url: item.response.data,
         });
       });
     },
@@ -305,7 +307,7 @@ export default {
     uploadPictureSuccess(res, file, fileList) {
       console.log(fileList, "图片上传成功");
       this.form.bxImg.push({
-        url: res.data
+        url: res.data,
       });
       console.log(this.form);
     },
@@ -315,16 +317,16 @@ export default {
       this.nameOpt = [];
       this.form.minCate = "";
       this.form.name = "";
-      this.tableData_left.map(item => {
+      this.tableData_left.map((item) => {
         if (item.name == val) {
           this.form.clTeaname = item.owner;
           this.form.clTeaid = item.ownerId;
         }
         if (item.children && item.name == val) {
-          item.children.map(subItem => {
+          item.children.map((subItem) => {
             this.minCateOpt.push({
               name: subItem.name,
-              id: subItem.id
+              id: subItem.id,
             });
           });
         }
@@ -334,14 +336,14 @@ export default {
     changeBxXl(val) {
       this.nameOpt = [];
       this.form.name = "";
-      this.tableData_left.map(item => {
+      this.tableData_left.map((item) => {
         if (item.children) {
-          item.children.map(subItem => {
+          item.children.map((subItem) => {
             if (subItem.children && subItem.name == val) {
-              subItem.children.map(subItem1 => {
+              subItem.children.map((subItem1) => {
                 this.nameOpt.push({
                   name: subItem1.name,
-                  id: subItem1.id
+                  id: subItem1.id,
                 });
               });
             }
@@ -353,20 +355,20 @@ export default {
     getBxDl() {
       main1
         .findCs({})
-        .then(res => {
+        .then((res) => {
           this.tableData_left = res.data.setRepcates;
           this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
           //?赋值报修大类数据源
           this.maxCateOpt = [];
-          this.tableData_left.map(item => {
+          this.tableData_left.map((item) => {
             this.maxCateOpt.push({
               name: item.name,
-              id: item.id
+              id: item.id,
             });
           });
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     //!提交报修
     submitBx() {
@@ -379,25 +381,26 @@ export default {
       }
       main
         .edit(val)
-        .then(res => {
+        .then((res) => {
           this.$message.success("新增成功!");
           this.getTable(20, 1);
           this.showBx = false;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     //!获取数据
     getTable(pageNum, pageSize) {
       let val = {
         // pageNum: pageNum,
         // pageSize: pageSize,
+        unionid: this.unionid,
       };
       main
         .find(val)
-        .then(res => {
+        .then((res) => {
           this.tableData = res.data.records;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     //!重置表单
     clearForm() {
@@ -411,7 +414,7 @@ export default {
         bxImg: [],
         bxTeaid: "",
         clTeaid: "",
-        status: 0
+        status: 0,
       };
       this.minCateOpt = [];
       this.nameOpt = [];
@@ -479,18 +482,18 @@ export default {
         onOk: () => {
           main
             .del({ id: row.id })
-            .then(res => {
+            .then((res) => {
               this.getTable(20, 1);
               this.$message.success("删除成功!");
             })
-            .catch(err => {});
-        }
+            .catch((err) => {});
+        },
       });
-    }
+    },
   },
   created() {
     this.getTable(20, 1);
-  }
+  },
 };
 </script>
 

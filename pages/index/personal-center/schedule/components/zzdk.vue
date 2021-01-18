@@ -470,7 +470,7 @@ export default {
   methods: {
     submitApply() {
       let val = {
-        unionid: this.unionid,
+        teaId: this.unionid,
         id: this.id,
       };
       main

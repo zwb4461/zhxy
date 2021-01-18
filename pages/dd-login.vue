@@ -2,7 +2,7 @@
   <div
     v-loading="loading"
     :element-loading-text="errLogin"
-    style="width: 50vh;height: 100vh;margin:0 auto;"
+    style="width: 50vh; height: 100vh; margin: 0 auto"
   ></div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   data() {
     return {
       loading: true,
-      errLogin: "钉钉登录中，请稍后。。。"
+      errLogin: "钉钉登录中，请稍后。。。",
     };
   },
   methods: {
@@ -28,7 +28,7 @@ export default {
         name: "admin",
         street: "",
         placepoint: "admin,--",
-        unionid: "282220545227448134"
+        unionid: "282220545227448134",
       };
       sessionStorage.setItem("ms_userInfo", JSON.stringify(testJson)); //登录用户姓名
       this.toLoginIng(); //跳转页面
@@ -42,7 +42,7 @@ export default {
         name: "用户",
         street: "",
         placepoint: "admin2,--",
-        unionid: "282220545227448134"
+        unionid: "282220545227448134",
       };
       sessionStorage.setItem("area", "admin2");
       sessionStorage.setItem("ms_userInfo", JSON.stringify(testJson)); //登录用户姓名
@@ -58,7 +58,7 @@ export default {
     },
     toLoginIng2() {
       this.$router.push("/onlyProvinceEntryPersonnel");
-    }
+    },
   },
   mounted() {
     const _this = this;
@@ -91,19 +91,19 @@ export default {
         // _this.errLogin = url;
         _this.$store
           .dispatch("auth/setSchoolId", { url, schoolId })
-          .then(schoolInfo => {
+          .then((schoolInfo) => {
             // alert("成功");
             //获取学校corpId与钉钉登录接口
             dd.runtime.permission.requestAuthCode({
               corpId: schoolInfo.cropId,
-              onSuccess: function(result) {
+              onSuccess: function (result) {
                 let code = result.code;
                 // _this.code = code;
                 // _this.errLogin = code;
                 // alert(code);
                 main
                   .login({ code: code }, schoolInfo.port, schoolInfo.ip)
-                  .then(res => {
+                  .then((res) => {
                     // _this.form.ddunionid = res.data;
                     let ddUnionid = res.data;
                     // alert("获得了----" + ddUnionid);
@@ -118,35 +118,39 @@ export default {
                     info.schoolId = schoolInfo.id;
                     return _this.$store.dispatch("auth/ddLogin", info);
                   })
-                  .then(res => {
+                  .then((res) => {
                     let power = res.power;
                     // // console.log("获得到的权限是----", power);
 
                     return _this.$store.dispatch("layout/getUserMenu", power);
                   })
-                  .then(res => {
+                  .then((res) => {
                     //  // console.log(res);
                     if (type == 1) {
                       _this.$router.push(
                         `/phone/reportStudent/${enrollId}/${formType}/${id}?schoolName=${_this.$store.state.auth.schoolName}`
                       );
+                    } else if (type == 2) {
+                      _this.$router.push(`/phone/dtk`);
+                    } else if (type == 3) {
+                      _this.$router.push(`/phone/bxPhone`);
                     } else {
                       _this.$router.push("/");
                     }
                     //   sessionStorage.setItem("name", this.param.username);
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     // _this.$message.error(JSON.stringify(err));
                     _this.errLogin = err;
                   });
               },
-              onFail: function(err) {
+              onFail: function (err) {
                 _this.errLogin = err;
                 // _this.$message.error(JSON.stringify(err));
-              }
+              },
             });
           })
-          .catch(err => {
+          .catch((err) => {
             _this.errLogin = err;
           });
       });
@@ -155,7 +159,7 @@ export default {
     //   let url = window.location.href;
     //   this.errLogin = "错误：无法获取学校" + url;
     // }
-  }
+  },
 };
 </script>
 

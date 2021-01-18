@@ -1,12 +1,7 @@
 <template>
   <div>
-    <div class="topBtn">
-      <van-button type="info" style="width: 90%" @click="toFzr"
-        >报修负责人进入</van-button
-      >
-    </div>
     <div class="topTitle">
-      <span>报修申请</span>
+      <span>报修信息</span>
       <span style="font-size: 16px; margin-top: 5px"
         >2020/2021学年第一学期</span
       >
@@ -15,21 +10,34 @@
       <van-cell-group>
         <van-field readonly label="报修时间:" :value="form.bxTime" />
         <van-field
-          clickable
+          disabled
           label="报修物品:"
           :value="form.maxCate + '-' + form.minCate + '-' + form.name"
           placeholder="选择报修物品"
-          @click="showDl = true"
         />
-        <van-field v-model="form.address" label="报修地点:" />
+        <van-field disabled v-model="form.address" label="报修地点:" />
         <van-field
+          disabled
           v-model="form.explaion"
           rows="3"
           autosize
           label="情况说明:"
           type="textarea"
         />
-        <div style="width: 100%">
+
+        <div style="width: 100%; padding-left: 15px">
+          <span style="color: #383e52">报修图片:</span>
+          <van-image
+            v-for="(item, index) in form.bxImg"
+            style="margin-right: 5px"
+            :key="index"
+            width="100"
+            height="100"
+            :src="item.url"
+          />
+        </div>
+
+        <!-- <div style="width: 100%">
           <van-uploader
             multiple
             style="margin-top: 15px; margin-left: 15px"
@@ -39,25 +47,90 @@
             preview-size="80px"
             @delete="delImg"
           />
-        </div>
+        </div> -->
         <van-field readonly v-model="userName" label="报修教师:" />
-        <van-field label="处理状态:" value="待处理" readonly />
+        <van-field
+          clickable
+          label="处理状态:"
+          :value="
+            form.status == 0
+              ? '待处理'
+              : form.status == 1
+              ? '处理中'
+              : form.status == 2
+              ? '已处理'
+              : ''
+          "
+          readonly
+          @click="showStatus = true"
+        />
         <van-field readonly v-model="form.clTeaname" label="处理教师:" />
       </van-cell-group>
+      <van-field
+        v-model="form.fkxx"
+        rows="3"
+        autosize
+        label="反馈信息:"
+        type="textarea"
+      />
+      <div style="width: 100%; padding-left: 15px">
+        <span style="color: #383e52">反馈图片:</span>
+        <van-uploader
+          multiple
+          style="margin-top: 15px; margin-left: 15px"
+          v-model="form.fkImg"
+          :after-read="uploadImg"
+          :max-count="9"
+          preview-size="80px"
+          @delete="delImg"
+        />
+      </div>
+      <van-field readonly v-model="form.xfTime" label="修复时间:" />
+      <van-field readonly v-model="form.history" label="故障历时:" />
+      <div class="title">
+        <span>配件清单</span>
+      </div>
+      <el-table
+        :header-cell-style="{ 'text-align': 'center' }"
+        size="mini"
+        :data="form.pjqd"
+        border
+        style="width: 100%"
+      >
+        <el-table-column type="index" label="序号" width="50">
+        </el-table-column>
+        <el-table-column prop="name" label="名称">
+          <template slot-scope="scope">
+            <el-input size="mini" v-model="scope.row.name"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sum" label="数量">
+          <template slot-scope="scope">
+            <el-input size="mini" v-model="scope.row.sum"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="dw" label="单位">
+          <template slot-scope="scope">
+            <el-input size="mini" v-model="scope.row.dw"></el-input>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-button size="mini" style="width: 100%" @click="addRow">+</el-button>
       <div class="topBtn">
-        <van-button type="primary" style="width: 90%" @click="submit"
+        <van-button style="width: 45%" @click="back">返回</van-button>
+        <van-button type="primary" style="width: 45%" @click="submit"
           >确定</van-button
         >
       </div>
 
       <!--报修大类弹出层 -->
-      <van-popup v-model="showDl" round position="bottom">
+      <van-popup v-model="showStatus" round position="bottom">
         <van-picker
           value-key="name"
           show-toolbar
-          :columns="bxOpt"
-          @cancel="showDl = false"
-          @confirm="confirmBxwp"
+          :columns="StatusOpt"
+          @cancel="showStatus = false"
+          @confirm="confirmStatus"
         />
       </van-popup>
     </div>
@@ -83,11 +156,23 @@ export default {
   },
   data() {
     return {
+      fileIds: [],
       wp: "",
       showDl: false,
+      showStatus: false,
       bxOpt: [],
+      StatusOpt: [
+        {
+          name: "待处理",
+        },
+        {
+          name: "处理中",
+        },
+        {
+          name: "已处理",
+        },
+      ],
       postData: [],
-      fileIds: [],
       form: {
         bxTime: "",
         maxCate: "",
@@ -107,10 +192,6 @@ export default {
     };
   },
   methods: {
-    //!跳转负责人
-    toFzr() {
-      this.$router.push("/phone/bxPhone/components/fzr");
-    },
     //!删除照片
     delImg(file, detail) {
       // 删除指定下标的图片对象
@@ -124,8 +205,8 @@ export default {
         }
       }
       this.postData = tmp;
-      console.log("this.postData1", this.postData);
       this.fileIds.splice(detail.index, 1);
+      console.log(" this.fileIds", this.fileIds);
     },
     //!上传图片
     uploadImg(file) {
@@ -144,10 +225,11 @@ export default {
           axios
             .post("http://103.219.33.112:10010/upload", params, config)
             .then((res) => {
-              console.log("上传照片--res", res.data);
+              console.log("上传照片--res", res.data.data);
               this.fileIds.push({
                 url: res.data.data,
               });
+              console.log(this.fileIds, " this.fileIds");
             })
             .catch((err) => {});
         });
@@ -164,38 +246,67 @@ export default {
         axios
           .post("http://103.219.33.112:10010/upload", params, config)
           .then((res) => {
-            console.log("上传照片--res", res.data);
+            console.log("上传照片--res", res.data.data);
             this.fileIds.push({
               url: res.data.data,
             });
+            console.log(this.fileIds, " this.fileIds");
           })
           .catch((err) => {});
       }
     },
+    back() {
+      this.$router.push("/phone/bxPhone/components/fzr");
+    },
+    //!添加表格行
+    addRow() {
+      this.form.pjqd.push({});
+    },
+    //!确定状态
+    confirmStatus(val) {
+      this.showStatus = false;
+      if (val.name == "待处理") {
+        this.form.status = 0;
+      } else if (val.name == "处理中") {
+        this.form.status = 1;
+      } else if (val.name == "已处理") {
+        this.form.status = 2;
+      }
+      console.log(val.name, this.form.status);
+    },
+    //!删除该报修
+    delItem() {
+      this.$confirm({
+        title: "确认删除吗",
+        cancelText: "取消",
+        okText: "确定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main1
+            .del({ id: this.form.id })
+            .then((res) => {
+              this.$message.success("删除成功!");
+              this.$router.push("/Phone/bxPhone");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      });
+    },
+
     //!提交
     submit() {
       let val = this.form;
       val.bxTeaid = this.unionid;
-      val.bxImg = this.fileIds;
+      val.fkImg = this.fileIds;
       console.log(val);
       main1
         .edit(val)
         .then((res) => {
-          this.$message.success("新增成功!");
-          this.form = {
-            bxTime: "",
-            maxCate: "",
-            minCate: "",
-            name: "",
-            address: "",
-            explaion: "",
-            bxImg: [],
-            bxTeaid: "",
-            clTeaid: "",
-            clTeaname: "",
-            status: 0,
-          };
-          this.getTime();
+          this.$message.success("修改成功!");
+          this.$router.push("/Phone/bxPhone");
         })
         .catch((err) => {});
     },
@@ -262,6 +373,9 @@ export default {
   created() {
     this.getTime();
     this.getBxDl();
+    console.log(this.$route.query.data, "路由信息");
+    this.form = this.$route.query.data;
+    this.fileIds = this.form.fkImg;
   },
 };
 </script>
@@ -271,7 +385,7 @@ export default {
   width: 100%;
   height: 80px;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 }
 .topTitle {
@@ -282,5 +396,11 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 20px;
+}
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #0064ff;
 }
 </style>

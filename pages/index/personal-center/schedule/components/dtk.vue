@@ -490,7 +490,7 @@ export default {
           must: "",
           oldTeaname: "",
           teaname: "",
-          oldclassId: "",
+          oldclassId: [],
           olddate: "",
           oldStanza: "",
           oldxkname: "",
@@ -514,6 +514,7 @@ export default {
     submit() {
       let data = this.showDiaData.form;
       data.cjlbId = this.dtkId;
+      data.oldTeaId = this.unionid;
       data.status = undefined;
       if (this.showDiaData.formType == 1) {
         main

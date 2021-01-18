@@ -22,6 +22,13 @@ const getNjBj = query => {
     data: query
   });
 };
+const reflushXh = query => {
+  return request({
+    url: Api.baoxiuCs.reflushXh,
+    method: "post",
+    data: query
+  });
+};
 const selectDdUsers = query => {
   return request({
     url: Api.baoxiuCs.selectDdUsers,
@@ -34,5 +41,6 @@ export default {
   findCs,
   saveRepairCanshu,
   selectDdUsers,
-  getNjBj
+  getNjBj,
+  reflushXh
 };

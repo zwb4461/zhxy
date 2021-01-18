@@ -1,12 +1,7 @@
 <template>
   <div>
-    <div class="topBtn">
-      <van-button type="info" style="width: 90%" @click="toFzr"
-        >报修负责人进入</van-button
-      >
-    </div>
     <div class="topTitle">
-      <span>报修申请</span>
+      <span>报修信息</span>
       <span style="font-size: 16px; margin-top: 5px"
         >2020/2021学年第一学期</span
       >
@@ -45,7 +40,10 @@
         <van-field readonly v-model="form.clTeaname" label="处理教师:" />
       </van-cell-group>
       <div class="topBtn">
-        <van-button type="primary" style="width: 90%" @click="submit"
+        <van-button type="danger" style="width: 45%" @click="delItem"
+          >删除</van-button
+        >
+        <van-button type="primary" style="width: 45%" @click="submit"
           >确定</van-button
         >
       </div>
@@ -107,9 +105,26 @@ export default {
     };
   },
   methods: {
-    //!跳转负责人
-    toFzr() {
-      this.$router.push("/phone/bxPhone/components/fzr");
+    //!删除该报修
+    delItem() {
+      this.$confirm({
+        title: "确认删除吗",
+        cancelText: "取消",
+        okText: "确定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main1
+            .del({ id: this.form.id })
+            .then((res) => {
+              this.$message.success("删除成功!");
+              this.$router.push("/Phone/bxPhone");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      });
     },
     //!删除照片
     delImg(file, detail) {
@@ -124,8 +139,8 @@ export default {
         }
       }
       this.postData = tmp;
-      console.log("this.postData1", this.postData);
       this.fileIds.splice(detail.index, 1);
+      console.log(" this.fileIds", this.fileIds);
     },
     //!上传图片
     uploadImg(file) {
@@ -144,10 +159,11 @@ export default {
           axios
             .post("http://103.219.33.112:10010/upload", params, config)
             .then((res) => {
-              console.log("上传照片--res", res.data);
+              console.log("上传照片--res", res.data.data);
               this.fileIds.push({
                 url: res.data.data,
               });
+              console.log(this.fileIds, " this.fileIds");
             })
             .catch((err) => {});
         });
@@ -164,10 +180,11 @@ export default {
         axios
           .post("http://103.219.33.112:10010/upload", params, config)
           .then((res) => {
-            console.log("上传照片--res", res.data);
+            console.log("上传照片--res", res.data.data);
             this.fileIds.push({
               url: res.data.data,
             });
+            console.log(this.fileIds, " this.fileIds");
           })
           .catch((err) => {});
       }
@@ -181,21 +198,8 @@ export default {
       main1
         .edit(val)
         .then((res) => {
-          this.$message.success("新增成功!");
-          this.form = {
-            bxTime: "",
-            maxCate: "",
-            minCate: "",
-            name: "",
-            address: "",
-            explaion: "",
-            bxImg: [],
-            bxTeaid: "",
-            clTeaid: "",
-            clTeaname: "",
-            status: 0,
-          };
-          this.getTime();
+          this.$message.success("修改成功!");
+          this.$router.push("/Phone/bxPhone");
         })
         .catch((err) => {});
     },
@@ -262,6 +266,9 @@ export default {
   created() {
     this.getTime();
     this.getBxDl();
+    console.log(this.$route.query.data, "路由信息");
+    this.form = this.$route.query.data;
+    this.fileIds = this.form.bxImg;
   },
 };
 </script>
@@ -271,7 +278,7 @@ export default {
   width: 100%;
   height: 80px;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 }
 .topTitle {

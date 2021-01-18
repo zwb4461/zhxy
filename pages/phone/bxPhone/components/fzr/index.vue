@@ -1,7 +1,6 @@
 <template>
   <div>
-    <van-tabs v-model="active" @click="clickTab">
-      <van-tab title="报修申请"><bxApply></bxApply></van-tab>
+    <van-tabs v-model="active">
       <van-tab title="待处理"><deal ref="one" :status="0"></deal></van-tab>
       <van-tab title="处理中"><deal :status="1"></deal></van-tab>
       <van-tab title="已处理"><deal :status="2"></deal></van-tab>
@@ -10,11 +9,9 @@
 </template>
 
 <script>
-import bxApply from "./components/bxApply";
-import deal from "./components/deal";
+import deal from "./deal";
 export default {
   components: {
-    bxApply,
     deal,
   },
   data() {
@@ -22,12 +19,7 @@ export default {
       active: 0,
     };
   },
-  methods: {
-    clickTab(name, title) {
-      console.log(name);
-      console.log(title);
-    },
-  },
+  methods: {},
   created() {},
 };
 </script>
