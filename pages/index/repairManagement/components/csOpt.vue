@@ -169,6 +169,7 @@ export default {
     //!编辑配件
     changePj(row) {
       let val = {
+        schoolId: this.schoolId,
         setRepapjs: [
           {
             dw: row.dw,
@@ -187,6 +188,7 @@ export default {
     //!编辑地址
     changeAddress(row) {
       let val = {
+        schoolId: this.schoolId,
         setAddrs: [
           {
             address: row.address,
@@ -218,6 +220,7 @@ export default {
     //!更改大类负责人
     changeOwner(row) {
       let val = {
+        schoolId: this.schoolId,
         setRepcates: [
           {
             children: [],
@@ -238,6 +241,7 @@ export default {
     //!提交创建子类或物品
     submitCj() {
       let val = {
+        schoolId: this.schoolId,
         setRepcates: [
           {
             children: [],

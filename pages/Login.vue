@@ -70,13 +70,11 @@ export default {
             .then((res) => {
               let power = res.power;
               // // console.log("获得到的权限是----", power);
-
               return this.$store.dispatch("layout/getUserMenu", power);
             })
             .then((res) => {
               this.loading = false;
               //  // console.log(res);
-
               this.$router.push("/");
               //   this.$router.push("/Phone/bxPhone");
               //   sessionStorage.setItem("name", this.param.username);

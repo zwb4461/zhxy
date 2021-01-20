@@ -7,14 +7,13 @@
     </div>
     <div class="topTitle">
       <span>报修申请</span>
-      <span style="font-size: 16px; margin-top: 5px"
-        >2020/2021学年第一学期</span
-      >
+      <span style="font-size: 16px; margin-top: 5px">{{ xqName }}</span>
     </div>
     <div class="form">
       <van-cell-group>
         <van-field readonly label="报修时间:" :value="form.bxTime" />
         <van-field
+          readonly
           clickable
           label="报修物品:"
           :value="form.maxCate + '-' + form.minCate + '-' + form.name"
@@ -83,6 +82,7 @@ export default {
   },
   data() {
     return {
+      xqName: "",
       wp: "",
       showDl: false,
       bxOpt: [],
@@ -177,6 +177,8 @@ export default {
       let val = this.form;
       val.bxTeaid = this.unionid;
       val.bxImg = this.fileIds;
+
+      val.schoolId = this.schoolId;
       console.log(val);
       main1
         .edit(val)
@@ -258,10 +260,21 @@ export default {
           : new Date().getSeconds();
       this.form.bxTime = yy + "-0" + mm + "-" + dd + " " + hh + ":" + mf;
     },
+    //!获取当前学期
+    getXq() {
+      main
+        .seeMobileScore({ schoolId: this.schoolId })
+        .then((res) => {
+          this.xqName = res.data.name;
+          //   this.classId = res.data.id;
+        })
+        .catch((err) => {});
+    },
   },
   created() {
     this.getTime();
     this.getBxDl();
+    this.getXq();
   },
 };
 </script>

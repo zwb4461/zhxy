@@ -35,6 +35,7 @@
 <script>
 import main from "~/api/dtk";
 import main1 from "~/api/scoreEntry";
+import main2 from "~/api/baoxiuCs";
 export default {
   computed: {
     //用户id
@@ -56,7 +57,7 @@ export default {
     },
     getTable() {
       let val = {
-        cjlbId: 44,
+        cjlbId: this.cjlbId,
         pageNum: 1,
         pageSize: 10000,
         unionid: this.unionid,
@@ -69,9 +70,20 @@ export default {
         })
         .catch((err) => {});
     },
+    //!获取当前学期
+    getXq() {
+      main2
+        .seeMobileScore({ schoolId: this.schoolId })
+        .then((res) => {
+          //   this.xqName = res.data.name;
+          this.cjlbId = res.data.id;
+          this.getTable();
+        })
+        .catch((err) => {});
+    },
   },
   created() {
-    this.getTable();
+    this.getXq();
   },
 };
 </script>

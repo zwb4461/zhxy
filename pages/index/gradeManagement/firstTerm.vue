@@ -31,12 +31,19 @@
         @click="copy"
         >批量复制</el-button
       >
+      <el-button
+        size="small"
+        type="info"
+        style="width: 108px"
+        @click="ifTree = !ifTree"
+        >显示/隐藏菜单</el-button
+      >
     </div>
     <div class="contain">
-      <el-card class="left">
+      <el-card class="left" v-show="ifTree">
         <el-tree
           v-loading="treeLoading"
-          element-loading-text="菜单加载中..."
+          element-loading-text="数据加载中，请耐心等待"
           :data="treeData"
           :props="defaultProps"
           @node-click="clickTree"
@@ -47,11 +54,11 @@
       <div class="right" style="width: 100%">
         <el-table
           v-loading="tableLoading"
-          element-loading-text="数据加载中..."
+          element-loading-text="数据加载中，请耐心等待"
           :data="tableData"
           border
           style="width: calc(100%-20px)"
-          size="small"
+          size="large"
           @cell-click="clickCell"
           @header-click="addColumn"
           :header-cell-style="{ 'text-align': 'center' }"
@@ -255,7 +262,7 @@
             <el-input
               :disabled="isLock == 1"
               size="small"
-              style="width: 300px"
+              style="width: 80%"
               v-model="minScore"
             ></el-input>
           </el-form-item>
@@ -263,7 +270,7 @@
             <el-input
               :disabled="isLock == 1"
               size="small"
-              style="width: 300px"
+              style="width: 80%"
               v-model="maxScore"
             ></el-input>
           </el-form-item>
@@ -271,7 +278,7 @@
             <el-select
               :disabled="isLock == 1"
               size="small"
-              style="width: 300px"
+              style="width: 80%"
               v-model="ksdw"
               placeholder="请选择单位"
             >
@@ -483,7 +490,7 @@
         <!-- 等第 -->
         <div v-show="lrfsRow == 1 || (lrfsRow == 0 && sjly !== -1)">
           <el-table
-            size="small"
+            size="large"
             :data="ddzhtableDataSecond"
             border
             style="width: 100%; margin-top: 10px"
@@ -620,6 +627,7 @@ export default {
   },
   data() {
     return {
+      ifTree: true,
       treeLoading: false,
       tableLoading: false,
       showDelExam: false,

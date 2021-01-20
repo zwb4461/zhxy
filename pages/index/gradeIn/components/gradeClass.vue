@@ -17,12 +17,19 @@
       <el-button size="small" type="primary" style="width: 108px" @click="cjdr"
         >成绩导入</el-button
       >
+      <el-button
+        size="small"
+        type="info"
+        style="width: 108px"
+        @click="ifTree = !ifTree"
+        >显示/隐藏菜单</el-button
+      >
     </div>
     <div class="contain">
-      <el-card class="left">
+      <el-card class="left" v-show="ifTree">
         <el-tree
           v-loading="treeLoading"
-          element-loading-text="菜单加载中..."
+          element-loading-text="数据加载中，请耐心等待"
           :data="ClassData"
           :props="ClassProps"
           @node-click="clickTree"
@@ -33,12 +40,12 @@
       <div class="right" style="width: 100%">
         <el-table
           v-loading="tableLoading"
-          element-loading-text="数据加载中..."
+          element-loading-text="数据加载中，请耐心等待"
           :data="tableData"
           border
           style="width: calc(100% - 20px)"
           max-height="600px"
-          size="small"
+          size="large"
           @cell-click="clickCell"
           :row-class-name="tableRowClassName"
         >
@@ -47,26 +54,50 @@
           </el-table-column>
 
           <template v-for="(item, index) in DynamicColumn">
-            <el-table-column :key="index" :label="item.name" :prop="item.name">
+            <el-table-column
+              :key="index"
+              :label="item.name"
+              :prop="item.name"
+              width="100"
+            >
               <template slot-scope="scope">
-                <div v-show="scope.row.showExam[index].lrfs == 0">
+                <div v-show="scope.row.showExam[index].name == '缺考'">
+                  <el-checkbox
+                    :true-label="1"
+                    :false-label="0"
+                    v-model="scope.row.showExam[index].isqk"
+                    @change="inputBlur(scope.row, index)"
+                  ></el-checkbox>
+                </div>
+                <div
+                  v-show="
+                    scope.row.showExam[index].lrfs == 0 &&
+                    scope.row.showExam[index].name != '缺考'
+                  "
+                >
                   <el-input
                     :disabled="
                       scope.row.showExam[index].islock ||
-                      scope.row.showExam[index].lrqx == '任课老师'
+                      scope.row.showExam[index].lrqx == '任课老师' ||
+                      scope.row.showExam[index].isqk == 1
                     "
-                    type="number"
                     v-model="scope.row.showExam[index].score"
                     max-length="300"
                     size="mini"
                     @blur="inputBlur(scope.row, index)"
                   />
                 </div>
-                <div v-show="scope.row.showExam[index].lrfs == 1">
+                <div
+                  v-show="
+                    scope.row.showExam[index].lrfs == 1 &&
+                    scope.row.showExam[index].name != '缺考'
+                  "
+                >
                   <el-select
                     :disabled="
                       scope.row.showExam[index].islock ||
-                      scope.row.showExam[index].lrqx == '任课老师'
+                      scope.row.showExam[index].lrqx == '任课老师' ||
+                      scope.row.showExam[index].isqk == 1
                     "
                     max-length="300"
                     size="mini"
@@ -260,6 +291,7 @@ export default {
   },
   data() {
     return {
+      ifTree: true,
       tableLoading: false,
       treeLoading: false,
       loading: false,
@@ -272,6 +304,7 @@ export default {
       },
       cascaderProp: { value: "id", label: "name", children: "children" },
       cjdrData: [],
+      tableData2: [],
       showCjdr: false,
       ddScoreOpt: [{ name: "11" }, { name: "22" }],
       tabClickIndex: null, // 点击的单元格
@@ -608,6 +641,7 @@ export default {
           .then((res) => {
             this.tableLoading = false;
             this.tableData = res.data.list;
+
             this.ksOpt = [];
             console.log(this.DynamicColumn);
             this.DynamicColumn.map((item) => {

@@ -120,7 +120,7 @@
           <el-input v-model="form1.username"></el-input>
         </el-form-item>
         <el-form-item label="密码:">
-          <el-input v-model="form1.password"></el-input>
+          <el-input type="password" v-model="form1.password"></el-input>
         </el-form-item>
         <el-form-item label="学期:">
           <el-select v-model="form1.djxq" placeholder="请选择">
@@ -219,18 +219,16 @@ export default {
         .then((res) => {
           if (res.code == 200) {
             this.showLogin = false;
-            this.$message.success(res.msg);
+            this.$message.success("登录成功");
             if (!this.tabList.includes(this.gradeClass1)) {
               this.tabList.push(this.gradeClass1);
             }
             this.gradeClass = this.gradeClass1;
           }
-          if (res.code == 500) {
-            console.log("13132121");
-            this.$message.error("账号密码错误!");
-          }
         })
-        .catch((err) => {});
+        .catch((err) => {
+          this.$message.error("账号密码错误!");
+        });
     },
     //!点击体卫分类跳转该分类
     toJcClass(item) {

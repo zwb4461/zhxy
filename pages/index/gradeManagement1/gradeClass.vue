@@ -23,12 +23,42 @@
             @click="cjdr"
             >成绩导入</el-button
           >
+          <el-button
+            v-show="twBtn"
+            size="small"
+            style="width: 108px"
+            @click="twmodelUpload"
+            >体卫模板下载</el-button
+          >
+          <el-upload
+            v-show="twBtn"
+            style="margin-left: 10px"
+            action="http://103.219.33.112:10010/importTwsz"
+            :show-file-list="false"
+            name="uploadFile"
+            :on-success="fileInSuccessTw"
+            :data="{
+              classId: classId,
+              djxq: djxq,
+              cjlbId: cjlbId,
+              schoolId: schoolId,
+            }"
+          >
+            <el-button size="small" type="primary">体卫导入</el-button>
+          </el-upload>
+          <el-button
+            size="small"
+            type="info"
+            style="width: 108px; margin-left: 15px"
+            @click="ifTree = !ifTree"
+            >显示/隐藏菜单</el-button
+          >
         </div>
         <div class="contain">
-          <el-card class="left">
+          <el-card class="left" v-show="ifTree">
             <el-tree
               v-loading="treeLoading"
-              element-loading-text="菜单加载中..."
+              element-loading-text="数据加载中，请耐心等待"
               :data="ClassData"
               :props="ClassProps"
               @node-click="clickTree"
@@ -42,11 +72,11 @@
               border
               style="width: calc(100% - 20px)"
               max-height="600px"
-              size="small"
+              size="large"
               @cell-click="clickCell"
               :row-class-name="tableRowClassName"
               v-loading="tableLoading"
-              element-loading-text="数据加载中..."
+              element-loading-text="数据加载中，请耐心等待"
             >
               <el-table-column prop="xh" label="学号" width="80">
               </el-table-column>
@@ -58,28 +88,48 @@
                   :key="index"
                   :label="item.name"
                   :prop="item.name"
+                  width="100"
                 >
                   <template slot-scope="scope">
-                    <div v-show="scope.row.showExam[index].lrfs == 0">
+                    <div v-show="scope.row.showExam[index].name == '缺考'">
+                      <el-checkbox
+                        :true-label="1"
+                        :false-label="0"
+                        v-model="scope.row.showExam[index].isqk"
+                        @change="inputBlur(scope.row, index)"
+                      ></el-checkbox>
+                    </div>
+                    <div
+                      v-show="
+                        scope.row.showExam[index].lrfs == 0 &&
+                        scope.row.showExam[index].name != '缺考'
+                      "
+                    >
                       <el-input
                         :disabled="
                           scope.row.showExam[index].islock ||
                           scope.row.showExam[index].lrqx == '账号密码登录' ||
-                          scope.row.showExam[index].havelr != 1
+                          scope.row.showExam[index].havelr != 1 ||
+                          scope.row.showExam[index].isqk == 1
                         "
-                        type="number"
                         v-model="scope.row.showExam[index].score"
                         max-length="300"
                         size="mini"
                         @blur="inputBlur(scope.row, index)"
                       />
                     </div>
-                    <div v-show="scope.row.showExam[index].lrfs == 1">
+                    <div
+                      v-show="
+                        scope.row.showExam[index].lrfs == 1 &&
+                        scope.row.showExam[index].name != '缺考'
+                      "
+                    >
                       <el-select
                         :disabled="
                           scope.row.showExam[index].islock ||
                           scope.row.showExam[index].lrqx == '账号密码登录' ||
-                          scope.row.showExam[index].havelr != 1
+                          scope.row.showExam[index].havelr != 1 ||
+                          scope.row.showExam[index].isqk == 1
                         "
                         max-length="300"
                         size="mini"
@@ -123,13 +173,13 @@
           <div class="right" v-show="isqm == 2" style="width: 100%">
             <el-table
               @cell-click="clickCell1"
-              size="small"
+              size="large"
               :data="qmpyData"
               border
               max-height="600px"
               style="width: calc(100% - 20px)"
               v-loading="tableLoading"
-              element-loading-text="数据加载中..."
+              element-loading-text="数据加载中，请耐心等待"
             >
               <el-table-column prop="xh" label="学号" width="80">
               </el-table-column>
@@ -181,12 +231,12 @@
           <div class="right" v-show="isqm == 3" style="width: 100%">
             <el-table
               :data="jcTable"
-              size="small"
+              size="large"
               border
               max-height="600px"
               style="width: calc(100% - 20px)"
               v-loading="tableLoading"
-              element-loading-text="数据加载中..."
+              element-loading-text="数据加载中，请耐心等待"
             >
               <el-table-column prop="xh" label="学号"> </el-table-column>
               <el-table-column prop="name" label="姓名"> </el-table-column>
@@ -280,13 +330,13 @@
           </div>
           <div class="right" v-show="isqm == 4" style="width: 100%">
             <el-table
-              size="small"
+              size="large"
               :data="twTable"
               border
               max-height="600px"
               style="width: calc(100% - 20px)"
               v-loading="tableLoading"
-              element-loading-text="数据加载中..."
+              element-loading-text="数据加载中，请耐心等待"
             >
               <el-table-column prop="xh" label="学号"> </el-table-column>
               <el-table-column prop="name" label="姓名"> </el-table-column>
@@ -486,6 +536,8 @@ export default {
   },
   data() {
     return {
+      ifTree: true,
+      twBtn: false,
       studentId: undefined,
       jcName: "",
       loading: false,
@@ -572,6 +624,24 @@ export default {
     };
   },
   methods: {
+    //!   体卫模板下载
+    twmodelUpload() {
+      let val = {
+        cjlbId: this.cjlbId,
+        schoolId: this.schoolId,
+        classId: this.classId,
+      };
+      if (this.classId) {
+        main3
+          .DownTwsz(val)
+          .then((res) => {
+            window.location.href = res.data;
+          })
+          .catch((err) => {});
+      } else {
+        this.$message.error("请选择班级!");
+      }
+    },
     process() {
       this.loading = true;
     },
@@ -956,6 +1026,7 @@ export default {
         node.data.name !== "奖惩信息" &&
         node.data.name !== "体卫信息"
       ) {
+        this.twBtn = false;
         this.isqm = 1;
         this.tableLoading = true;
         let val = {
@@ -985,6 +1056,7 @@ export default {
           })
           .catch((err) => {});
       } else if (node.level == 4 && node.data.name == "期末评语") {
+        this.twBtn = false;
         this.tableLoading = true;
         this.isqm = 2;
         let val = {
@@ -1003,6 +1075,7 @@ export default {
           })
           .catch((err) => {});
       } else if (node.level == 5) {
+        this.twBtn = false;
         this.tableLoading = true;
         this.isqm = 3;
         this.nrOpt = [];
@@ -1020,6 +1093,7 @@ export default {
         this.getJcTable(val);
       } else if (node.level == 4 && node.data.name == "体卫信息") {
         this.tableLoading = true;
+        this.twBtn = true;
         console.log("体卫信息");
         this.isqm = 4;
         this.classId = node.parent.data.id;
@@ -1031,6 +1105,15 @@ export default {
         };
         this.gettwTable(val);
       }
+    },
+    fileInSuccessTw() {
+      let val = {
+        cjlbId: this.cjlbId,
+        classId: this.classId,
+        djxq: this.djxq,
+      };
+      this.$message.success("导入成功!");
+      this.gettwTable(val);
     },
     //获取奖惩表格
     gettwTable(val) {

@@ -64,6 +64,7 @@ export default {
       let val = {
         status: this.status,
         unionid: this.unionid,
+        schoolId: this.schoolId,
       };
       main
         .find(val)

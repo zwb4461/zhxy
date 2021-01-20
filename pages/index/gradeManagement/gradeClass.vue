@@ -38,9 +38,16 @@
             @click="cjdr"
             >成绩导入</el-button
           >
+          <el-button
+            size="small"
+            type="info"
+            style="width: 108px"
+            @click="ifTree = !ifTree"
+            >显示/隐藏菜单</el-button
+          >
         </div>
         <div class="contain">
-          <el-card class="left">
+          <el-card class="left" v-show="ifTree">
             <el-tree
               :data="ClassData"
               :props="ClassProps"
@@ -50,41 +57,98 @@
             ></el-tree>
           </el-card>
           <div class="right" v-if="!isqm" style="width: 100%">
+            <div style="width: 100%; height: 120px">
+              <el-table
+                border
+                size="mini"
+                :data="tableData2"
+                style="width: 40%"
+              >
+                <el-table-column>
+                  <template slot-scope="scope">
+                    <div>
+                      <span v-show="scope.row['sk']">
+                        {{ scope.row["sk"] }}
+                      </span>
+                      <span v-show="scope.row['qk']">
+                        {{ scope.row["qk"] }}
+                      </span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="prop"
+                  :label="item"
+                  v-for="(item, index) in tableDataCol"
+                  :key="index"
+                >
+                  <template slot-scope="scope">
+                    <div>
+                      {{ scope.row[index] }}
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
             <el-table
               :data="tableData"
               border
               style="width: calc(100% - 20px)"
               max-height="600px"
-              size="small"
+              size="large"
               @cell-click="clickCell"
               :row-class-name="tableRowClassName"
               v-loading="tableLoading"
-              element-loading-text="数据加载中..."
+              element-loading-text="数据加载中，请耐心等待"
             >
               <el-table-column prop="xh" label="学号" width="80">
               </el-table-column>
-              <el-table-column prop="name" label="姓名" width="80">
+              <el-table-column prop="name" label="姓名" width="60">
               </el-table-column>
-
               <template v-for="(item, index) in DynamicColumn">
                 <el-table-column
                   :key="index"
                   :label="item.name"
                   :prop="item.name"
+                  width="100"
                 >
                   <template slot-scope="scope">
-                    <div v-show="scope.row.showExam[index].lrfs == 0">
+                    <div v-show="scope.row.showExam[index].name == '缺考'">
+                      <el-checkbox
+                        :true-label="1"
+                        :false-label="0"
+                        v-model="scope.row.showExam[index].isqk"
+                        @change="inputBlur(scope.row, index)"
+                      ></el-checkbox>
+                    </div>
+                    <div
+                      v-show="
+                        scope.row.showExam[index].lrfs == 0 &&
+                        scope.row.showExam[index].name != '缺考'
+                      "
+                    >
                       <el-input
-                        :disabled="scope.row.showExam[index].islock"
-                        type="number"
+                        :disabled="
+                          scope.row.showExam[index].islock ||
+                          scope.row.showExam[index].isqk == 1
+                        "
                         v-model="scope.row.showExam[index].score"
                         max-length="300"
                         size="mini"
                         @blur="inputBlur(scope.row, index)"
                       />
                     </div>
-                    <div v-show="scope.row.showExam[index].lrfs == 1">
+                    <div
+                      v-show="
+                        scope.row.showExam[index].lrfs == 1 &&
+                        scope.row.showExam[index].name != '缺考'
+                      "
+                    >
                       <el-select
+                        :disabled="
+                          scope.row.showExam[index].islock ||
+                          scope.row.showExam[index].isqk == 1
+                        "
                         max-length="300"
                         size="mini"
                         v-model="scope.row.showExam[index].score"
@@ -130,6 +194,7 @@
               size="small"
               :data="qmpyData"
               border
+              max-height="600px"
               style="width: calc(100% - 20px)"
             >
               <el-table-column prop="xh" label="学号" width="100">
@@ -188,6 +253,9 @@
       ></el-tab-pane>
       <el-tab-pane label="成绩单查看" name="6"
         ><cjdPrint :cjlbId="cjlbId"></cjdPrint
+      ></el-tab-pane>
+      <el-tab-pane label="成绩查询" name="7"
+        ><gradeSearch :cjlbId="cjlbId"></gradeSearch
       ></el-tab-pane>
     </el-tabs>
     <qmpy
@@ -308,6 +376,7 @@ import secondTerm from "./secondTerm";
 import gradeTotal from "./components/gradeTotal";
 import cjdOpt from "./components/cjdOpt";
 import cjdPrint from "./components/cjdPrint";
+import gradeSearch from "./components/gradeSearch";
 export default {
   components: {
     qmpy,
@@ -315,7 +384,7 @@ export default {
     secondTerm,
     gradeTotal,
     cjdOpt,
-    cjdPrint,
+    cjdPrint,gradeSearch
   },
   props: {
     id: {
@@ -348,11 +417,14 @@ export default {
   },
   data() {
     return {
+      ifTree: true,
       tableLoading: false,
       loading: false,
       cascaderProp: { value: "id", label: "name", children: "children" },
       cjdrData: [],
       qmpyData: [],
+      tableData2: [],
+      tableDataCol: [],
       isqm: false,
       showCjdr: false,
       ddScoreOpt: [{ name: "11" }, { name: "22" }],
@@ -713,6 +785,7 @@ export default {
     },
     //   点击树
     clickTree(data, node, obj) {
+      console.log(this.DynamicColumn, "this.DynamicColumn");
       if (node.level == 4 && node.data.name !== "期末评语") {
         this.tableLoading = true;
         this.isqm = false;
@@ -731,6 +804,30 @@ export default {
           .find(val)
           .then((res) => {
             this.tableData = res.data.list;
+            this.tableDataCol = [];
+            this.tableData2 = [{}, {}];
+            res.data2.map((item) => {
+              this.tableDataCol.push(item.name);
+            });
+            res.data2.map((item, index) => {
+              this.tableData2[0]["sk"] = "实考人数";
+              this.tableData2[0][index] = item.skrs;
+              this.tableData2[1]["qk"] = "缺考人数";
+              this.tableData2[1][index] = item.qkrs;
+            });
+            console.log(this.tableData2, " this.tableData2");
+            // this.tableData2 = [
+            //   {
+            //     1: "11",
+            //     2: "22",
+            //     3: "33",
+            //   },
+            //   {
+            //     4: "44",
+            //     5: "55",
+            //     6: "66",
+            //   },
+            // ];
             this.tableLoading = false;
             this.ksOpt = [];
             this.DynamicColumn.map((item) => {
@@ -807,6 +904,7 @@ export default {
     console.log("cjlbId", this.cjlbId);
     this.getClass();
     this.getClass1();
+    console.log(this.DynamicColumn, "DynamicColumn");
   },
 };
 </script>

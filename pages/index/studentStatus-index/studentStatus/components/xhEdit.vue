@@ -4,7 +4,7 @@
       <el-card class="left">
         <el-tree
           v-loading="treeLoading"
-          element-loading-text="菜单加载中..."
+          element-loading-text="数据加载中，请耐心等待"
           :data="treeData"
           :props="defaultProps"
           @node-click="clickTree"
@@ -17,7 +17,7 @@
         <el-table
           height="500"
           v-loading="tableLoading"
-          element-loading-text="数据加载中..."
+          element-loading-text="数据加载中，请耐心等待"
           size="small"
           border
           :data="tableData"

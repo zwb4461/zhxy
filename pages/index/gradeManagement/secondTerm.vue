@@ -31,9 +31,16 @@
         @click="copy"
         >批量复制</el-button
       >
+      <el-button
+        size="small"
+        type="info"
+        style="width: 108px"
+        @click="ifTree = !ifTree"
+        >显示/隐藏菜单</el-button
+      >
     </div>
     <div class="contain">
-      <el-card class="left">
+      <el-card class="left" v-show="ifTree">
         <el-tree
           :data="treeData"
           :props="defaultProps"
@@ -47,7 +54,7 @@
           :data="tableData"
           border
           style="width: calc(100%-20px)"
-          size="small"
+          size="large"
           @cell-click="clickCell"
           @header-click="addColumn"
           :header-cell-style="{ 'text-align': 'center' }"
@@ -250,7 +257,7 @@
             <el-input
               :disabled="isLock == 1"
               size="small"
-              style="width: 300px"
+              style="width: 80%"
               v-model="minScore"
             ></el-input>
           </el-form-item>
@@ -258,7 +265,7 @@
             <el-input
               :disabled="isLock == 1"
               size="small"
-              style="width: 300px"
+              style="width: 80%"
               v-model="maxScore"
             ></el-input>
           </el-form-item>
@@ -266,7 +273,7 @@
             <el-select
               :disabled="isLock == 1"
               size="small"
-              style="width: 300px"
+              style="width: 80%"
               v-model="ksdw"
               placeholder="请选择单位"
             >
@@ -651,6 +658,7 @@ export default {
   },
   data() {
     return {
+      ifTree: true,
       showDelExam: false,
       examId: undefined,
       examIdOpt: [],

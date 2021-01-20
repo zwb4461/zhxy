@@ -53,9 +53,18 @@ const getNewMenu = power => {
         },
         {
           key: "gradeManagement1",
-          title: "成绩管理",
+          title: "成绩录入",
           meta: {
-            title: "成绩管理"
+            title: "成绩录入"
+          }
+        },
+        {
+          key: "gradeIn",
+          title: "成绩密录",
+          //   hide: true,
+          //   power: "m-18-4",
+          meta: {
+            title: "成绩密录"
           }
         },
         {
@@ -151,12 +160,12 @@ const getNewMenu = power => {
     //暂去
     {
       key: "15",
-      title: "成绩管理",
+      title: "素质管理",
       icon: "file",
       //   hide: true,
       //   power: "m-18",
       meta: {
-        title: "成绩管理"
+        title: "素质管理"
         // affix: true,
       },
       children: [
@@ -169,15 +178,7 @@ const getNewMenu = power => {
             title: "成绩管理"
           }
         },
-        {
-          key: "gradeIn",
-          title: "成绩录入",
-          //   hide: true,
-          //   power: "m-18-4",
-          meta: {
-            title: "成绩录入"
-          }
-        },
+
         {
           key: "jcManagement",
           title: "奖惩管理",

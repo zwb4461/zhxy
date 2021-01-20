@@ -10,6 +10,7 @@
       <van-cell-group>
         <van-field readonly label="报修时间:" :value="form.bxTime" />
         <van-field
+          readonly
           clickable
           label="报修物品:"
           :value="form.maxCate + '-' + form.minCate + '-' + form.name"

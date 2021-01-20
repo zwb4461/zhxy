@@ -282,7 +282,8 @@ module.exports = {
     find: baseUrl + "/selectAchimodule", //添加
     seeDedis: baseUrl + "/seeDedis",
     saveAchimodule: baseUrl + "/saveAchimodule",
-    seeAchimodule: baseUrl + "/seeAchimodule"
+    seeAchimodule: baseUrl + "/seeAchimodule",
+    finalSeeScore: baseUrl + "/finalSeeScore"
   },
   dtk: {
     find: baseUrl + "/selectTakeTran",
@@ -293,7 +294,8 @@ module.exports = {
     selectSetTake: baseUrl + "/selectSetTake",
     saveSetTake: baseUrl + "/saveSetTake",
     deleteSetTake: baseUrl + "/deleteSetTake",
-    seeTakeTJ: baseUrl + "/seeTakeTJ"
+    seeTakeTJ: baseUrl + "/seeTakeTJ",
+    selectMobileStanza: baseUrl + "/selectMobileStanza"
   },
   baoxiu: {
     find: baseUrl + "/repairList",
@@ -305,6 +307,8 @@ module.exports = {
     saveRepairCanshu: baseUrl + "/saveRepairCanshu",
     selectDdUsers: baseUrl + "/dd-user/selectDdUsers",
     getNjBj: baseUrl + "/getNjBj",
-    reflushXh: baseUrl + "/reflushXh"
+    reflushXh: baseUrl + "/reflushXh",
+    seeMobileScore: baseUrl + "/seeMobileScore",
+    repairTj: baseUrl + "/repairTj"
   }
 };

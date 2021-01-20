@@ -56,7 +56,7 @@
             @cell-dblclick="clickTable"
             border
             style="width: 100%"
-            size="mini"
+            size="large"
             :header-cell-style="{
               'text-align': 'center',
               background: '#f5f7fa',

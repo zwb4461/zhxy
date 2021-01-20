@@ -36,6 +36,13 @@ const seeTakeTJ = query => {
     data: query
   });
 };
+const selectMobileStanza = query => {
+  return request({
+    url: Api.dtk.selectMobileStanza,
+    method: "post",
+    data: query
+  });
+};
 const add = query => {
   return request({
     url: Api.dtk.add,
@@ -74,5 +81,6 @@ export default {
   saveSetTake,
   selectSetTake,
   deleteSetTake,
-  seeTakeTJ
+  seeTakeTJ,
+  selectMobileStanza
 };

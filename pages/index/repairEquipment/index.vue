@@ -253,6 +253,7 @@ export default {
   },
   data() {
     return {
+      hour: 120,
       gettime: "",
       formType: 1, //1--新增，2编辑
       tableData: [],
@@ -394,6 +395,7 @@ export default {
         // pageNum: pageNum,
         // pageSize: pageSize,
         unionid: this.unionid,
+        schoolId: this.schoolId,
       };
       main
         .find(val)

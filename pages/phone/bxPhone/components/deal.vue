@@ -27,6 +27,18 @@
 <script>
 import main from "~/api/baoxiu";
 export default {
+  computed: {
+    //学校id
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
+    userName() {
+      return this.$store.state.auth.userInfo.name;
+    },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
+    },
+  },
   props: {
     status: {
       type: Number,
@@ -51,6 +63,7 @@ export default {
     getTable() {
       let val = {
         status: this.status,
+        schoolId: this.schoolId,
       };
       main
         .find(val)

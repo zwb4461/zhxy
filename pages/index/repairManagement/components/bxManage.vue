@@ -425,6 +425,7 @@ export default {
       let val = {
         // pageNum: pageNum,
         // pageSize: pageSize,
+        schoolId: this.schoolId,
       };
       main
         .find(val)

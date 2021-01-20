@@ -4,6 +4,7 @@
       <van-tab title="代课">
         <van-cell-group>
           <van-field
+            readonly
             clickable
             label="学期年级:"
             :value="form.className"
@@ -16,6 +17,7 @@
             @click="showDkrq = true"
           />
           <van-field
+            readonly
             clickable
             label="代课课次:"
             :value="form.stanza"
@@ -23,6 +25,7 @@
             @click="showDkjc = true"
           />
           <van-field
+            readonly
             clickable
             label="代课学科:"
             :value="form.xkname"
@@ -30,8 +33,9 @@
             @click="getOpt(1)"
           />
 
-          <van-field disabled clickable label="原授课人:" :value="userName" />
+          <van-field readonly clickable label="原授课人:" :value="userName" />
           <van-field
+            readonly
             clickable
             label="现授课人:"
             :value="form.teaname"
@@ -58,6 +62,7 @@
       <van-tab title="调课">
         <van-cell-group>
           <van-field
+            readonly
             clickable
             label="学期年级:"
             :value="form.className"
@@ -70,6 +75,7 @@
             @click="showDkrq = true"
           />
           <van-field
+            readonly
             clickable
             label="调课课次:"
             :value="form.stanza"
@@ -77,6 +83,7 @@
             @click="showDkjc = true"
           />
           <van-field
+            readonly
             clickable
             label="调课学科:"
             :value="form.xkname"
@@ -84,6 +91,7 @@
             @click="getOpt(1)"
           />
           <van-field
+            readonly
             clickable
             label="原授课人:"
             :value="form.oldTeaname"
@@ -91,6 +99,7 @@
             @click="getOpt(2)"
           />
           <van-field
+            readonly
             clickable
             label="互调年级:"
             :value="form.oldCllassName"
@@ -103,6 +112,7 @@
             @click="showHdrq = true"
           />
           <van-field
+            readonly
             clickable
             label="互调课次:"
             :value="form.oldStanza"
@@ -110,6 +120,7 @@
             @click="showHdkc = true"
           />
           <van-field
+            readonly
             clickable
             label="互调学科:"
             :value="form.oldxkname"
@@ -117,6 +128,7 @@
             @click="getOpt(4)"
           />
           <van-field
+            readonly
             clickable
             label="现授课人:"
             :value="form.teaname"
@@ -232,6 +244,7 @@
 <script>
 import main from "~/api/dtk";
 import main1 from "~/api/scoreEntry";
+import main2 from "~/api/baoxiuCs";
 export default {
   computed: {
     //用户id
@@ -244,6 +257,8 @@ export default {
   },
   data() {
     return {
+      xqName: "",
+      cjlbId: "",
       active: 0,
       showXq: false,
       showDkrq: false,
@@ -347,7 +362,7 @@ export default {
     },
     getXqNj() {
       let val = {
-        cjlbId: 44,
+        cjlbId: this.cjlbId,
         type: 1,
       };
       main1
@@ -359,7 +374,7 @@ export default {
     },
     submit() {
       let data = this.form;
-      data.cjlbId = 44;
+      data.cjlbId = this.cjlbId;
       data.oldTeaId = this.unionid;
       data.status = undefined;
       console.log(data);
@@ -435,9 +450,20 @@ export default {
       this.form.oldCllassName = val.join(",");
       this.showHdxq = false;
     },
+    //!获取当前学期
+    getXq() {
+      main2
+        .seeMobileScore({ schoolId: this.schoolId })
+        .then((res) => {
+          this.xqName = res.data.name;
+          this.cjlbId = res.data.id;
+          this.getXqNj();
+        })
+        .catch((err) => {});
+    },
   },
   created() {
-    this.getXqNj();
+    this.getXq();
   },
 };
 </script>

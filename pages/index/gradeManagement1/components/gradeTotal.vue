@@ -1,5 +1,14 @@
 <template>
   <div>
+    <el-button
+      v-if="ifTj"
+      @click="outTj"
+      style="margin-bottom: 15px"
+      type="primary"
+      class="button"
+      size="small"
+      >导出总统计表</el-button
+    >
     <div class="contain">
       <el-card class="left">
         <el-tree
@@ -13,14 +22,15 @@
       <div class="right">
         <div v-if="TotalName == '总统计表'" style="width: 100%">
           <el-table
+            id="out-tj"
             v-loading="tjLoading"
-            element-loading-text="数据加载中..."
+            element-loading-text="数据加载中，请耐心等待"
             size="small"
             :data="totalTable"
             border
             style="width: calc(100% - 20px)"
           >
-            <el-table-column prop="ranking" label="排名"> </el-table-column>
+            <!-- <el-table-column prop="ranking" label="排名"> </el-table-column> -->
             <el-table-column prop="xh" label="学号"> </el-table-column>
             <el-table-column prop="name" label="姓名"> </el-table-column>
             <el-table-column prop="className" label="所在班级">
@@ -43,7 +53,7 @@
           <el-table
             v-loading="tjLoading"
             style="width: calc(100% - 20px)"
-            element-loading-text="数据加载中..."
+            element-loading-text="数据加载中，请耐心等待"
             size="small"
             :render-header="labelHead"
             :data="tableData"
@@ -133,7 +143,6 @@
           border
           style="width: 100%"
         >
-          <el-table-column type="index" label="序"> </el-table-column>
           <el-table-column prop="xh" label="学号"> </el-table-column>
           <el-table-column prop="name" label="姓名"> </el-table-column>
           <el-table-column
@@ -182,6 +191,7 @@ export default {
   },
   data() {
     return {
+      ifTj: false,
       tjLoading: false,
       showDetail: false,
       Menu: [],
@@ -223,6 +233,30 @@ export default {
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
           this.paperName + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    outTj() {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-tj"));
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "总统计表.xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
@@ -276,6 +310,7 @@ export default {
         //判断是否是总统计表
         this.TotalName = node.data.name;
         if (this.TotalName != "总统计表") {
+          this.ifTj = false;
           this.tjLoading = true;
           let val = {
             schoolId: this.schoolId,
@@ -295,12 +330,13 @@ export default {
             })
             .catch((err) => {});
         } else {
+          this.ifTj = true;
           this.tjLoading = true;
-
           let val = {
             schoolId: this.schoolId,
             ksxkId: node.data.id,
             gradeId: node.parent.parent.data.id,
+            unionid: this.unionid,
           };
           console.log(val);
           this.ksxkId = node.data.id;

@@ -29,6 +29,20 @@ const reflushXh = query => {
     data: query
   });
 };
+const seeMobileScore = query => {
+  return request({
+    url: Api.baoxiuCs.seeMobileScore,
+    method: "post",
+    data: query
+  });
+};
+const repairTj = query => {
+  return request({
+    url: Api.baoxiuCs.repairTj,
+    method: "post",
+    data: query
+  });
+};
 const selectDdUsers = query => {
   return request({
     url: Api.baoxiuCs.selectDdUsers,
@@ -42,5 +56,7 @@ export default {
   saveRepairCanshu,
   selectDdUsers,
   getNjBj,
-  reflushXh
+  reflushXh,
+  seeMobileScore,
+  repairTj
 };

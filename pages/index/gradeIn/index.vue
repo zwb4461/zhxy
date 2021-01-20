@@ -56,7 +56,7 @@
           <el-input v-model="form.username"></el-input>
         </el-form-item>
         <el-form-item label="密码:">
-          <el-input v-model="form.password"></el-input>
+          <el-input type="password" v-model="form.password"></el-input>
         </el-form-item>
         <el-form-item label="学期:">
           <el-select v-model="form.djxq" placeholder="请选择">
@@ -127,25 +127,23 @@ export default {
         username: this.form.username,
         password: this.form.password,
       };
+      console.log(val, "val");
       main
         .loginScore(val)
         .then((res) => {
           if (res.code == 200) {
-            console.log("111111", res.code);
             this.showLogin = false;
             this.njId = res.data;
-            this.$message.success(res.msg);
+            this.$message.success("登入成功");
             if (!this.tabList.includes(this.gradeClass1)) {
               this.tabList.push(this.gradeClass1);
             }
             this.gradeClass = this.gradeClass1;
           }
-          if (res.code == 500) {
-            console.log("13132121");
-            this.$message.error("账号密码错误!");
-          }
         })
-        .catch((err) => {});
+        .catch((err) => {
+          this.$message.error("账号或密码错误！");
+        });
     },
     //跳转特定类别tab
     toGradeClass(item) {

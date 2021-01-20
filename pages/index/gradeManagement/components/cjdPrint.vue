@@ -19,7 +19,7 @@
       class="grade_contain"
       id="printTest"
       v-loading="loading"
-      element-loading-text="成绩单加载中..."
+      element-loading-text="数据加载中，请耐心等待"
     >
       <div class="right" v-for="(XkItem, index) in tableData" :key="index">
         <div

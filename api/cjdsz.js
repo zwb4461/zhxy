@@ -29,10 +29,18 @@ const seeAchimodule = query => {
     data: query
   });
 };
+const finalSeeScore = query => {
+  return request({
+    url: Api.cjdsz.finalSeeScore,
+    method: "post",
+    data: query
+  });
+};
 
 export default {
   find,
   seeDedis,
   saveAchimodule,
-  seeAchimodule
+  seeAchimodule,
+  finalSeeScore
 };

@@ -99,10 +99,10 @@
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
-          <el-table-column prop="date" label="报修分类"> </el-table-column>
-          <el-table-column prop="date" label="待处理"> </el-table-column>
-          <el-table-column prop="date" label="处理中"> </el-table-column>
-          <el-table-column prop="date" label="已处理"> </el-table-column>
+          <el-table-column prop="name" label="报修分类"> </el-table-column>
+          <el-table-column prop="dcl" label="待处理"> </el-table-column>
+          <el-table-column prop="clz" label="处理中"> </el-table-column>
+          <el-table-column prop="ycl" label="已处理"> </el-table-column>
         </el-table>
       </div>
       <div class="right">
@@ -113,9 +113,9 @@
           style="width: 100%"
           border
         >
-          <el-table-column prop="date" label="配件"> </el-table-column>
-          <el-table-column prop="date" label="数量"> </el-table-column>
-          <el-table-column prop="date" label="单位"> </el-table-column>
+          <el-table-column prop="name" label="配件"> </el-table-column>
+          <el-table-column prop="sum" label="数量"> </el-table-column>
+          <el-table-column prop="dw" label="单位"> </el-table-column>
         </el-table>
       </div>
     </div>
@@ -123,6 +123,7 @@
 </template>
 
 <script>
+import main from "~/api/baoxiuCs";
 export default {
   data() {
     return {
@@ -142,6 +143,21 @@ export default {
         status: "",
       },
     };
+  },
+  methods: {
+    getTable() {
+      main
+        .repairTj({ schoolId: this.schoolId })
+        .then((res) => {
+          console.log(res.data, "res.data");
+          this.tableData_left = res.data;
+          this.tableData_right = res.data2;
+        })
+        .catch((err) => {});
+    },
+  },
+  created() {
+    this.getTable();
   },
 };
 </script>
