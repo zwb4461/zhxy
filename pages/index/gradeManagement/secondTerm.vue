@@ -330,7 +330,7 @@
     <el-dialog
       title="录入设置"
       :visible.sync="showLrsz"
-      width="30%"
+      width="40%"
       :before-close="closeLrsz"
     >
       <!-- <el-form label-width="80px">
@@ -355,7 +355,7 @@
       <el-table size="mini" :data="passwordTable" border style="width: 100%">
         <el-table-column prop="njname" label="年级" width="180">
         </el-table-column>
-        <el-table-column prop="username" label="账号" width="180">
+        <el-table-column prop="username" label="账号">
           <template slot-scope="scope">
             <div>
               <el-input

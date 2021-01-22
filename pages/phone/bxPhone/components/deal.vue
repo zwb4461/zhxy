@@ -101,18 +101,20 @@ export default {
 }
 .time_contain {
   width: 100%;
-  height: 20px;
+  height: 30px;
   padding-left: 15px;
+  display: flex;
+  align-items: center;
 }
 .lei_contain {
   width: 100%;
-  height: 40px;
+  height: 35px;
   padding-left: 15px;
   font-size: 20px;
 }
 .address_contain {
   width: 100%;
-  height: 35px;
+  height: 30px;
   padding-left: 15px;
   font-size: 18px;
 }

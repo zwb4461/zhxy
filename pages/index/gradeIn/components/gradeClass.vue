@@ -38,6 +38,34 @@
         ></el-tree>
       </el-card>
       <div class="right" style="width: 100%">
+        <div style="width: 100%; height: 120px">
+          <el-table border size="mini" :data="tableData2" style="width: 40%">
+            <el-table-column>
+              <template slot-scope="scope">
+                <div>
+                  <span v-show="scope.row['sk']">
+                    {{ scope.row["sk"] }}
+                  </span>
+                  <span v-show="scope.row['qk']">
+                    {{ scope.row["qk"] }}
+                  </span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="prop"
+              :label="item"
+              v-for="(item, index) in tableDataCol"
+              :key="index"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row[index] }}
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
         <el-table
           v-loading="tableLoading"
           element-loading-text="数据加载中，请耐心等待"
@@ -63,6 +91,7 @@
               <template slot-scope="scope">
                 <div v-show="scope.row.showExam[index].name == '缺考'">
                   <el-checkbox
+                    :disabled="scope.row.showExam[index].lrqx == '任课老师'"
                     :true-label="1"
                     :false-label="0"
                     v-model="scope.row.showExam[index].isqk"
@@ -291,6 +320,8 @@ export default {
   },
   data() {
     return {
+      tableDataCol: [],
+      tableData2: [],
       ifTree: true,
       tableLoading: false,
       treeLoading: false,
@@ -641,6 +672,17 @@ export default {
           .then((res) => {
             this.tableLoading = false;
             this.tableData = res.data.list;
+            this.tableDataCol = [];
+            this.tableData2 = [{}, {}];
+            res.data2.map((item) => {
+              this.tableDataCol.push(item.name);
+            });
+            res.data2.map((item, index) => {
+              this.tableData2[0]["sk"] = "实考人数";
+              this.tableData2[0][index] = item.skrs;
+              this.tableData2[1]["qk"] = "缺考人数";
+              this.tableData2[1][index] = item.qkrs;
+            });
 
             this.ksOpt = [];
             console.log(this.DynamicColumn);

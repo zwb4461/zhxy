@@ -8,25 +8,38 @@
     </div>
     <div class="form">
       <van-cell-group>
-        <van-field readonly label="报修时间:" :value="form.bxTime" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修时间:</span>
+        </div>
+        <van-field input-align="right" readonly :value="form.bxTime" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修物品:</span>
+        </div>
         <van-field
-          disabled
-          label="报修物品:"
+          input-align="right"
+          readonly
           :value="form.maxCate + '-' + form.minCate + '-' + form.name"
           placeholder="选择报修物品"
         />
-        <van-field disabled v-model="form.address" label="报修地点:" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修地点:</span>
+        </div>
+        <van-field input-align="right" readonly v-model="form.address" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
+        </div>
         <van-field
-          disabled
+          input-align="right"
+          readonly
           v-model="form.explaion"
           rows="3"
           autosize
-          label="情况说明:"
           type="textarea"
         />
-
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
+        </div>
         <div style="width: 100%; padding-left: 15px">
-          <span style="color: #383e52">报修图片:</span>
           <van-image
             v-for="(item, index) in form.bxImg"
             style="margin-right: 5px"
@@ -36,22 +49,16 @@
             :src="item.url"
           />
         </div>
-
-        <!-- <div style="width: 100%">
-          <van-uploader
-            multiple
-            style="margin-top: 15px; margin-left: 15px"
-            v-model="form.bxImg"
-            :after-read="uploadImg"
-            :max-count="9"
-            preview-size="80px"
-            @delete="delImg"
-          />
-        </div> -->
-        <van-field readonly v-model="userName" label="报修教师:" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
+        </div>
+        <van-field input-align="right" readonly v-model="userName" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
+        </div>
         <van-field
+          input-align="right"
           clickable
-          label="处理状态:"
           :value="
             form.status == 0
               ? '待处理'
@@ -64,17 +71,25 @@
           readonly
           @click="showStatus = true"
         />
-        <van-field readonly v-model="form.clTeaname" label="处理教师:" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
+        </div>
+        <van-field input-align="right" readonly v-model="form.clTeaname" />
       </van-cell-group>
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">反馈信息:</span>
+      </div>
       <van-field
+        input-align="right"
         v-model="form.fkxx"
         rows="3"
         autosize
-        label="反馈信息:"
         type="textarea"
       />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">反馈图片:</span>
+      </div>
       <div style="width: 100%; padding-left: 15px">
-        <span style="color: #383e52">反馈图片:</span>
         <van-uploader
           multiple
           style="margin-top: 15px; margin-left: 15px"
@@ -85,8 +100,15 @@
           @delete="delImg"
         />
       </div>
-      <van-field readonly v-model="form.xfTime" label="修复时间:" />
-      <van-field readonly v-model="form.history" label="故障历时:" />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">修复时间:</span>
+      </div>
+      <van-field input-align="right" readonly v-model="form.xfTime" />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">故障历时:</span>
+      </div>
+      <van-field input-align="right" readonly v-model="form.history" />
+
       <div class="title">
         <span>配件清单</span>
       </div>
@@ -396,11 +418,21 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 20px;
+  font-weight: bold;
 }
 .title {
   display: flex;
   justify-content: center;
   align-items: center;
   color: #0064ff;
+  font-size: 18px;
+}
+.font-bold {
+  font-weight: bold;
+  padding-top: 10px;
+}
+/deep/.van-field__control,
+/deep/.van-field__control--right {
+  font-size: 18px;
 }
 </style>

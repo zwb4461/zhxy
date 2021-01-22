@@ -47,6 +47,14 @@
             <el-button size="small" type="primary">体卫导入</el-button>
           </el-upload>
           <el-button
+            @click="outTj"
+            style="margin-left: 10px"
+            type="warning"
+            class="button"
+            size="small"
+            >成绩导出</el-button
+          >
+          <el-button
             size="small"
             type="info"
             style="width: 108px; margin-left: 15px"
@@ -67,6 +75,39 @@
             ></el-tree>
           </el-card>
           <div class="right" v-show="isqm == 1" style="width: 100%">
+            <div style="width: 100%; height: 120px">
+              <el-table
+                border
+                size="mini"
+                :data="tableData2"
+                style="width: 40%"
+              >
+                <el-table-column>
+                  <template slot-scope="scope">
+                    <div>
+                      <span v-show="scope.row['sk']">
+                        {{ scope.row["sk"] }}
+                      </span>
+                      <span v-show="scope.row['qk']">
+                        {{ scope.row["qk"] }}
+                      </span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="prop"
+                  :label="item"
+                  v-for="(item, index) in tableDataCol"
+                  :key="index"
+                >
+                  <template slot-scope="scope">
+                    <div>
+                      {{ scope.row[index] }}
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
             <el-table
               :data="tableData"
               border
@@ -93,6 +134,10 @@
                   <template slot-scope="scope">
                     <div v-show="scope.row.showExam[index].name == '缺考'">
                       <el-checkbox
+                        :disabled="
+                          scope.row.showExam[index].lrqx == '账号密码登录' ||
+                          scope.row.showExam[index].havelr != 1
+                        "
                         :true-label="1"
                         :false-label="0"
                         v-model="scope.row.showExam[index].isqk"
@@ -169,6 +214,67 @@
                 </template>
               </template>
             </el-table>
+            <!-- 模板定位(只用于导出) -->
+            <el-table
+              :data="tableData"
+              border
+              style="width: calc(100% - 20px)"
+              max-height="600px"
+              size="large"
+              id="out-tj"
+              v-show="false"
+            >
+              <el-table-column prop="xh" label="学号" width="80">
+              </el-table-column>
+              <el-table-column prop="name" label="姓名" width="80">
+              </el-table-column>
+
+              <template v-for="(item, index) in DynamicColumn">
+                <el-table-column
+                  :key="index"
+                  :label="item.name"
+                  :prop="item.name"
+                  width="100"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.showExam[index].name == '缺考'">
+                      <span>{{
+                        scope.row.showExam[index].isqk == 1 ? "缺考" : "未缺考"
+                      }}</span>
+                    </div>
+                    <div
+                      v-show="
+                        scope.row.showExam[index].lrfs == 0 &&
+                        scope.row.showExam[index].name != '缺考'
+                      "
+                    >
+                      <span>{{ scope.row.showExam[index].score }}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <template v-for="(subItem, subIndex) in item.scoreChange">
+                  <el-table-column
+                    :key="subIndex + item.name"
+                    :label="subItem.name"
+                  >
+                    <template
+                      slot-scope="scope"
+                      v-if="scope.row.showExam[index].scoreChange"
+                    >
+                      <div>
+                        {{
+                          scope.row.showExam[index].scoreChange[subIndex]
+                            ? scope.row.showExam[index].scoreChange[subIndex]
+                                .score
+                            : ""
+                        }}
+                      </div>
+                    </template>
+                  </el-table-column>
+                </template>
+              </template>
+            </el-table>
+            <!-- 末班定位end -->
           </div>
           <div class="right" v-show="isqm == 2" style="width: 100%">
             <el-table
@@ -382,6 +488,12 @@
       <el-tab-pane label="成绩统计" name="4"
         ><gradeTotal :cjlbId="cjlbId"></gradeTotal
       ></el-tab-pane>
+      <el-tab-pane v-if="ifBzr == 1" label="成绩查询" name="5"
+        ><gradeSearch :cjlbId="cjlbId"></gradeSearch
+      ></el-tab-pane>
+      <el-tab-pane v-if="ifBzr == 1" label="成绩单查看" name="6"
+        ><cjdPrint :cjlbId="cjlbId"></cjdPrint
+      ></el-tab-pane>
     </el-tabs>
     <qmpy
       ref="qmpyComponent"
@@ -499,14 +611,24 @@ import main1 from "~/api/examManage";
 import main2 from "~/api/jcManage";
 import main3 from "~/api/twManage";
 import gradeTotal from "./components/gradeTotal";
+import gradeSearch from "./components/gradeSearch";
+import cjdPrint from "./components/cjdPrint";
 import qmpy from "~/pages/index/gradeManagement/components/qmpy";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
   components: {
     qmpy,
     gradeTotal,
+    gradeSearch,
+    cjdPrint,
   },
   props: {
     id: {
+      type: Number,
+      default: 0,
+    },
+    ifBzr: {
       type: Number,
       default: 0,
     },
@@ -536,6 +658,8 @@ export default {
   },
   data() {
     return {
+      tableData2: [],
+      tableDataCol: [],
       ifTree: true,
       twBtn: false,
       studentId: undefined,
@@ -624,6 +748,35 @@ export default {
     };
   },
   methods: {
+    //!成绩导出
+    outTj() {
+      var xlsxParam = { raw: true }; //转换成excel时，使用原始的格式
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(
+        document.querySelector("#out-tj"),
+        xlsxParam
+      );
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "总统计表.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     //!   体卫模板下载
     twmodelUpload() {
       let val = {
@@ -1045,6 +1198,17 @@ export default {
           .find(val)
           .then((res) => {
             this.tableData = res.data.list;
+            this.tableDataCol = [];
+            this.tableData2 = [{}, {}];
+            res.data2.map((item) => {
+              this.tableDataCol.push(item.name);
+            });
+            res.data2.map((item, index) => {
+              this.tableData2[0]["sk"] = "实考人数";
+              this.tableData2[0][index] = item.skrs;
+              this.tableData2[1]["qk"] = "缺考人数";
+              this.tableData2[1][index] = item.qkrs;
+            });
             this.tableLoading = false;
             this.ksOpt = [];
             console.log(this.DynamicColumn);
@@ -1084,11 +1248,11 @@ export default {
           classId: node.parent.parent.data.id,
           cjlbId: this.cjlbId,
           djxq: node.parent.parent.parent.parent.data.id,
-          name: node.data.name,
+          name: node.data.nameData,
         };
         this.djxq = node.parent.parent.parent.parent.data.id;
         this.classId = node.parent.parent.data.id;
-        this.jcName = node.data.name;
+        this.jcName = node.data.nameData;
         this.studentId = node.data.id;
         this.getJcTable(val);
       } else if (node.level == 4 && node.data.name == "体卫信息") {
@@ -1164,7 +1328,21 @@ export default {
         .seeSiji(val)
         .then((res) => {
           this.treeLoading = false;
-          this.ClassData = res.data;
+          this.ClassData = res.data.map((item1) => {
+            item1.children.map((item2) => {
+              item2.children.map((item3) => {
+                item3.children.map((item4) => {
+                  if (item4.children) {
+                    item4.children.map((item5) => {
+                      item5.nameData = item5.name;
+                      item5.name = item5.xh + "  " + item5.name;
+                    });
+                  }
+                });
+              });
+            });
+            return item1;
+          });
         })
         .catch((err) => {});
     },

@@ -41,30 +41,15 @@
         :key="index"
         :label="item"
         :name="item"
-        ><gradeClass :id="id" :ifBzr="ifBzr"></gradeClass
+        ><gradeClass :cjlbId="cjlbId"></gradeClass
       ></el-tab-pane>
     </el-tabs>
-    <!-- 添加成绩分类dia -->
-    <my-drawer-vue
-      title="学期成绩"
-      :width="500"
-      :visible="showAddClassDia"
-      :onOk="submit"
-      @onClose="formClose"
-    >
-      <template slot="contentInfo">
-        <addGradeClass ref="tableForm" />
-      </template>
-    </my-drawer-vue>
   </div>
 </template>
 
 <script>
-import addGradeClass from "./components/addGradeClass";
-import myDrawerVue from "~/components/common/myDrawer.vue";
+import gradeClass from "./components";
 import main from "~/api/addGradeClass";
-
-import gradeClass from "./gradeClass";
 export default {
   computed: {
     //学校id
@@ -76,8 +61,6 @@ export default {
     },
   },
   components: {
-    addGradeClass,
-    myDrawerVue,
     gradeClass,
   },
   data() {
@@ -87,14 +70,14 @@ export default {
       gradeClass: "cjfl", //选中的tab名
       showAddClassDia: false, //控制显示添加成绩分类dia
       formType: 1, //1--新增,2--编辑
-      id: 0, //当前编辑的id
+      cjlbId: 0, //当前编辑的id
       ifBzr: 0, //0不是--1是班主任
     };
   },
   methods: {
     //跳转特定类别tab
     toGradeClass(item) {
-      this.id = item.id;
+      this.cjlbId = item.id;
       if (!this.tabList.includes(item.name)) {
         this.tabList.push(item.name);
       }
@@ -104,11 +87,9 @@ export default {
       main
         .find({
           schoolId: this.schoolId,
-          unionid: this.unionid,
         })
         .then((res) => {
           this.gradeList = res.data;
-          this.ifBzr = res.data2; //0不是--1是班主任
         })
         .catch((err) => {});
     },
@@ -116,92 +97,9 @@ export default {
     handleClick(tab, event) {
       //   console.log(tab, event);
     },
-    // 点击添加成绩分类
-    addClass() {
-      this.showAddClassDia = true;
-      this.formType = 1;
-    },
-    //关闭添加分类的dia
-    formClose() {
-      this.showAddClassDia = false;
-    },
-    // 编辑
-    edit(item) {
-      this.showAddClassDia = true;
-      this.formType = 2;
-      this.id = item.id;
-      console.log("item", item);
-      setTimeout(() => {
-        this.$refs.tableForm.setForm(item);
-      }, 100);
-    },
-
-    // 删除
-    del(item) {
-      this.$confirm({
-        title: "确认删除吗",
-        cancelText: "取消",
-        okText: "确定",
-        okType: "danger",
-        centered: true,
-        onOk: () => {
-          main
-            .del({ id: item.id })
-            .then((res) => {
-              console.log("res", res);
-              this.$message.success(res.data);
-              this.getGradeClass();
-            })
-            .catch((err) => {
-              this.$message.error(err);
-            });
-        },
-      });
-    },
-    // 提交
-    submit() {
-      if (this.formType == 1) {
-        let val = {
-          name: this.$refs.tableForm.form.name,
-          xueqiId: this.$refs.tableForm.form.term,
-          schoolId: this.schoolId,
-        };
-        console.log("val", val);
-        main
-          .add(val)
-          .then((res) => {
-            this.$message.success(res.data);
-            this.showAddClassDia = false;
-            this.getGradeClass();
-          })
-          .catch((err) => {
-            this.$message.error(err);
-            this.showAddClassDia = false;
-          });
-      } else if (this.formType == 2) {
-        let val = {
-          id: this.id,
-          name: this.$refs.tableForm.form.name,
-          xueqiId: this.$refs.tableForm.form.term,
-          schoolId: this.schoolId,
-        };
-        main
-          .edit(val)
-          .then((res) => {
-            this.$message.success(res.data);
-            this.showAddClassDia = false;
-            this.getGradeClass();
-          })
-          .catch((err) => {
-            this.$message.error(err);
-            this.showAddClassDia = false;
-          });
-      }
-    },
   },
   created() {
     this.getGradeClass();
-    console.log("schoolId", this.schoolId);
   },
 };
 </script>

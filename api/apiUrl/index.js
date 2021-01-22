@@ -242,7 +242,8 @@ module.exports = {
     findJc: baseUrl + "/selectMoralPrize",
     saveMoralPrize: baseUrl + "/saveMoralPrize",
     seeJcsz: baseUrl + "/seeJcsz",
-    saveJcsz: baseUrl + "/saveJcsz"
+    saveJcsz: baseUrl + "/saveJcsz",
+    deleteMoralPrize: baseUrl + "/deleteMoralPrize"
   },
   twManage: {
     add: baseUrl + "/insertPhysicalCate",
@@ -268,7 +269,8 @@ module.exports = {
     ksSeeScore: baseUrl + "/ksSeeScore",
     seeScore: baseUrl + "/seeScore",
     BjSeeScore: baseUrl + "/BjSeeScore",
-    ztjSeeScore: baseUrl + "/ztjSeeScore"
+    ztjSeeScore: baseUrl + "/ztjSeeScore",
+    cjfxSeeScore: baseUrl + "/cjfxSeeScore"
   },
   //成绩单位
   cjdw: {

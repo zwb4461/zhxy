@@ -216,8 +216,12 @@ export default {
   },
   methods: {
     exportExcel() {
+      var xlsxParam = { raw: true }; //转换成excel时，使用原始的格式
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      var wb = XLSX.utils.table_to_book(
+        document.querySelector("#out-table"),
+        xlsxParam
+      );
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -240,8 +244,12 @@ export default {
       return wbout;
     },
     outTj() {
+      var xlsxParam = { raw: true }; //转换成excel时，使用原始的格式
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#out-tj"));
+      var wb = XLSX.utils.table_to_book(
+        document.querySelector("#out-tj"),
+        xlsxParam
+      );
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",

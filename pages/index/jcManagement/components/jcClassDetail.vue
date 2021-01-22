@@ -2,8 +2,15 @@
   <div>
     <el-tabs v-model="activeName">
       <el-tab-pane label="奖惩录入" name="first">
+        <el-button
+          type="info"
+          size="small"
+          @click="ifShow = !ifShow"
+          style="margin-bottom: 10px"
+          >显示/隐藏菜单</el-button
+        >
         <div class="contain">
-          <div class="left">
+          <div class="left" v-show="ifShow">
             <el-tree
               :data="treeData"
               :props="defaultProps"
@@ -13,8 +20,13 @@
             >
             </el-tree>
           </div>
-          <div class="right">
-            <el-table :data="jcTable" size="small" border style="width: 100%">
+          <div class="right" style="width: 100%">
+            <el-table
+              :data="jcTable"
+              size="small"
+              border
+              style="width: calc(100%-50px)"
+            >
               <el-table-column prop="xh" label="学号"> </el-table-column>
               <el-table-column prop="name" label="姓名"> </el-table-column>
               <el-table-column prop="className" label="所在班级">
@@ -95,6 +107,18 @@
                       @blur="edit(scope.row)"
                       v-model="scope.row.remark"
                     ></el-input>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <div>
+                    <el-button
+                      type="danger"
+                      @click="del(scope.row)"
+                      size="small"
+                      >删除</el-button
+                    >
                   </div>
                 </template>
               </el-table-column>
@@ -192,6 +216,7 @@ export default {
   },
   data() {
     return {
+      ifShow: true,
       activeName: "first",
       //当前选中的是班级还是学生.2--班级，3--学生
       level: 0,
@@ -239,6 +264,39 @@ export default {
     };
   },
   methods: {
+    //!删除
+    del(row) {
+      console.log(row);
+      this.$confirm({
+        title: "确定删除吗?",
+        cancelText: "取消",
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .deleteMoralPrize({ id: row.id })
+            .then((res) => {
+              this.$message.success("删除成功!");
+              if (this.level == 2) {
+                let val = {
+                  classId: this.classId,
+                  cjlbId: this.cjlbId,
+                };
+                this.getJcTable(val);
+              } else if (this.level == 3) {
+                let val = {
+                  cjlbId: this.cjlbId,
+                  classId: this.classId,
+                  name: this.name,
+                };
+                this.getJcTable(val);
+              }
+            })
+            .catch((err) => {});
+        },
+      });
+    },
     //添加奖惩表格
     addTable() {
       let val = {
@@ -304,7 +362,15 @@ export default {
       main
         .seeSanjiMeui(val)
         .then((res) => {
-          this.treeData = res.data;
+          this.treeData = res.data.map((item1) => {
+            item1.children.map((item2) => {
+              item2.children.map((item3) => {
+                item3.nameData = item3.name;
+                item3.name = item3.xh + "  " + item3.name;
+              });
+            });
+            return item1;
+          });
         })
         .catch((err) => {});
     },
@@ -336,12 +402,12 @@ export default {
       } else if (data.level == 3) {
         this.level = 3;
         this.classId = data.parent.data.id;
-        this.name = data.data.name;
+        this.name = data.data.nameData;
         this.studentId = data.data.id;
         let val = {
           cjlbId: this.cjlbId,
           classId: data.parent.data.id,
-          name: data.data.name,
+          name: data.data.nameData,
         };
         this.getJcTable(val);
       }
@@ -418,7 +484,7 @@ export default {
   padding: 0;
 }
 .left {
-  width: 250px;
+  min-width: 250px;
   min-height: 500px;
   border: 1px solid #eeeeee;
 }
@@ -430,8 +496,7 @@ export default {
 .optContain {
   display: flex;
   flex-direction: row;
-  height: 100vh;
-  width: 50vw;
+  width: 100%;
 }
 .leftOpt {
   width: 49%;

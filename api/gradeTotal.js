@@ -22,6 +22,13 @@ const ztjSeeScore = query => {
     data: query
   });
 };
+const cjfxSeeScore = query => {
+  return request({
+    url: Api.gradeTotal.cjfxSeeScore,
+    method: "post",
+    data: query
+  });
+};
 
 const seeScore = query => {
   return request({
@@ -35,5 +42,6 @@ export default {
   ksSeeScore,
   seeScore,
   BjSeeScore,
-  ztjSeeScore
+  ztjSeeScore,
+  cjfxSeeScore
 };

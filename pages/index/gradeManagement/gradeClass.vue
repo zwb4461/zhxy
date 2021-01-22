@@ -384,7 +384,8 @@ export default {
     secondTerm,
     gradeTotal,
     cjdOpt,
-    cjdPrint,gradeSearch
+    cjdPrint,
+    gradeSearch,
   },
   props: {
     id: {
@@ -815,19 +816,6 @@ export default {
               this.tableData2[1]["qk"] = "缺考人数";
               this.tableData2[1][index] = item.qkrs;
             });
-            console.log(this.tableData2, " this.tableData2");
-            // this.tableData2 = [
-            //   {
-            //     1: "11",
-            //     2: "22",
-            //     3: "33",
-            //   },
-            //   {
-            //     4: "44",
-            //     5: "55",
-            //     6: "66",
-            //   },
-            // ];
             this.tableLoading = false;
             this.ksOpt = [];
             this.DynamicColumn.map((item) => {

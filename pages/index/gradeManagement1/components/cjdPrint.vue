@@ -305,6 +305,9 @@ export default {
     schoolId() {
       return this.$store.state.auth.schoolId;
     },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
+    },
   },
   data() {
     return {
@@ -325,9 +328,8 @@ export default {
   methods: {
     getTree() {
       main1
-        .seeSanjiMeui({ cjlbId: this.cjlbId })
+        .seeSanjiMeui({ cjlbId: this.cjlbId, unionid: this.unionid })
         .then((res) => {
-          //   this.treeData = res.data;
           this.treeData = res.data.map((item1) => {
             item1.children.map((item2) => {
               item2.children.map((item3) => {

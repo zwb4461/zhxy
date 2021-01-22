@@ -140,7 +140,7 @@ export default {
           ],
         },
         {
-          title: "成绩管理",
+          title: "素质管理",
           key: "m-18",
           children: [
             {
@@ -148,9 +148,13 @@ export default {
               key: "m-18-1",
             },
             {
-              title: "成绩录入",
-              key: "m-18-4",
+              title: "成绩统计",
+              key: "m-18-5",
             },
+            // {
+            //   title: "成绩密入",
+            //   key: "m-18-4",
+            // },
             {
               title: "奖惩管理",
               key: "m-18-2",

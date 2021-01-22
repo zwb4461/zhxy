@@ -70,6 +70,9 @@ export default {
     schoolId() {
       return this.$store.state.auth.schoolId;
     },
+    unionid() {
+      return this.$store.state.auth.userInfo.unionid;
+    },
   },
   data() {
     return {
@@ -139,6 +142,7 @@ export default {
       let val = {
         schoolId: this.schoolId,
         twId: this.cjlbId,
+        unionid: this.unionid,
       };
       main1
         .seeSanjiMeui(val)

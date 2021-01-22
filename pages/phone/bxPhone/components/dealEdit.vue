@@ -8,23 +8,38 @@
     </div>
     <div class="form">
       <van-cell-group>
-        <van-field readonly label="报修时间:" :value="form.bxTime" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修时间:</span>
+        </div>
+        <van-field input-align="right" readonly :value="form.bxTime" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修物品:</span>
+        </div>
         <van-field
+          input-align="right"
           readonly
           clickable
-          label="报修物品:"
           :value="form.maxCate + '-' + form.minCate + '-' + form.name"
           placeholder="选择报修物品"
           @click="showDl = true"
         />
-        <van-field v-model="form.address" label="报修地点:" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修地点:</span>
+        </div>
+        <van-field input-align="right" v-model="form.address" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
+        </div>
         <van-field
+          input-align="right"
           v-model="form.explaion"
           rows="3"
           autosize
-          label="情况说明:"
           type="textarea"
         />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
+        </div>
         <div style="width: 100%">
           <van-uploader
             multiple
@@ -36,9 +51,30 @@
             @delete="delImg"
           />
         </div>
-        <van-field readonly v-model="userName" label="报修教师:" />
-        <van-field label="处理状态:" value="待处理" readonly />
-        <van-field readonly v-model="form.clTeaname" label="处理教师:" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
+        </div>
+        <van-field input-align="right" readonly v-model="userName" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
+        </div>
+        <van-field
+          input-align="right"
+          :value="
+            form.status == 0
+              ? '待处理'
+              : form.status == 1
+              ? '处理中'
+              : form.status == 2
+              ? '已处理'
+              : ''
+          "
+          readonly
+        />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
+        </div>
+        <van-field readonly input-align="right" v-model="form.clTeaname" />
       </van-cell-group>
       <div class="topBtn">
         <van-button type="danger" style="width: 45%" @click="delItem"
@@ -290,5 +326,14 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 20px;
+  font-weight: bold;
+}
+.font-bold {
+  font-weight: bold;
+  padding-top: 10px;
+}
+/deep/.van-field__control,
+/deep/.van-field__control--right {
+  font-size: 18px;
 }
 </style>

@@ -162,8 +162,8 @@ const getNewMenu = power => {
       key: "15",
       title: "素质管理",
       icon: "file",
-      //   hide: true,
-      //   power: "m-18",
+      hide: true,
+      power: "m-18",
       meta: {
         title: "素质管理"
         // affix: true,
@@ -176,6 +176,15 @@ const getNewMenu = power => {
           power: "m-18-1",
           meta: {
             title: "成绩管理"
+          }
+        },
+        {
+          key: "gradeTotal",
+          title: "成绩统计",
+          hide: true,
+          power: "m-18-5",
+          meta: {
+            title: "成绩统计"
           }
         },
 

@@ -29,6 +29,13 @@ const seeJcsz = query => {
     data: query
   });
 };
+const deleteMoralPrize = query => {
+  return request({
+    url: Api.jcManage.deleteMoralPrize,
+    method: "post",
+    data: query
+  });
+};
 const findJc = query => {
   return request({
     url: Api.jcManage.findJc,
@@ -66,5 +73,6 @@ export default {
   findJc,
   saveMoralPrize,
   saveJcsz,
-  seeJcsz
+  seeJcsz,
+  deleteMoralPrize
 };
