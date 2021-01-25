@@ -101,8 +101,17 @@
           <a-button size="small" type="primary" @click="see(scope.row)"
             >查看</a-button
           >
-          <a-button size="small" @click="edit(scope.row)">编辑</a-button>
-          <a-button size="small" type="danger" @click="del(scope.row)"
+          <a-button
+            size="small"
+            @click="edit(scope.row)"
+            :disabled="scope.row.status == 1 || scope.row.status == 2"
+            >编辑</a-button
+          >
+          <a-button
+            size="small"
+            type="danger"
+            @click="del(scope.row)"
+            :disabled="scope.row.status == 1 || scope.row.status == 2"
             >删除</a-button
           >
         </template>
@@ -111,7 +120,7 @@
     <el-dialog
       title="报修"
       :visible.sync="showBx"
-      width="40%"
+      width="30%"
       :close-on-click-modal="false"
     >
       <div>
@@ -156,6 +165,8 @@
               :disabled="formType == 3"
               size="small"
               v-model="form.name"
+              filterable
+              allow-create
             >
               <el-option
                 v-for="item in nameOpt"
@@ -374,6 +385,7 @@ export default {
     //!提交报修
     submitBx() {
       let val = this.form;
+      //   val.schoolId;
       if (this.formType == 1) {
         //新增
         val.bxTeaid = this.unionid;
@@ -383,7 +395,7 @@ export default {
       main
         .edit(val)
         .then((res) => {
-          this.$message.success("新增成功!");
+          this.$message.success("提交成功!");
           this.getTable(20, 1);
           this.showBx = false;
         })

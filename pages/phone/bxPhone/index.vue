@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <van-tabs v-model="bxActive" @click="clickTab">
+  <div class="contain">
+    <van-tabs v-model="bxActive" @click="clickTab" animated class="order-tabs">
       <van-tab title="报修申请"><bxApply></bxApply></van-tab>
       <van-tab title="待处理"><deal ref="one" :status="0"></deal></van-tab>
       <van-tab title="处理中"><deal :status="1"></deal></van-tab>
@@ -42,4 +42,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/deep/.van-tab,
+/deep/.van-tab--active,
+/deep/.van-ellipsis {
+  font-size: 18px;
+}
+</style>

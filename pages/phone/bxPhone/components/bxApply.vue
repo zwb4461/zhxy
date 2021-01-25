@@ -212,7 +212,7 @@ export default {
       main1
         .edit(val)
         .then((res) => {
-          this.$message.success("新增成功!");
+          this.$message.success("报修申请成功!");
           this.form = {
             bxTime: "",
             maxCate: "",

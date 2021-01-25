@@ -1,134 +1,131 @@
 <template>
   <div class="contain">
-    <div class="left">
-      <el-table
-        :header-cell-style="{ 'text-align': 'center' }"
-        size="small"
-        :data="tableData_left"
-        style="width: 100%"
-        row-key="id"
-        border
-        default-expand-all
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-      >
-        <el-table-column prop="name" label="报修分类" class-name="cell">
-          <template slot-scope="scope">
-            <div class="cells">
-              <!-- :class="
-                  scope.row.zmenu == 1
-                    ? 'rad'
-                    : scope.row.zmenu == 2
-                    ? 'rad1'
-                    : 'rad2'
-                " -->
-              <span></span>
+    <el-tabs v-model="activeName" :stretch="true">
+      <el-tab-pane label="报修设备名称管理" name="first">
+        <el-table
+          :header-cell-style="{ 'text-align': 'center' }"
+          size="small"
+          :data="tableData_left"
+          style="width: 50%"
+          row-key="id"
+          border
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        >
+          <el-table-column prop="name" label="报修分类" class-name="cell">
+            <template slot-scope="scope">
+              <div class="cells">
+                <span></span>
+                <el-input
+                  size="mini"
+                  style="width: 100%"
+                  v-model="scope.row.name"
+                  @blur="changeOwner(scope.row)"
+                ></el-input>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="owner" label="大类负责人">
+            <template slot-scope="scope">
+              <div>
+                <span v-show="scope.row.zmenu != 1">
+                  {{ scope.row.owner }}</span
+                >
+                <el-select
+                  filterable
+                  multiple
+                  size="mini"
+                  v-show="scope.row.zmenu == 1"
+                  @change="changeOwner(scope.row)"
+                  v-model="scope.row.ownerId"
+                >
+                  <el-option
+                    v-for="item in personOpt"
+                    :key="item.unionid"
+                    :label="item.name"
+                    :value="item.unionid"
+                  >
+                  </el-option>
+                </el-select>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                v-show="scope.row.zmenu == 1"
+                size="mini"
+                @click="addZl(scope.row)"
+                >创建子类</el-button
+              >
+              <el-button
+                v-show="scope.row.zmenu == 2"
+                size="mini"
+                @click="addWp(scope.row)"
+                >创建物品</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-button size="small" style="width: 100%" @click="addDl"
+          >+添加大类</el-button
+        >
+      </el-tab-pane>
+      <el-tab-pane label="配件管理" name="second">
+        <el-table
+          :header-cell-style="{ 'text-align': 'center' }"
+          size="small"
+          :data="tableData_center"
+          style="width: 40%"
+          border
+        >
+          <el-table-column prop="name" label="配件管理">
+            <template slot-scope="scope">
               <el-input
                 size="mini"
-                style="width: 170px"
                 v-model="scope.row.name"
-                @blur="changeOwner(scope.row)"
+                @blur="changePj(scope.row)"
               ></el-input>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="owner" label="大类负责人">
-          <template slot-scope="scope">
-            <div>
-              <span v-show="scope.row.zmenu != 1"> {{ scope.row.owner }}</span>
-              <el-select
-                filterable
-                multiple
+            </template>
+          </el-table-column>
+          <el-table-column prop="dw" label="单位">
+            <template slot-scope="scope">
+              <el-input
                 size="mini"
-                v-show="scope.row.zmenu == 1"
-                @change="changeOwner(scope.row)"
-                v-model="scope.row.ownerId"
-              >
-                <el-option
-                  v-for="item in personOpt"
-                  :key="item.unionid"
-                  :label="item.name"
-                  :value="item.unionid"
-                >
-                </el-option>
-              </el-select>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="120" align="center">
-          <template slot-scope="scope">
-            <el-button
-              v-show="scope.row.zmenu == 1"
-              size="mini"
-              @click="addZl(scope.row)"
-              >创建子类</el-button
-            >
-            <el-button
-              v-show="scope.row.zmenu == 2"
-              size="mini"
-              @click="addWp(scope.row)"
-              >创建物品</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-button size="small" style="width: 100%" @click="addDl"
-        >+添加大类</el-button
-      >
-    </div>
-    <div class="center">
-      <el-table
-        :header-cell-style="{ 'text-align': 'center' }"
-        size="small"
-        :data="tableData_center"
-        style="width: 100%"
-        border
-      >
-        <el-table-column prop="name" label="配件管理">
-          <template slot-scope="scope">
-            <el-input
-              size="mini"
-              v-model="scope.row.name"
-              @blur="changePj(scope.row)"
-            ></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="dw" label="单位">
-          <template slot-scope="scope">
-            <el-input
-              size="mini"
-              v-model="scope.row.dw"
-              @blur="changePj(scope.row)"
-            ></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
+                v-model="scope.row.dw"
+                @blur="changePj(scope.row)"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
 
-      <el-button size="small" style="width: 100%" @click="addPj"
-        >+添加</el-button
-      >
-    </div>
-    <div class="right">
-      <el-table
-        :header-cell-style="{ 'text-align': 'center' }"
-        size="small"
-        :data="tableData_right"
-        style="width: 100%"
-        border
-      >
-        <el-table-column prop="address" label="报修地点">
-          <template slot-scope="scope">
-            <el-input
-              size="mini"
-              v-model="scope.row.address"
-              @blur="changeAddress(scope.row)"
-            ></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-button size="small" style="width: 100%" @click="addAddress"
-        >+添加</el-button
-      >
-    </div>
+        <el-button size="small" style="width: 100%" @click="addPj"
+          >+添加</el-button
+        >
+      </el-tab-pane>
+      <el-tab-pane label="报修地点管理" name="third">
+        <el-table
+          :header-cell-style="{ 'text-align': 'center' }"
+          size="small"
+          :data="tableData_right"
+          style="width: 30%"
+          border
+        >
+          <el-table-column prop="address" label="报修地点">
+            <template slot-scope="scope">
+              <el-input
+                size="mini"
+                v-model="scope.row.address"
+                @blur="changeAddress(scope.row)"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-button size="small" style="width: 30%" @click="addAddress"
+          >+添加</el-button
+        >
+      </el-tab-pane>
+    </el-tabs>
+
     <el-dialog :title="title" :visible.sync="showCj" width="30%">
       <el-form label-width="80px">
         <el-form-item :label="title.slice(2, 4) + '名称:'">
@@ -154,6 +151,7 @@ export default {
   },
   data() {
     return {
+      activeName: "first",
       title: "",
       name: "",
       rowData: {},
@@ -219,6 +217,7 @@ export default {
     },
     //!更改大类负责人
     changeOwner(row) {
+      console.log(row);
       let val = {
         schoolId: this.schoolId,
         setRepcates: [
@@ -318,18 +317,15 @@ export default {
 .contain {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 .left {
-  width: 33%;
+  width: 100%;
 }
 .center {
-  width: 33%;
+  width: 100%;
 }
 .right {
-  width: 33%;
+  width: 100%;
 }
 .cell {
   font-size: 25px;

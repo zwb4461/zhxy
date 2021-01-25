@@ -77,7 +77,11 @@
         <van-field readonly input-align="right" v-model="form.clTeaname" />
       </van-cell-group>
       <div class="topBtn">
-        <van-button type="danger" style="width: 45%" @click="delItem"
+        <van-button
+          type="danger"
+          style="width: 45%"
+          @click="delItem"
+          :disabled="form.status == 1 || form.status == 2"
           >删除</van-button
         >
         <van-button type="primary" style="width: 45%" @click="submit"
@@ -263,7 +267,6 @@ export default {
             });
             return item;
           });
-          console.log(this.bxOpt, "11111111111");
           this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
         })
@@ -271,7 +274,6 @@ export default {
     },
     //!确定报修物品
     confirmBxwp(val) {
-      console.log(val);
       this.showDl = false;
       this.form.maxCate = val[0];
       this.form.minCate = val[1];
