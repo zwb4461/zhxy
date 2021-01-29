@@ -20,9 +20,11 @@
           input-align="right"
           size="large"
         />
+
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修物品:</span>
         </div>
+
         <van-field
           readonly
           clickable
@@ -38,6 +40,7 @@
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
         </div>
+
         <van-field
           v-model="form.explaion"
           rows="3"
@@ -70,6 +73,7 @@
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
         </div>
+
         <van-field input-align="right" readonly v-model="form.clTeaname" />
       </van-cell-group>
       <div class="topBtn">
@@ -77,7 +81,6 @@
           >确定</van-button
         >
       </div>
-
       <!--报修大类弹出层 -->
       <van-popup v-model="showDl" round position="bottom">
         <van-picker
@@ -111,6 +114,18 @@ export default {
   },
   data() {
     return {
+      value11: "",
+      showPicker11: false,
+      columns11: [
+        "杭州",
+        "宁波",
+        "温州",
+        "绍兴",
+        "湖州",
+        "嘉兴",
+        "金华",
+        "衢州",
+      ],
       xqName: "",
       wp: "",
       showDl: false,
@@ -136,6 +151,10 @@ export default {
     };
   },
   methods: {
+    onConfirm11(value) {
+      this.value = value;
+      this.showPicker = false;
+    },
     //!跳转负责人
     toFzr() {
       this.$router.push("/phone/bxPhone/components/fzr");
@@ -233,7 +252,7 @@ export default {
     //!获取报修大类数据源
     getBxDl() {
       main
-        .findCs({})
+        .findCs({ schoolId: this.schoolId })
         .then((res) => {
           this.bxOpt = res.data.setRepcates.map((item) => {
             if (item.children.length == 0) {
@@ -334,4 +353,7 @@ export default {
 /deep/.van-field__control--right {
   font-size: 18px;
 }
+// /deep/.van-popup--bottom {
+//   bottom: 200px;
+// }
 </style>

@@ -535,7 +535,8 @@ export default {
         val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
-
+      //!改变缺考同时改变对应的考试缺考状态
+      val.showExam[index + 1].isqk = val.showExam[index].isqk;
       main
         .addEdit(val)
         .then((res) => {

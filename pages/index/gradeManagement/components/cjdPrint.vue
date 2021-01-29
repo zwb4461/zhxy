@@ -398,9 +398,10 @@ export default {
   flex-direction: row;
 }
 .left {
-  width: 250px;
-  min-height: 500px;
+  width: 280px;
+  height: 100vh;
   border: 1px solid #eeeeee;
+  overflow: auto;
 }
 
 .info5 {

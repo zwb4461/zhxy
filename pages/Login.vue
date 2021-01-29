@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import main from "@/api/baoxiuCs";
 export default {
   data: function () {
     return {
@@ -54,6 +55,7 @@ export default {
   },
   methods: {
     submitForm() {
+      let isBx = this.$route.query.bx;
       let type = this.$route.query.type; //进入的类型
       let schoolId = this.$route.query.id;
       this.$refs.login.validate((valid) => {
@@ -69,8 +71,47 @@ export default {
             })
             .then((res) => {
               let power = res.power;
-              // // console.log("获得到的权限是----", power);
-              return this.$store.dispatch("layout/getUserMenu", power);
+              console.log("获得到的权限是----", power);
+              if (isBx == 1) {
+                main
+                  .findCs({
+                    schoolId: schoolId,
+                    unionid: this.$store.state.auth.userInfo.unionid,
+                  })
+                  .then((res) => {
+                    console.log(res.data.setRepcates);
+
+                    if (res.data.setRepcates.length > 0) {
+                      return this.$store.dispatch("layout/getUserMenu", [
+                        "m-m-m-1",
+                        "m-m-m-2",
+                      ]);
+                    } else {
+                      return this.$store.dispatch("layout/getUserMenu", [
+                        "m-m-m-1",
+                      ]);
+                    }
+                  })
+                  .catch((err) => {});
+                //!报修PC端进入
+              } else {
+                //!正常进入
+                //!个人中心始终显示
+                let alwaysShow = [
+                  "m-m",
+                  "m-m-1",
+                  "m-m-2",
+                  "m-m-3",
+                  "m-m-4",
+                  "m-m-5",
+                  "m-m-6",
+                  "m-m-7",
+                ];
+                return this.$store.dispatch(
+                  "layout/getUserMenu",
+                  power.concat(alwaysShow)
+                );
+              }
             })
             .then((res) => {
               this.loading = false;

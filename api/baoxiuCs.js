@@ -43,6 +43,27 @@ const repairTj = query => {
     data: query
   });
 };
+const delRepairPjqd = query => {
+  return request({
+    url: Api.baoxiuCs.delRepairPjqd,
+    method: "post",
+    data: query
+  });
+};
+const delRepairCanshu = query => {
+  return request({
+    url: Api.baoxiuCs.delRepairCanshu,
+    method: "post",
+    data: query
+  });
+};
+const delRepairAddr = query => {
+  return request({
+    url: Api.baoxiuCs.delRepairAddr,
+    method: "post",
+    data: query
+  });
+};
 const selectDdUsers = query => {
   return request({
     url: Api.baoxiuCs.selectDdUsers,
@@ -58,5 +79,8 @@ export default {
   getNjBj,
   reflushXh,
   seeMobileScore,
-  repairTj
+  repairTj,
+  delRepairPjqd,
+  delRepairCanshu,
+  delRepairAddr
 };

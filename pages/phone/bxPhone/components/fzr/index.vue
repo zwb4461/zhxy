@@ -38,4 +38,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/deep/.van-tab,
+/deep/.van-tab--active,
+/deep/.van-ellipsis {
+  font-size: 18px;
+}
+</style>

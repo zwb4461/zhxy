@@ -194,6 +194,9 @@
           ></el-table-column>
         </el-table>
       </el-tab-pane>
+      <el-tab-pane label="成绩单背景" name="five"
+        ><BackgroundSeting></BackgroundSeting
+      ></el-tab-pane>
     </el-tabs>
     <my-drawer-vue
       title="学期设置"
@@ -796,6 +799,7 @@ import main2 from "~/api/xkhz";
 import main3 from "~/api/cjdw";
 import main5 from "~/api/twManage";
 import myDrawerVue from "~/components/common/myDrawer.vue";
+import BackgroundSeting from "./components/backgroundSeting";
 export default {
   computed: {
     //学校id
@@ -805,6 +809,7 @@ export default {
   },
   components: {
     myDrawerVue,
+    BackgroundSeting,
   },
   data() {
     return {

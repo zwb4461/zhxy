@@ -34,6 +34,23 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="sex" label="性别">
+            <template slot-scope="scope">
+              <el-select
+                size="mini"
+                @change="edit(scope.row)"
+                v-model="scope.row.sex"
+              >
+                <el-option
+                  v-for="item in sexOpt"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
           <el-table-column prop="name" label="姓名"> </el-table-column>
         </el-table>
       </div>
@@ -61,6 +78,16 @@ export default {
       classId: "",
       tableData: [],
       treeData: [],
+      sexOpt: [
+        {
+          name: "男",
+          id: 1,
+        },
+        {
+          name: "女",
+          id: 2,
+        },
+      ],
       defaultProps: {
         children: "children",
         label: "name",
@@ -81,6 +108,7 @@ export default {
       let val = {
         id: row.id,
         classNumber: row.classNumber,
+        sex: row.sex,
       };
       main1
         .edit(val)

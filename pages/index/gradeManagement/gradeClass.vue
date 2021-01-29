@@ -634,6 +634,7 @@ export default {
     // 失去焦点初始化
     inputBlur(row, index) {
       let val = row;
+      console.log(val.showExam[index], " val.showExam[index]");
       delete val.comment;
       delete val.createTime;
       delete val.ifdelete;
@@ -658,7 +659,8 @@ export default {
         val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
-
+      //!改变缺考同时改变对应的考试缺考状态
+      val.showExam[index + 1].isqk = val.showExam[index].isqk;
       main
         .addEdit(val)
         .then((res) => {

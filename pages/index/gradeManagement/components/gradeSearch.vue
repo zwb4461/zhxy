@@ -20,7 +20,7 @@
       <el-button size="small" type="primary" @click="searchData"
         >查询</el-button
       >
-      <el-button size="small">批量导入后查询</el-button>
+      <el-button size="small" @click="pldr">批量导入后查询</el-button>
       <el-button size="small" type="primary" @click="exportExcel"
         >导出数据</el-button
       >
@@ -50,6 +50,45 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog
+      :close-on-click-modal="false"
+      title="成绩查询"
+      :visible.sync="showSearch"
+      width="30%"
+      v-loading="loadingSearch"
+      element-loading-text="数据查询中,请稍等"
+    >
+      <div>
+        <el-select size="small" v-model="djxq">
+          <el-option
+            v-for="item in xqOpt"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+        <div class="cjdrBtn">
+          <el-upload
+            style="width: 100%"
+            action="http://103.219.33.112:10010/finalSeeScore"
+            :show-file-list="false"
+            name="file"
+            :on-success="fileInSuccess"
+            :on-progress="process"
+            :before-upload="befUp"
+            :data="{ djxq: djxq, cjlbId: cjlbId, schoolId: schoolId }"
+          >
+            <el-button size="small" style="width: 95%" type="primary"
+              >选择文件</el-button
+            >
+          </el-upload>
+        </div>
+      </div>
+      <div slot="footer">
+        <el-button @click="showSearch = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -73,7 +112,20 @@ export default {
   },
   data() {
     return {
+      showSearch: false,
       loading: false,
+      loadingSearch: false,
+      djxq: undefined,
+      xqOpt: [
+        {
+          name: "第一学期",
+          id: 1,
+        },
+        {
+          name: "第二学期",
+          id: 2,
+        },
+      ],
       tableData: [],
       tableDataCol: [],
       opt: {
@@ -86,6 +138,30 @@ export default {
     };
   },
   methods: {
+    //!导入成功后
+    fileInSuccess(res, file, fileList) {
+      this.loadingSearch = false;
+      this.$message.success("查询成功!");
+      this.tableData = res.data.data;
+      this.tableDataCol = res.data.data2;
+      this.showSearch = false;
+      console.log(res, "res");
+    },
+    //!导入前
+    befUp(file) {
+      if (!this.djxq) {
+        this.$message.error("请选择第几学期!");
+        return false;
+      }
+    },
+    //!导入时
+    process() {
+      this.loadingSearch = true;
+    },
+    //!批量导入
+    pldr() {
+      this.showSearch = true;
+    },
     //!导出
     exportExcel() {
       /* 从表生成工作簿对象 */
@@ -188,5 +264,11 @@ export default {
 }
 .searchBtn {
   margin-right: 15px;
+}
+.cjdrBtn {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
 }
 </style>

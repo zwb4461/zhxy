@@ -151,6 +151,14 @@ export default {
               title: "成绩统计",
               key: "m-18-5",
             },
+            {
+              title: "成绩单查看",
+              key: "m-18-6",
+            },
+            {
+              title: "成绩查询",
+              key: "m-18-7",
+            },
             // {
             //   title: "成绩密入",
             //   key: "m-18-4",

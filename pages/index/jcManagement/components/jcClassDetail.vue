@@ -485,7 +485,8 @@ export default {
 }
 .left {
   min-width: 250px;
-  min-height: 500px;
+  height: 500px;
+  overflow: auto;
   border: 1px solid #eeeeee;
 }
 .right {

@@ -401,8 +401,9 @@ export default {
 }
 .left {
   width: 250px;
-  min-height: 500px;
+  height: 500px;
   border: 1px solid #eeeeee;
+  overflow: auto;
 }
 
 .info5 {

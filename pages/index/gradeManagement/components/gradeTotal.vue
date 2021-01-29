@@ -28,7 +28,11 @@
         ></el-tree>
       </el-card>
       <div class="right">
-        <div v-show="TotalName == '总统计表'" style="width: 100%">
+        <div
+          ref="directrecordwp"
+          v-show="TotalName == '总统计表'"
+          style="width: 100%"
+        >
           <el-table
             id="out-tj"
             v-loading="tjLoading"
@@ -59,6 +63,7 @@
           </el-table>
         </div>
         <div
+          ref="directrecordwp1"
           v-show="TotalName == '成绩分析'"
           style="width: 100%; min-height: 500px"
         >
@@ -82,7 +87,10 @@
             </el-table-column>
           </el-table>
         </div>
-        <div v-show="TotalName != '总统计表' && TotalName != '成绩分析'">
+        <div
+          ref="directrecordwp2"
+          v-show="TotalName != '总统计表' && TotalName != '成绩分析'"
+        >
           <el-table
             size="large"
             :render-header="labelHead"
@@ -204,6 +212,7 @@
 import main from "~/api/gradeTotal";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
+import Watermark from "~/utils/watermark";
 export default {
   computed: {
     //学校id
@@ -422,6 +431,11 @@ export default {
   },
   created() {
     this.getMenu();
+  },
+  mounted() {
+    // Watermark.set("高校党政云记录管理平台 ", this.$refs.directrecordwp);
+    // Watermark.set("高校党政云记录管理平台2 ", this.$refs.directrecordwp2);
+    // Watermark.set("高校党政云记录管理平台3 ", this.$refs.directrecordwp3);
   },
 };
 </script>

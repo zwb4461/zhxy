@@ -123,19 +123,30 @@
         </el-table-column>
         <el-table-column prop="name" label="名称">
           <template slot-scope="scope">
-            <el-input size="mini" v-model="scope.row.name"></el-input>
+            <el-select
+              style="width: 100%"
+              v-model="scope.row.name"
+              size="mini"
+              allow-create
+              filterable
+              @change="changeName(scope.row)"
+            >
+              <el-option
+                v-for="item in pjqdOpt"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" label="数量">
+        <el-table-column prop="sum" label="数量" width="80">
           <template slot-scope="scope">
             <el-input size="mini" v-model="scope.row.sum"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="dw" label="单位">
-          <template slot-scope="scope">
-            <el-input size="mini" v-model="scope.row.dw"></el-input>
-          </template>
-        </el-table-column>
+        <el-table-column prop="dw" label="单位" width="80"> </el-table-column>
       </el-table>
       <el-button size="mini" style="width: 100%" @click="addRow">+</el-button>
       <div class="topBtn">
@@ -179,6 +190,7 @@ export default {
   data() {
     return {
       fileIds: [],
+      pjqdOpt: [],
       wp: "",
       showDl: false,
       showStatus: false,
@@ -209,11 +221,18 @@ export default {
         status: 0,
       },
       tableData_left: [],
-      tableData_center: [],
       tableData_right: [],
     };
   },
   methods: {
+    //!配件清单改变名称，赋值单位
+    changeName(row) {
+      let data = "";
+      data = this.pjqdOpt.find((item) => {
+        return row.name == item.name;
+      });
+      row.dw = data.dw;
+    },
     //!删除照片
     delImg(file, detail) {
       // 删除指定下标的图片对象
@@ -356,8 +375,8 @@ export default {
             return item;
           });
           console.log(this.bxOpt, "11111111111");
-          this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
+          this.pjqdOpt = res.data.setRepapjs;
         })
         .catch((err) => {});
     },

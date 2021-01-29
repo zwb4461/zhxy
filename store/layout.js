@@ -22,13 +22,34 @@ const getNewMenu = power => {
         // affix: true,
       }
     },
+    //!pc设备报修
+    {
+      key: "bxPage/sbbx",
+      title: "设备报修",
+      hide: true,
+      icon: "radar-chart",
+      power: "m-m-m-1",
+      meta: {
+        title: "设备报修"
+      }
+    },
+    {
+      key: "bxPage/bxgl",
+      title: "报修管理",
+      hide: true,
+      icon: "radar-chart",
+      power: "m-m-m-2",
+      meta: {
+        title: "报修管理"
+      }
+    },
     //-------------------------
     {
       key: "12",
       title: "个人中心",
       icon: "user",
-      //   hide: true,
-      //   power: "m-7",
+      hide: true,
+      power: "m-m",
       meta: {
         title: "个人中心"
       },
@@ -36,8 +57,8 @@ const getNewMenu = power => {
         {
           key: "personal-center/info",
           title: "我的信息",
-          //   hide: true,
-          //   power: "m-7-1",
+          hide: true,
+          power: "m-m-1",
           //   alwaysShow: false,
           meta: {
             title: "我的信息"
@@ -47,6 +68,8 @@ const getNewMenu = power => {
         {
           key: "studentStatus-index",
           title: "学籍管理",
+          hide: true,
+          power: "m-m-2",
           meta: {
             title: "学籍管理"
           }
@@ -54,6 +77,8 @@ const getNewMenu = power => {
         {
           key: "gradeManagement1",
           title: "成绩录入",
+          hide: true,
+          power: "m-m-3",
           meta: {
             title: "成绩录入"
           }
@@ -61,8 +86,8 @@ const getNewMenu = power => {
         {
           key: "gradeIn",
           title: "成绩密录",
-          //   hide: true,
-          //   power: "m-18-4",
+          hide: true,
+          power: "m-m-4",
           meta: {
             title: "成绩密录"
           }
@@ -70,6 +95,8 @@ const getNewMenu = power => {
         {
           key: "repairEquipment",
           title: "设备报修",
+          hide: true,
+          power: "m-m-5",
           meta: {
             title: "设备报修"
           }
@@ -91,8 +118,8 @@ const getNewMenu = power => {
         {
           key: "personal-center/schedule",
           title: "我的排课",
-          //   hide: true,
-          //   power: "m-7-3",
+          hide: true,
+          power: "m-m-6",
           //   alwaysShow: false,
           meta: {
             title: "我的排课"
@@ -102,8 +129,8 @@ const getNewMenu = power => {
         {
           key: "personal-center/community",
           title: "我的社团课",
-          //   hide: true,
-          //   power: "m-7-4",
+          hide: true,
+          power: "m-m-7",
           //   alwaysShow: false,
           meta: {
             title: "我的社团课"
@@ -185,6 +212,24 @@ const getNewMenu = power => {
           power: "m-18-5",
           meta: {
             title: "成绩统计"
+          }
+        },
+        {
+          key: "gradePrint",
+          title: "成绩单查看",
+          hide: true,
+          power: "m-18-6",
+          meta: {
+            title: "成绩单查看"
+          }
+        },
+        {
+          key: "gradeSearch",
+          title: "成绩查询",
+          hide: true,
+          power: "m-18-7",
+          meta: {
+            title: "成绩查询"
           }
         },
 

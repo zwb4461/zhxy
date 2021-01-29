@@ -427,6 +427,18 @@
                   </div>
                 </template>
               </el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <div>
+                    <el-button
+                      type="danger"
+                      @click="del(scope.row)"
+                      size="small"
+                      >删除</el-button
+                    >
+                  </div>
+                </template>
+              </el-table-column>
             </el-table>
             <div class="add">
               <el-button size="small" style="width: 100%" @click="addTable"
@@ -748,6 +760,32 @@ export default {
     };
   },
   methods: {
+    //!删除奖惩
+    del(row) {
+      console.log(row);
+      this.$confirm({
+        title: "确定删除吗?",
+        cancelText: "取消",
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main2
+            .deleteMoralPrize({ id: row.id })
+            .then((res) => {
+              this.$message.success("删除成功!");
+              let val = {
+                classId: this.classId,
+                cjlbId: this.cjlbId,
+                djxq: this.djxq,
+                name: this.jcName,
+              };
+              this.getJcTable(val);
+            })
+            .catch((err) => {});
+        },
+      });
+    },
     //!成绩导出
     outTj() {
       var xlsxParam = { raw: true }; //转换成excel时，使用原始的格式
@@ -1025,7 +1063,8 @@ export default {
         val.djxq = this.djxq;
         val.cjlbId = this.cjlbId;
       }
-
+      //!改变缺考同时改变对应的考试缺考状态
+      val.showExam[index + 1].isqk = val.showExam[index].isqk;
       main
         .addEdit(val)
         .then((res) => {
@@ -1396,7 +1435,8 @@ export default {
   min-width: 250px;
   width: 250px;
   border: 1px solid #eeeeee;
-  min-height: 600px;
+  height: 600px;
+  overflow: auto;
 }
 .right {
   width: 100%;

@@ -8,6 +8,7 @@
 
 <script>
 import main from "@/api/dingding";
+import main1 from "@/api/baoxiuCs";
 import * as dd from "dingtalk-jsapi";
 
 export default {
@@ -64,6 +65,7 @@ export default {
     const _this = this;
     // this.testLogin();
     let type = this.$route.query.type; //进入的类型
+    let isBx = this.$route.query.bx; //是否是报修图标进入
     let enrollId = this.$route.query.enrollId; //类别id
     let formType = this.$route.query.formType; //表单类型
     let id = this.$route.query.id;
@@ -121,8 +123,44 @@ export default {
                   .then((res) => {
                     let power = res.power;
                     // // console.log("获得到的权限是----", power);
-
-                    return _this.$store.dispatch("layout/getUserMenu", power);
+                    if (isBx == 1) {
+                      main1
+                        .findCs({
+                          schoolId: schoolId,
+                          unionid: _this.$store.state.auth.userInfo.unionid,
+                        })
+                        .then((res) => {
+                          if (res.data.setRepcates.length > 0) {
+                            return _this.$store.dispatch("layout/getUserMenu", [
+                              "m-m-m-1",
+                              "m-m-m-2",
+                            ]);
+                          } else {
+                            return _this.$store.dispatch("layout/getUserMenu", [
+                              "m-m-m-1",
+                            ]);
+                          }
+                        })
+                        .catch((err) => {});
+                      //!报修PC端进入
+                    } else {
+                      //!正常进入
+                      //!个人中心始终显示
+                      let alwaysShow = [
+                        "m-m",
+                        "m-m-1",
+                        "m-m-2",
+                        "m-m-3",
+                        "m-m-4",
+                        "m-m-5",
+                        "m-m-6",
+                        "m-m-7",
+                      ];
+                      return _this.$store.dispatch(
+                        "layout/getUserMenu",
+                        power.concat(alwaysShow)
+                      );
+                    }
                   })
                   .then((res) => {
                     //  // console.log(res);

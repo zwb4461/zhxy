@@ -20,9 +20,9 @@
         ></el-tree>
       </el-card>
       <div class="right">
-        <div v-if="TotalName == '总统计表'" style="width: 100%">
+        <div v-show="TotalName == '总统计表'" style="width: 100%">
           <el-table
-            id="out-tj"
+            id="out-tjPerson"
             v-loading="tjLoading"
             element-loading-text="数据加载中，请耐心等待"
             size="small"
@@ -49,7 +49,10 @@
             <el-table-column prop="score" label="总分"> </el-table-column>
           </el-table>
         </div>
-        <div v-else style="width: 100%">
+        <div
+          v-show="TotalName != '总统计表' && TotalName != '成绩分析'"
+          style="width: 100%"
+        >
           <el-table
             v-loading="tjLoading"
             style="width: calc(100% - 20px)"
@@ -247,7 +250,7 @@ export default {
       var xlsxParam = { raw: true }; //转换成excel时，使用原始的格式
       /* 从表生成工作簿对象 */
       var wb = XLSX.utils.table_to_book(
-        document.querySelector("#out-tj"),
+        document.querySelector("#out-tjPerson"),
         xlsxParam
       );
       /* 获取二进制字符串作为输出 */

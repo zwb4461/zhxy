@@ -96,7 +96,6 @@
           style="width: 100%"
           row-key="id"
           border
-          default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column prop="name" label="报修分类"> </el-table-column>

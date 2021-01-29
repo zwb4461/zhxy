@@ -85,7 +85,8 @@ module.exports = {
     list: baseUrl + "/selectSchool", //列表
     add: baseUrl + "/insertSchool", //添加
     del: baseUrl + "/deleteSchool", //删除
-    edit: baseUrl + "/updateSchool" //删除
+    edit: baseUrl + "/updateSchool", //删除
+    upload: baseUrl + "/upload" //删除
   },
   //报名新生
   reportStudent: {
@@ -311,6 +312,9 @@ module.exports = {
     getNjBj: baseUrl + "/getNjBj",
     reflushXh: baseUrl + "/reflushXh",
     seeMobileScore: baseUrl + "/seeMobileScore",
-    repairTj: baseUrl + "/repairTj"
+    repairTj: baseUrl + "/repairTj",
+    delRepairCanshu: baseUrl + "/delRepairCanshu",
+    delRepairPjqd: baseUrl + "/delRepairPjqd",
+    delRepairAddr: baseUrl + "/delRepairAddr"
   }
 };

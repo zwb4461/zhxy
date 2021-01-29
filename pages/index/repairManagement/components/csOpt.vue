@@ -1,12 +1,19 @@
 <template>
   <div class="contain">
-    <el-tabs v-model="activeName" :stretch="true">
+    <el-tabs v-model="activeName">
       <el-tab-pane label="报修设备名称管理" name="first">
+        <el-button
+          size="small"
+          style="margin-bottom: 15px"
+          type="primary"
+          @click="addDl"
+          >+添加大类</el-button
+        >
         <el-table
           :header-cell-style="{ 'text-align': 'center' }"
           size="small"
           :data="tableData_left"
-          style="width: 50%"
+          style="width: 100%"
           row-key="id"
           border
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -14,23 +21,39 @@
           <el-table-column prop="name" label="报修分类" class-name="cell">
             <template slot-scope="scope">
               <div class="cells">
-                <span></span>
+                <span
+                  :class="{
+                    rad: scope.row.zmenu == 1,
+                    rad1: scope.row.zmenu == 2,
+                    rad2: scope.row.zmenu == 3,
+                  }"
+                ></span>
                 <el-input
                   size="mini"
-                  style="width: 100%"
+                  :style="{
+                    width:
+                      scope.row.zmenu == 1
+                        ? '400px'
+                        : scope.row.zmenu == 2
+                        ? '385px'
+                        : scope.row.zmenu == 3
+                        ? '370px'
+                        : '0',
+                  }"
                   v-model="scope.row.name"
                   @blur="changeOwner(scope.row)"
                 ></el-input>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="owner" label="大类负责人">
+          <el-table-column prop="owner" label="大类负责人" width="400">
             <template slot-scope="scope">
               <div>
                 <span v-show="scope.row.zmenu != 1">
                   {{ scope.row.owner }}</span
                 >
                 <el-select
+                  style="width: 380px"
                   filterable
                   multiple
                   size="mini"
@@ -49,28 +72,37 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="right" width="180">
             <template slot-scope="scope">
-              <el-button
-                v-show="scope.row.zmenu == 1"
-                size="mini"
-                @click="addZl(scope.row)"
-                >创建子类</el-button
-              >
-              <el-button
-                v-show="scope.row.zmenu == 2"
-                size="mini"
-                @click="addWp(scope.row)"
-                >创建物品</el-button
-              >
+              <div class="btnContain">
+                <el-button
+                  v-show="scope.row.zmenu == 1"
+                  size="mini"
+                  @click="addZl(scope.row)"
+                  >创建子类</el-button
+                >
+                <el-button
+                  v-show="scope.row.zmenu == 2"
+                  size="mini"
+                  @click="addWp(scope.row)"
+                  >创建物品</el-button
+                >
+                <el-button size="mini" type="danger" @click="delBxFl(scope.row)"
+                  >删除</el-button
+                >
+              </div>
             </template>
           </el-table-column>
         </el-table>
-        <el-button size="small" style="width: 100%" @click="addDl"
-          >+添加大类</el-button
-        >
       </el-tab-pane>
       <el-tab-pane label="配件管理" name="second">
+        <el-button
+          size="small"
+          style="margin-bottom: 15px"
+          type="primary"
+          @click="addPj"
+          >+添加</el-button
+        >
         <el-table
           :header-cell-style="{ 'text-align': 'center' }"
           size="small"
@@ -87,7 +119,7 @@
               ></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="dw" label="单位">
+          <el-table-column prop="dw" label="单位" width="100">
             <template slot-scope="scope">
               <el-input
                 size="mini"
@@ -96,13 +128,23 @@
               ></el-input>
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="delPj(scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
-
-        <el-button size="small" style="width: 100%" @click="addPj"
-          >+添加</el-button
-        >
       </el-tab-pane>
       <el-tab-pane label="报修地点管理" name="third">
+        <el-button
+          size="small"
+          style="margin-bottom: 15px"
+          type="primary"
+          @click="addAddress"
+          >+添加</el-button
+        >
         <el-table
           :header-cell-style="{ 'text-align': 'center' }"
           size="small"
@@ -119,14 +161,26 @@
               ></el-input>
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button
+                type="danger"
+                size="mini"
+                @click="delAddress(scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
-        <el-button size="small" style="width: 30%" @click="addAddress"
-          >+添加</el-button
-        >
       </el-tab-pane>
     </el-tabs>
 
-    <el-dialog :title="title" :visible.sync="showCj" width="30%">
+    <el-dialog
+      :close-on-click-modal="false"
+      :title="title"
+      :visible.sync="showCj"
+      width="30%"
+    >
       <el-form label-width="80px">
         <el-form-item :label="title.slice(2, 4) + '名称:'">
           <el-input size="small" v-model="name"></el-input>
@@ -164,6 +218,69 @@ export default {
     };
   },
   methods: {
+    //!删除地址
+    delAddress(row) {
+      this.$confirm({
+        title: "确定删除吗?",
+        cancelText: "取消",
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .delRepairAddr({ id: row.id })
+            .then((res) => {
+              this.$message.success("删除成功");
+              this.getTable();
+            })
+            .catch((err) => {
+              this.$message.error(err);
+            });
+        },
+      });
+    },
+    //!删除配件
+    delPj(row) {
+      this.$confirm({
+        title: "确定删除吗?",
+        cancelText: "取消",
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .delRepairPjqd({ id: row.id })
+            .then((res) => {
+              this.$message.success("删除成功");
+              this.getTable();
+            })
+            .catch((err) => {
+              this.$message.error(err);
+            });
+        },
+      });
+    },
+    //!删除报修物品分类
+    delBxFl(row) {
+      this.$confirm({
+        title: "确定删除吗?",
+        cancelText: "取消",
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .delRepairCanshu({ id: row.id })
+            .then((res) => {
+              this.$message.success("删除成功");
+              this.getTable();
+            })
+            .catch((err) => {
+              this.$message.error(err);
+            });
+        },
+      });
+    },
     //!编辑配件
     changePj(row) {
       let val = {
@@ -207,6 +324,7 @@ export default {
         pagesize: 10000,
         pagenum: 1,
         schoolId: this.schoolId,
+        type: 1,
       };
       main
         .selectDdUsers(val)
@@ -235,7 +353,10 @@ export default {
           this.getTable();
           this.showCj = false;
         })
-        .catch((err) => {});
+        .catch((err) => {
+          this.$message.error("该报修大类名字已存在！");
+          this.getTable();
+        });
     },
     //!提交创建子类或物品
     submitCj() {
@@ -258,7 +379,10 @@ export default {
           this.getTable();
           this.showCj = false;
         })
-        .catch((err) => {});
+        .catch((err) => {
+          this.showCj = false;
+          this.$message.error("该报修大类名字已存在！");
+        });
     },
     //!创建子类
     addZl(row) {
@@ -296,8 +420,11 @@ export default {
       main
         .findCs({})
         .then((res) => {
+          console.log(res);
           this.tableData_left = res.data.setRepcates.map((item) => {
-            item.ownerId = item.ownerId.split(",");
+            if (item.ownerId) {
+              item.ownerId = item.ownerId.split(",");
+            }
             return item;
           });
           this.tableData_center = res.data.setRepapjs;
@@ -334,7 +461,7 @@ export default {
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-color: #ff6666;
+  background-color: #0064ff;
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -342,7 +469,7 @@ export default {
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-color: #ff9966;
+  background-color: #00bac8;
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -350,7 +477,7 @@ export default {
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-color: #ffcccc;
+  background-color: #00c801;
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -365,5 +492,10 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+.btnContain {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

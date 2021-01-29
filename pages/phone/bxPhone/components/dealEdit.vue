@@ -75,20 +75,72 @@
           <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
         </div>
         <van-field readonly input-align="right" v-model="form.clTeaname" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">反馈信息:</span>
+        </div>
+        <van-field
+          readonly
+          input-align="right"
+          v-model="form.fkxx"
+          rows="3"
+          autosize
+          type="textarea"
+        />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">反馈图片:</span>
+        </div>
+        <div style="width: 100%; padding-left: 15px">
+          <van-uploader
+            disabled
+            multiple
+            style="margin-top: 15px; margin-left: 15px"
+            v-model="form.fkImg"
+            :after-read="uploadImg"
+            :max-count="9"
+            preview-size="80px"
+          />
+        </div>
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">修复时间:</span>
+        </div>
+        <van-field input-align="right" readonly v-model="form.xfTime" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">故障历时:</span>
+        </div>
+        <van-field input-align="right" readonly v-model="form.history" />
       </van-cell-group>
+      <div class="title">
+        <span>配件清单</span>
+      </div>
+      <el-table
+        :header-cell-style="{ 'text-align': 'center' }"
+        size="mini"
+        :data="form.pjqd"
+        border
+        style="width: 100%"
+      >
+        <el-table-column type="index" label="序号" width="50">
+        </el-table-column>
+        <el-table-column prop="name" label="名称"> </el-table-column>
+        <el-table-column prop="sum" label="数量" width="80"> </el-table-column>
+        <el-table-column prop="dw" label="单位" width="80"> </el-table-column>
+      </el-table>
       <div class="topBtn">
         <van-button
+          v-show="form.status == 0"
           type="danger"
           style="width: 45%"
           @click="delItem"
-          :disabled="form.status == 1 || form.status == 2"
           >删除</van-button
         >
-        <van-button type="primary" style="width: 45%" @click="submit"
+        <van-button
+          v-show="form.status == 0"
+          type="primary"
+          style="width: 45%"
+          @click="submit"
           >确定</van-button
         >
       </div>
-
       <!--报修大类弹出层 -->
       <van-popup v-model="showDl" round position="bottom">
         <van-picker
