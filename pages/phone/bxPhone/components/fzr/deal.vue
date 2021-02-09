@@ -13,7 +13,10 @@
         <span>{{ item.name }}</span>
       </div>
       <div class="address_contain">
-        <i class="el-icon-position"></i>
+        <img
+          src="../../../../../assets/img/address.svg"
+          style="width: 24px; height: 24px"
+        />
         <span>{{ item.address }}</span>
       </div>
       <div class="teacher_contain">
@@ -27,6 +30,12 @@
 <script>
 import main from "~/api/baoxiu";
 export default {
+  head() {
+    return {
+      title: "报修管理",
+      meta: [],
+    };
+  },
   computed: {
     //学校id
     schoolId() {
@@ -123,7 +132,7 @@ export default {
   width: 100%;
   height: 35px;
   padding: 0 15px;
-  font-size: 16px;
+  font-size: 14px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

@@ -16,6 +16,7 @@
           <span style="margin-left: 15px; font-size: 18px">报修物品:</span>
         </div>
         <van-field
+          v-show="form.status == 0"
           input-align="right"
           readonly
           clickable
@@ -23,17 +24,29 @@
           placeholder="选择报修物品"
           @click="showDl = true"
         />
+        <van-field
+          v-show="form.status != 0"
+          input-align="right"
+          readonly
+          :value="form.maxCate + '-' + form.minCate + '-' + form.name"
+          placeholder="选择报修物品"
+        />
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修地点:</span>
         </div>
-        <van-field input-align="right" v-model="form.address" />
+        <van-field
+          :readonly="form.status != 0"
+          input-align="right"
+          v-model="form.address"
+        />
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
         </div>
         <van-field
+          :readonly="form.status != 0"
           input-align="right"
           v-model="form.explaion"
-          rows="3"
+          rows="1"
           autosize
           type="textarea"
         />
@@ -42,6 +55,8 @@
         </div>
         <div style="width: 100%">
           <van-uploader
+            accept="image/*"
+            v-show="form.status == 0"
             multiple
             style="margin-top: 15px; margin-left: 15px"
             v-model="form.bxImg"
@@ -50,11 +65,19 @@
             preview-size="80px"
             @delete="delImg"
           />
+          <img
+            v-show="form.status == 1 || form.status == 2"
+            :src="item.url"
+            v-for="(item, index) in form.bxImg"
+            :key="index"
+            style="width: 100px; height: 100px; margin: 5px"
+            @click="getImg_Bx(index)"
+          />
         </div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
         </div>
-        <van-field input-align="right" readonly v-model="userName" />
+        <van-field input-align="right" readonly :value="form.bxTeaname" />
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
         </div>
@@ -76,30 +99,40 @@
         </div>
         <van-field readonly input-align="right" v-model="form.clTeaname" />
         <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">开始处理:</span>
+        </div>
+        <van-field readonly input-align="right" v-model="form.ksclTime" />
+        <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">反馈信息:</span>
         </div>
         <van-field
           readonly
           input-align="right"
           v-model="form.fkxx"
-          rows="3"
+          rows="1"
           autosize
           type="textarea"
         />
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">反馈图片:</span>
         </div>
-        <div style="width: 100%; padding-left: 15px">
-          <van-uploader
-            disabled
-            multiple
-            style="margin-top: 15px; margin-left: 15px"
-            v-model="form.fkImg"
-            :after-read="uploadImg"
-            :max-count="9"
-            preview-size="80px"
+        <div
+          style="width: 100%; padding-left: 15px"
+          v-show="form.fkImg.length > 0"
+        >
+          <img
+            :src="item.url"
+            v-for="(item, index) in form.fkImg"
+            :key="index"
+            style="width: 100px; height: 100px; margin: 5px"
+            @click="getImg(index)"
           />
         </div>
+        <van-field
+          v-show="form.fkImg.length == 0"
+          readonly
+          input-align="right"
+        />
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">修复时间:</span>
         </div>
@@ -159,7 +192,14 @@
 import main1 from "~/api/baoxiu";
 import main from "~/api/baoxiuCs";
 import axios from "axios";
+import { ImagePreview } from "vant";
 export default {
+  head() {
+    return {
+      title: "设备报修",
+      meta: [],
+    };
+  },
   computed: {
     //学校id
     schoolId() {
@@ -198,6 +238,30 @@ export default {
     };
   },
   methods: {
+    //!预览反馈图片
+    getImg(index) {
+      let arr = this.form.fkImg.map((item) => {
+        return item.url;
+      });
+      ImagePreview({
+        images: arr, // 预览图片的那个数组
+        showIndex: true,
+        loop: false,
+        startPosition: index, // 指明预览第几张图
+      });
+    },
+    //!预览报修图片
+    getImg_Bx(index) {
+      let arr = this.form.bxImg.map((item) => {
+        return item.url;
+      });
+      ImagePreview({
+        images: arr, // 预览图片的那个数组
+        showIndex: true,
+        loop: false,
+        startPosition: index, // 指明预览第几张图
+      });
+    },
     //!删除该报修
     delItem() {
       this.$confirm({
@@ -380,7 +444,6 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  font-weight: bold;
 }
 .font-bold {
   font-weight: bold;
@@ -388,6 +451,13 @@ export default {
 }
 /deep/.van-field__control,
 /deep/.van-field__control--right {
+  font-size: 18px;
+}
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #0064ff;
   font-size: 18px;
 }
 </style>

@@ -178,6 +178,7 @@
           <el-col :span="12">
             <el-form-item label="开始处理:">
               <span>{{ form.ksclTime }}</span>
+              <span style="margin-right: 5px">{{ form.zzTeaname }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -189,7 +190,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="修复时间:">
-              <span>{{ form.xfTime }}</span>
+              <span style="margin-right: 5px">{{ form.xfTime }}</span>
+              <span>{{ form.zzxfTeaname }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -309,6 +311,7 @@
               :disabled="formType == 1"
               size="mini"
               v-model="scope.row.sum"
+              @blur="changeSum"
             ></el-input>
           </template>
         </el-table-column>
@@ -317,6 +320,7 @@
           <template slot-scope="scope">
             <el-button
               type="danger"
+              :disabled="formType == 1"
               size="mini"
               @click="delRow(form.pjqd, scope.$index)"
               >删除</el-button
@@ -447,6 +451,12 @@ export default {
     };
   },
   methods: {
+    //!配件清单数量不能为负
+    changeSum(e) {
+      if (e.target.value <= 0) {
+        e.target.value = 1;
+      }
+    },
     //!删除行
     delRow(row, index) {
       row.splice(index, 1);
@@ -483,7 +493,8 @@ export default {
     //!提交报修
     submitBX() {
       let val = this.form;
-      //   val.bxTeaid = this.unionid;
+      val.bxTeaid = this.unionid;
+      val.unionid = this.unionid;
       main
         .edit(val)
         .then((res) => {
@@ -654,8 +665,5 @@ export default {
 }
 /deep/.disabled .el-upload--picture-card {
   display: none !important;
-}
-/deep/.el-icon-circle-close {
-  background-color: #b0ace6 !important;
 }
 </style>

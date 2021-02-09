@@ -79,8 +79,6 @@ export default {
                     unionid: this.$store.state.auth.userInfo.unionid,
                   })
                   .then((res) => {
-                    console.log(res.data.setRepcates);
-
                     if (res.data.setRepcates.length > 0) {
                       return this.$store.dispatch("layout/getUserMenu", [
                         "m-m-m-1",

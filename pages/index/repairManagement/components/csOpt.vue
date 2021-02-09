@@ -56,6 +56,7 @@
                   style="width: 380px"
                   filterable
                   multiple
+                  :multiple-limit="2"
                   size="mini"
                   v-show="scope.row.zmenu == 1"
                   @change="changeOwner(scope.row)"
@@ -381,7 +382,7 @@ export default {
         })
         .catch((err) => {
           this.showCj = false;
-          this.$message.error("该报修大类名字已存在！");
+          this.$message.error("该报修名字已存在！");
         });
     },
     //!创建子类

@@ -453,7 +453,7 @@ export default {
         { name: "数学", id: 2 },
       ],
       statusOpt: [
-        { name: "匹配中", id: 0, disabled: true },
+        { name: "申请中", id: 0, disabled: true },
         { name: "待审核", id: 1 },
         { name: "审核通过", id: 2 },
         { name: "审核未通过", id: 3 },
@@ -609,7 +609,7 @@ export default {
       };
     },
     setFrom(row) {
-      this.showDiaData.form = row;
+      this.showDiaData.form = JSON.parse(JSON.stringify(row));
     },
     add() {
       this.showDiaData.formType = 1;

@@ -1,6 +1,12 @@
 <template>
   <div class="contain">
-    <van-tabs v-model="bxActive" @click="clickTab" animated class="order-tabs">
+    <van-tabs
+      v-model="bxActive"
+      @click="clickTab"
+      animated
+      class="order-tabs"
+      :sticky="true"
+    >
       <van-tab title="报修申请"><bxApply></bxApply></van-tab>
       <van-tab title="待处理"><deal ref="one" :status="0"></deal></van-tab>
       <van-tab title="处理中"><deal :status="1"></deal></van-tab>
@@ -13,6 +19,18 @@
 import bxApply from "./components/bxApply";
 import deal from "./components/deal";
 export default {
+  head() {
+    return {
+      title: "设备报修",
+      meta: [
+        {
+          hid: "sbbx",
+          name: "description",
+          content: "My sbbx description",
+        },
+      ],
+    };
+  },
   computed: {
     //学校id
     bxActive: {

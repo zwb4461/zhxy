@@ -339,7 +339,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="开始处理:">
-              <span>{{ form.ksclTime }}</span>
+              <span style="margin-right: 5px">{{ form.ksclTime }}</span>
+              <span>{{ form.zzTeaname }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -351,7 +352,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="修复时间:">
-              <span>{{ form.xfTime }}</span>
+              <span style="margin-right: 5px">{{ form.xfTime }}</span>
+              <span>{{ form.zzxfTeaname }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -660,6 +662,9 @@ export default {
         .findCs({})
         .then((res) => {
           this.tableData_left = res.data.setRepcates;
+          //   .filter((item) => {
+          //     return item.ownerId.indexOf(this.unionid) > -1;
+          //   });
           this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
           this.search.sbzlOpt = [];
@@ -731,6 +736,7 @@ export default {
         // pageSize: pageSize,
         unionid: this.unionid,
         schoolId: this.schoolId,
+        type: 1,
       };
       main
         .find(val)

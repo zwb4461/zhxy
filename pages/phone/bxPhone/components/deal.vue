@@ -13,11 +13,14 @@
         <span>{{ item.name }}</span>
       </div>
       <div class="address_contain">
-        <i class="el-icon-position"></i>
+        <img
+          src="../../../../assets/img/address.svg"
+          style="width: 24px; height: 24px"
+        />
         <span>{{ item.address }}</span>
       </div>
       <div class="teacher_contain">
-        <span>报修教师:{{ item.bxTeaname }}</span>
+        <!-- <span>报修教师:{{ item.bxTeaname }}</span> -->
         <span>处理教师:{{ item.clTeaname }}</span>
       </div>
     </div>
@@ -27,6 +30,12 @@
 <script>
 import main from "~/api/baoxiu";
 export default {
+  head() {
+    return {
+      title: "设备报修",
+      meta: [],
+    };
+  },
   computed: {
     //学校id
     schoolId() {
@@ -64,6 +73,8 @@ export default {
       let val = {
         status: this.status,
         schoolId: this.schoolId,
+        unionid: this.unionid,
+        type: 1,
       };
       main
         .find(val)

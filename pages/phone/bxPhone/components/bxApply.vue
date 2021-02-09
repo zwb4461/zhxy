@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="topBtn">
+  <div class="contain">
+    <div class="topBtn" v-if="ifFzr == 1">
       <van-button type="info" style="width: 90%" @click="toFzr"
         >报修负责人进入</van-button
       >
@@ -10,78 +10,96 @@
       <span style="font-size: 16px; margin-top: 5px">{{ xqName }}</span>
     </div>
     <div class="form">
-      <van-cell-group>
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">报修时间:</span>
-        </div>
-        <van-field
-          readonly
-          v-model="form.bxTime"
-          input-align="right"
-          size="large"
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">报修时间:</span>
+      </div>
+      <van-field
+        readonly
+        v-model="form.bxTime"
+        input-align="right"
+        size="large"
+      />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px"
+          ><span style="color: red">*</span>报修物品:</span
+        >
+      </div>
+      <van-field
+        readonly
+        clickable
+        input-align="right"
+        :value="form.maxCate + '-' + form.minCate + '-' + form.name"
+        placeholder="选择报修物品"
+        @click="showDl = true"
+      />
+      <div class="font-bold" v-show="!ZdyAddress">
+        <span style="margin-left: 15px; font-size: 18px"
+          ><span style="color: red">*</span>报修地点:</span
+        >
+      </div>
+      <van-field
+        v-show="!ZdyAddress"
+        readonly
+        input-align="right"
+        v-model="form.address"
+        @click="showAddress = true"
+      />
+      <div class="font-bold" v-show="ZdyAddress">
+        <span style="margin-left: 15px; font-size: 18px"
+          ><span style="color: red">*</span>自定义报修地点:</span
+        >
+      </div>
+      <van-field
+        v-show="ZdyAddress"
+        input-align="right"
+        v-model="form.address"
+      />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
+      </div>
+      <van-field
+        v-model="form.explaion"
+        rows="3"
+        input-align="right"
+        autosize
+        type="textarea"
+      />
+
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
+      </div>
+      <div style="width: 100%">
+        <van-uploader
+          multiple
+          style="margin-top: 15px; margin-left: 15px"
+          v-model="form.bxImg"
+          :after-read="uploadImg"
+          :max-count="9"
+          preview-size="80px"
+          @delete="delImg"
         />
+      </div>
 
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">报修物品:</span>
-        </div>
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
+      </div>
+      <van-field input-align="right" readonly v-model="userName" />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
+      </div>
+      <van-field input-align="right" value="待处理" readonly />
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
+      </div>
 
-        <van-field
-          readonly
-          clickable
-          input-align="right"
-          :value="form.maxCate + '-' + form.minCate + '-' + form.name"
-          placeholder="选择报修物品"
-          @click="showDl = true"
-        />
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">报修地点:</span>
-        </div>
-        <van-field input-align="right" v-model="form.address" />
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
-        </div>
+      <!--报修大类弹出层 -->
 
-        <van-field
-          v-model="form.explaion"
-          rows="3"
-          input-align="right"
-          autosize
-          type="textarea"
-        />
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
-        </div>
-        <div style="width: 100%">
-          <van-uploader
-            multiple
-            style="margin-top: 15px; margin-left: 15px"
-            v-model="form.bxImg"
-            :after-read="uploadImg"
-            :max-count="9"
-            preview-size="80px"
-            @delete="delImg"
-          />
-        </div>
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
-        </div>
-        <van-field input-align="right" readonly v-model="userName" />
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
-        </div>
-        <van-field input-align="right" value="待处理" readonly />
-        <div class="font-bold">
-          <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
-        </div>
-
-        <van-field input-align="right" readonly v-model="form.clTeaname" />
-      </van-cell-group>
+      <van-field input-align="right" readonly v-model="form.clTeaname" />
       <div class="topBtn">
         <van-button type="primary" style="width: 90%" @click="submit"
           >确定</van-button
         >
       </div>
-      <!--报修大类弹出层 -->
       <van-popup v-model="showDl" round position="bottom">
         <van-picker
           value-key="name"
@@ -89,6 +107,15 @@
           :columns="bxOpt"
           @cancel="showDl = false"
           @confirm="confirmBxwp"
+        />
+      </van-popup>
+      <van-popup v-model="showAddress" round position="bottom">
+        <van-picker
+          value-key="address"
+          show-toolbar
+          :columns="tableData_right"
+          @cancel="showAddress = false"
+          @confirm="confirmAddress"
         />
       </van-popup>
     </div>
@@ -99,7 +126,14 @@
 import main1 from "~/api/baoxiu";
 import main from "~/api/baoxiuCs";
 import axios from "axios";
+import { Toast } from "vant";
 export default {
+  head() {
+    return {
+      title: "设备报修",
+      meta: [],
+    };
+  },
   computed: {
     //学校id
     schoolId() {
@@ -114,8 +148,11 @@ export default {
   },
   data() {
     return {
+      ZdyAddress: false,
+      ifFzr: 0,
       value11: "",
       showPicker11: false,
+      showAddress: false,
       columns11: [
         "杭州",
         "宁波",
@@ -151,9 +188,36 @@ export default {
     };
   },
   methods: {
+    //!判断是否是负责人
+    getFzr() {
+      main
+        .findCs({
+          schoolId: this.schoolId,
+          unionid: this.unionid,
+        })
+        .then((res) => {
+          if (res.data.setRepcates.length > 0) {
+            console.log("负责人");
+            this.ifFzr = 1;
+          } else {
+            console.log("不是负责人");
+            this.ifFzr = 0;
+          }
+        })
+        .catch((err) => {});
+    },
     onConfirm11(value) {
       this.value = value;
       this.showPicker = false;
+    },
+    //!确定地址
+    confirmAddress(value) {
+      if (value.address == "自定义") {
+        this.ZdyAddress = true;
+      } else {
+        this.form.address = value.address;
+      }
+      this.showAddress = false;
     },
     //!跳转负责人
     toFzr() {
@@ -225,29 +289,32 @@ export default {
       let val = this.form;
       val.bxTeaid = this.unionid;
       val.bxImg = this.fileIds;
-
       val.schoolId = this.schoolId;
-      console.log(val);
-      main1
-        .edit(val)
-        .then((res) => {
-          this.$message.success("报修申请成功!");
-          this.form = {
-            bxTime: "",
-            maxCate: "",
-            minCate: "",
-            name: "",
-            address: "",
-            explaion: "",
-            bxImg: [],
-            bxTeaid: "",
-            clTeaid: "",
-            clTeaname: "",
-            status: 0,
-          };
-          this.getTime();
-        })
-        .catch((err) => {});
+      if (!this.form.name || !this.form.address) {
+        Toast.fail("请填写必填项");
+      } else {
+        main1
+          .edit(val)
+          .then((res) => {
+            this.$message.success("报修申请成功!");
+            document.documentElement.scrollTop = 0;
+            this.form = {
+              bxTime: "",
+              maxCate: "",
+              minCate: "",
+              name: "",
+              address: "",
+              explaion: "",
+              bxImg: [],
+              bxTeaid: "",
+              clTeaid: "",
+              clTeaname: "",
+              status: 0,
+            };
+            this.getTime();
+          })
+          .catch((err) => {});
+      }
     },
     //!获取报修大类数据源
     getBxDl() {
@@ -275,6 +342,10 @@ export default {
           console.log(this.bxOpt, "11111111111");
           this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
+          this.tableData_right.unshift({
+            address: "自定义",
+            id: -1,
+          });
         })
         .catch((err) => {});
     },
@@ -323,11 +394,18 @@ export default {
     this.getTime();
     this.getBxDl();
     this.getXq();
+    this.getFzr();
+    console.log(document.title, "111");
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.contain {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}
 .topBtn {
   width: 100%;
   height: 80px;
@@ -343,7 +421,6 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  font-weight: bold;
 }
 .font-bold {
   font-weight: bold;
@@ -353,7 +430,9 @@ export default {
 /deep/.van-field__control--right {
   font-size: 18px;
 }
-// /deep/.van-popup--bottom {
-//   bottom: 200px;
-// }
+/deep/.van-popup,
+/deep/.van-popup--round,
+/deep/.van-popup--bottom {
+  height: 350px;
+}
 </style>

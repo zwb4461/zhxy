@@ -54,8 +54,8 @@
         format="yyyy-MM-dd"
         value-format="yyyy-MM-dd"
         range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
+        start-placeholder="发起开始日期"
+        end-placeholder="发起结束日期"
       >
       </el-date-picker>
       <el-input
@@ -99,9 +99,27 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column prop="name" label="报修分类"> </el-table-column>
-          <el-table-column prop="dcl" label="待处理"> </el-table-column>
-          <el-table-column prop="clz" label="处理中"> </el-table-column>
-          <el-table-column prop="ycl" label="已处理"> </el-table-column>
+          <el-table-column prop="dcl" label="待处理" align="center">
+            <template slot-scope="scope">
+              <div style="font-size: 18px; color: #ff5151">
+                {{ scope.row.dcl }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="clz" label="处理中" align="center">
+            <template slot-scope="scope">
+              <div style="font-size: 18px; color: #c4c400">
+                {{ scope.row.clz }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ycl" label="已处理" align="center">
+            <template slot-scope="scope">
+              <div style="font-size: 18px; color: #73bf00">
+                {{ scope.row.ycl }}
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="right">

@@ -10,7 +10,7 @@
         <span class="marginL">{{ item.stanza }}</span>
       </div>
       <div class="table">
-        <!-- 0：匹配中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
+        <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
 
         <el-table border :data="[...item]" style="width: 100%" size="mini">
           <el-table-column prop="className" label="班级"> </el-table-column>
@@ -21,7 +21,7 @@
             <template slot-scope="scope">
               <div>
                 <van-tag v-show="scope.row.status == 0" type="warning"
-                  >匹配中</van-tag
+                  >申请中</van-tag
                 >
                 <van-tag v-show="scope.row.status == 1">待审核</van-tag>
                 <van-tag type="success" v-show="scope.row.status == 2"

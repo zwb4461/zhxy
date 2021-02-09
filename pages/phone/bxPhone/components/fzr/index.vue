@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-tabs v-model="bxFzrActive" @click="clickTab">
+    <van-tabs v-model="bxFzrActive" @click="clickTab" :sticky="true">
       <van-tab title="待处理"><deal ref="one" :status="0"></deal></van-tab>
       <van-tab title="处理中"><deal :status="1"></deal></van-tab>
       <van-tab title="已处理"><deal :status="2"></deal></van-tab>
@@ -11,6 +11,12 @@
 <script>
 import deal from "./deal";
 export default {
+  head() {
+    return {
+      title: "报修管理",
+      meta: [],
+    };
+  },
   computed: {
     bxFzrActive: {
       get() {

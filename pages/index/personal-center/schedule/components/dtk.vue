@@ -53,10 +53,10 @@
       </el-table-column>
       <el-table-column prop="status" label="状态" align="center">
         <template slot-scope="scope">
-          <!-- 0：匹配中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
+          <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
           <div>
             <el-tag v-show="scope.row.status == 0" type="warning"
-              >匹配中</el-tag
+              >申请中</el-tag
             >
             <el-tag v-show="scope.row.status == 1">待审核</el-tag>
             <el-tag type="success" v-show="scope.row.status == 2"
@@ -105,7 +105,7 @@
       :close-on-click-modal="false"
     >
       <div class="dkOrTk">
-        <el-radio-group size="small" v-model="showDiaData.form.type">
+        <el-radio-group v-model="showDiaData.form.type">
           <el-radio-button :label="0" style="margin-right: 20px"
             >代课</el-radio-button
           >
@@ -114,8 +114,13 @@
       </div>
       <!-- 代课 -->
       <div class="dk" v-show="showDiaData.form.type == 0">
-        <el-form label-width="80px">
-          <el-form-item label="学期年级:">
+        <el-form
+          label-width="90px"
+          :model="showDiaData.form"
+          :rules="rules"
+          ref="ruleForm"
+        >
+          <el-form-item label="学期年级:" prop="classId">
             <el-cascader
               size="small"
               class="inp"
@@ -126,7 +131,7 @@
               @change="chgang1"
             ></el-cascader>
           </el-form-item>
-          <el-form-item label="代课日期:">
+          <el-form-item label="代课日期:" prop="date">
             <el-date-picker
               size="small"
               class="inp"
@@ -139,22 +144,23 @@
             </el-date-picker>
             {{ zj }}
           </el-form-item>
-          <el-form-item label="代课课次:">
+          <el-form-item label="代课课次:" prop="stanza">
             <el-select
               size="small"
               class="inp"
               v-model="showDiaData.form.stanza"
+              @focus="getOpt(4)"
             >
               <el-option
                 v-for="item in stanzaOpt"
                 :key="item.id"
-                :label="item.name"
-                :value="item.name"
+                :label="item.stanz"
+                :value="item.stanz"
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="代课学科:">
+          <el-form-item label="代课学科:" prop="xkname">
             <el-select
               @focus="getOpt(1)"
               size="small"
@@ -187,8 +193,9 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="现授课人:">
+          <el-form-item label="现授课人:" prop="teaname">
             <el-select
+              filterable
               @focus="getOpt(3)"
               size="small"
               class="inp"
@@ -237,8 +244,13 @@
       </div>
       <!-- 调课 -->
       <div class="dk" v-show="showDiaData.form.type == 1">
-        <el-form label-width="80px">
-          <el-form-item label="学期年级:">
+        <el-form
+          label-width="90px"
+          :model="showDiaData.form"
+          :rules="rules1"
+          ref="ruleForm1"
+        >
+          <el-form-item label="学期年级:" prop="classId">
             <el-cascader
               size="small"
               class="inp"
@@ -248,7 +260,7 @@
               :options="xqNjOpt"
             ></el-cascader>
           </el-form-item>
-          <el-form-item label="调课日期:">
+          <el-form-item label="调课日期:" prop="date">
             <el-date-picker
               size="small"
               class="inp"
@@ -261,22 +273,23 @@
             </el-date-picker>
             {{ zj }}
           </el-form-item>
-          <el-form-item label="调课课次:">
+          <el-form-item label="调课课次:" prop="stanza">
             <el-select
               size="small"
               class="inp"
               v-model="showDiaData.form.stanza"
+              @focus="getOpt(4)"
             >
               <el-option
                 v-for="item in stanzaOpt"
                 :key="item.id"
-                :label="item.name"
-                :value="item.name"
+                :label="item.stanz"
+                :value="item.stanz"
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="调课学科:">
+          <el-form-item label="调课学科:" prop="xkname">
             <el-select
               @focus="getOpt(1)"
               size="small"
@@ -309,17 +322,36 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="互调年级:">
+          <el-form-item label="现授课人:" prop="teaname">
+            <el-select
+              clearable
+              filterable
+              @focus="getOpt(3)"
+              @change="changeXskr"
+              size="small"
+              class="inp"
+              v-model="showDiaData.form.teaname"
+            >
+              <el-option
+                v-for="item in teanameOpt"
+                :key="item.id"
+                :label="item.teacherName"
+                :value="item.teacherName"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="互调年级:" prop="oldclassId">
             <el-cascader
               size="small"
               class="inp"
               :props="{ children: 'children', label: 'name', value: 'id' }"
-              @focus="getXqNj"
+              @focus="getXqNjHt"
               v-model="showDiaData.form.oldclassId"
-              :options="xqNjOpt"
+              :options="xqNjOptHt"
             ></el-cascader>
           </el-form-item>
-          <el-form-item label="互调日期:">
+          <el-form-item label="互调日期:" prop="olddate">
             <el-date-picker
               size="small"
               class="inp"
@@ -332,14 +364,14 @@
             </el-date-picker>
             {{ zjHt }}
           </el-form-item>
-          <el-form-item label="互调课次:">
+          <el-form-item label="互调课次:" prop="oldStanza">
             <el-select
               size="small"
               class="inp"
               v-model="showDiaData.form.oldStanza"
             >
               <el-option
-                v-for="item in stanzaOpt"
+                v-for="item in stanzaOptHt"
                 :key="item.id"
                 :label="item.name"
                 :value="item.name"
@@ -347,7 +379,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="互调学科:">
+          <el-form-item label="互调学科:" prop="oldxkname">
             <el-select
               @focus="getOpt(1)"
               size="small"
@@ -359,22 +391,6 @@
                 :key="item.id"
                 :label="item.subjectName"
                 :value="item.subjectName"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="现授课人:">
-            <el-select
-              @focus="getOpt(3)"
-              size="small"
-              class="inp"
-              v-model="showDiaData.form.teaname"
-            >
-              <el-option
-                v-for="item in teanameOpt"
-                :key="item.id"
-                :label="item.teacherName"
-                :value="item.teacherName"
               >
               </el-option>
             </el-select>
@@ -442,29 +458,76 @@ export default {
   },
   data() {
     return {
+      rules: {
+        classId: [
+          { required: true, message: "请选择学期年级", trigger: "blur" },
+        ],
+        date: [{ required: true, message: "请选择代课日期", trigger: "blur" }],
+        stanza: [
+          { required: true, message: "请选择代课课次", trigger: "blur" },
+        ],
+        xkname: [
+          { required: true, message: "请选择代课学科", trigger: "blur" },
+        ],
+        teaname: [
+          { required: true, message: "请选择现授课人", trigger: "blur" },
+        ],
+      },
+      rules1: {
+        classId: [
+          { required: true, message: "请选择学期年级", trigger: "blur" },
+        ],
+        date: [{ required: true, message: "请选择代课日期", trigger: "blur" }],
+        stanza: [
+          { required: true, message: "请选择代课课次", trigger: "blur" },
+        ],
+        xkname: [
+          { required: true, message: "请选择代课学科", trigger: "blur" },
+        ],
+        teaname: [
+          { required: false, message: "请选择现授课人", trigger: "blur" },
+        ],
+        oldclassId: [
+          { required: false, message: "请选择互调年级", trigger: "blur" },
+        ],
+        olddate: [
+          { required: false, message: "请选择互调日期", trigger: "blur" },
+        ],
+        oldStanza: [
+          { required: false, message: "请选择互调课次", trigger: "blur" },
+        ],
+        oldxkname: [
+          { required: false, message: "请选择互调学科", trigger: "blur" },
+        ],
+      },
       // 分页相关
       pageNum: 1,
       totalDataNum: 0,
       pageSize: 20,
       //
       tableData: [],
+      kcZdyArr: [],
       xqNjOpt: [],
+      xqNjOptHt: [],
       teanameOpt: [],
       oldTeanameOpt: [],
-      stanzaOpt: [
+      stanzaOpt: [],
+      stanzaOptHt: [
         { name: "第一节", id: 1 },
         { name: "第二节", id: 2 },
         { name: "第三节", id: 3 },
         { name: "第四节", id: 4 },
         { name: "第五节", id: 5 },
         { name: "第六节", id: 6 },
+        { name: "第七节", id: 7 },
+        { name: "第八节", id: 8 },
       ],
       xkOpt: [
         { name: "语文", id: 1 },
         { name: "数学", id: 2 },
       ],
       statusOpt: [
-        { name: "匹配中", id: 0, disabled: true },
+        { name: "申请中", id: 0, disabled: true },
         { name: "待审核", id: 1 },
         { name: "审核通过", id: 2 },
         { name: "审核未通过", id: 3 },
@@ -499,6 +562,28 @@ export default {
     };
   },
   methods: {
+    //!通用-调课打开必填项
+    setRequire() {
+      this.rules1.teaname[0].required = true;
+      this.rules1.oldclassId[0].required = true;
+      this.rules1.olddate[0].required = true;
+      this.rules1.oldStanza[0].required = true;
+      this.rules1.oldxkname[0].required = true;
+    },
+    //!通用-调课关闭必填项
+    breakRequire() {
+      this.rules1.teaname[0].required = false;
+      this.rules1.oldclassId[0].required = false;
+      this.rules1.olddate[0].required = false;
+      this.rules1.oldStanza[0].required = false;
+      this.rules1.oldxkname[0].required = false;
+    },
+    //!调课-选择现授课人-打开必填项
+    changeXskr(val) {
+      if (val) {
+        this.setRequire();
+      }
+    },
     changePageSize(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -510,32 +595,75 @@ export default {
       this.getTable(val, this.pageSize);
     },
 
-    //提交新增和编辑
+    //!提交新增和编辑
     submit() {
       let data = this.showDiaData.form;
       data.cjlbId = this.dtkId;
       data.oldTeaId = this.unionid;
       data.status = undefined;
-      if (this.showDiaData.formType == 1) {
-        main
-          .add(data)
-          .then((res) => {
-            this.getTable(this.pageNum, this.pageSize);
-            this.clearForm();
-            this.showDiaData.showDia = false;
-            this.$message.success("提交成功!");
-          })
-          .catch((err) => {});
-      } else if (this.showDiaData.formType == 2) {
-        main
-          .edit(data)
-          .then((res) => {
-            this.getTable(this.pageNum, this.pageSize);
-            this.clearForm();
-            this.showDiaData.showDia = false;
-            this.$message.success("编辑成功!");
-          })
-          .catch((err) => {});
+      if (this.showDiaData.form.type == 0) {
+        //!代课
+        this.$refs["ruleForm"].validate((valid) => {
+          if (valid) {
+            if (this.showDiaData.formType == 1) {
+              //?新增
+              main
+                .add(data)
+                .then((res) => {
+                  this.getTable(this.pageNum, this.pageSize);
+                  this.clearForm();
+                  this.showDiaData.showDia = false;
+                  this.$message.success("提交成功!");
+                })
+                .catch((err) => {});
+            } else if (this.showDiaData.formType == 2) {
+              console.log(data, "data....");
+              //?编辑
+              main
+                .edit(data)
+                .then((res) => {
+                  this.getTable(this.pageNum, this.pageSize);
+                  this.clearForm();
+                  this.showDiaData.showDia = false;
+                  this.$message.success("编辑成功!");
+                })
+                .catch((err) => {});
+            }
+          } else {
+            return false;
+          }
+        });
+      } else {
+        //!调课
+        this.$refs["ruleForm1"].validate((valid) => {
+          if (valid) {
+            if (this.showDiaData.formType == 1) {
+              //?新增
+              main
+                .add(data)
+                .then((res) => {
+                  this.getTable(this.pageNum, this.pageSize);
+                  this.clearForm();
+                  this.showDiaData.showDia = false;
+                  this.$message.success("提交成功!");
+                })
+                .catch((err) => {});
+            } else if (this.showDiaData.formType == 2) {
+              //?编辑
+              main
+                .edit(data)
+                .then((res) => {
+                  this.getTable(this.pageNum, this.pageSize);
+                  this.clearForm();
+                  this.showDiaData.showDia = false;
+                  this.$message.success("编辑成功!");
+                })
+                .catch((err) => {});
+            }
+          } else {
+            return false;
+          }
+        });
       }
     },
     getOpt(data) {
@@ -544,8 +672,8 @@ export default {
         let val = {
           classId: this.showDiaData.form.classId[2],
           type: 1,
+          unionid: this.unionid,
         };
-        console.log(val);
         main
           .selectTakeStanza(val)
           .then((res) => {
@@ -576,6 +704,20 @@ export default {
             this.teanameOpt = res.data;
           })
           .catch((err) => {});
+      } else if (data == 4) {
+        //?节次opt
+        let val = {
+          classId: this.showDiaData.form.classId[2],
+          type: 4,
+          unionid: this.unionid,
+        };
+        main
+          .selectTakeStanza(val)
+          .then((res) => {
+            this.stanzaOpt = res.data;
+            this.stanzaOpt = this.stanzaOpt.concat(this.kcZdyArr);
+          })
+          .catch((err) => {});
       }
     },
     //dia-点击下拉-获取三级菜单
@@ -583,11 +725,24 @@ export default {
       let val = {
         cjlbId: this.dtkId,
         type: 1,
+        unionid: this.unionid,
       };
       main1
         .seeSiji(val)
         .then((res) => {
           this.xqNjOpt = res.data;
+        })
+        .catch((err) => {});
+    },
+    getXqNjHt() {
+      let val = {
+        cjlbId: this.dtkId,
+        type: 1,
+      };
+      main1
+        .seeSiji(val)
+        .then((res) => {
+          this.xqNjOptHt = res.data;
         })
         .catch((err) => {});
     },
@@ -620,11 +775,17 @@ export default {
       };
     },
     setFrom(row) {
-      this.showDiaData.form = row;
+      this.showDiaData.form = JSON.parse(JSON.stringify(row));
+      if (this.showDiaData.form.teaname) {
+        this.setRequire();
+      } else {
+        this.breakRequire();
+      }
     },
     add() {
       this.showDiaData.formType = 1;
       this.clearForm();
+      this.breakRequire();
       this.showDiaData.form.oldTeaname = this.userName;
       this.showDiaData.showDia = true;
     },
@@ -634,6 +795,7 @@ export default {
     edit(row) {
       console.log(row);
       this.getXqNj();
+      this.getXqNjHt();
       this.setFrom(row);
       this.showDiaData.formType = 2;
       this.showDiaData.showDia = true;
@@ -713,9 +875,26 @@ export default {
           return "";
       }
     },
+    //!获取课次自定义参数
+    getKcZdy() {
+      main
+        .selectSetTake({ cjlbId: this.dtkId })
+        .then((res) => {
+          this.kcZdyArr = res.data.changeTakes.filter((item) => {
+            return item.type == 0;
+          });
+          this.kcZdyArr = this.kcZdyArr.map((item) => {
+            item.stanz = item.name;
+            return item;
+          });
+          this.stanzaOptHt = this.stanzaOptHt.concat(this.kcZdyArr);
+        })
+        .catch((err) => {});
+    },
   },
   created() {
     this.getTable(1, 20);
+    this.getKcZdy();
     this.showDiaData.form.oldTeaname = this.userName;
   },
 };

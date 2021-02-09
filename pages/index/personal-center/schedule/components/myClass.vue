@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="btn">
+      <el-button type="primary" @click="switchKb(0)">上周</el-button>
+      <el-button type="primary" @click="switchKb(1)">下周</el-button>
+    </div>
     <el-table
       :data="tableData"
       border
@@ -7,19 +11,176 @@
       style="width: 100%; margin-top: 20px"
       :span-method="objectSpanMethod"
     >
+      <!-- 1变灰 -->
       <el-table-column prop="time" width="100"></el-table-column>
-      <el-table-column type="index" width="100"></el-table-column>
-      <el-table-column prop="one" label="星期一"> </el-table-column>
-      <el-table-column prop="two" label="星期二"> </el-table-column>
-      <el-table-column prop="three" label="星期三"> </el-table-column>
-      <el-table-column prop="four" label="星期四"> </el-table-column>
-      <el-table-column prop="five" label="星期五"> </el-table-column>
+      <el-table-column prop="ind" width="100"></el-table-column>
+      <el-table-column prop="one" :label="'星期一(' + dataTime[0] + ')'">
+        <template slot-scope="scope">
+          <div>
+            <span> {{ scope.row.one[0] }}</span>
+            <div class="dis">
+              <div
+                style="margin-right: 20px"
+                :class="
+                  scope.row.one[1] == '代课'
+                    ? 'dk'
+                    : scope.row.one[1] == '调课'
+                    ? 'tk'
+                    : ''
+                "
+              >
+                <span>{{ scope.row.one[1] }}</span>
+              </div>
+              <div
+                :class="
+                  scope.row.one[2] == '1'
+                    ? 'bh'
+                    : scope.row.one[2] == '0'
+                    ? 'bl'
+                    : ''
+                "
+              >
+                {{ scope.row.one[3] }}
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="two" :label="'星期二(' + dataTime[1] + ')'">
+        <template slot-scope="scope">
+          <div>
+            <span> {{ scope.row.two[0] }}</span>
+            <div class="dis">
+              <div
+                style="margin-right: 20px"
+                :class="
+                  scope.row.two[1] == '代课'
+                    ? 'dk'
+                    : scope.row.two[1] == '调课'
+                    ? 'tk'
+                    : ''
+                "
+              >
+                <span>{{ scope.row.two[1] }}</span>
+              </div>
+              <div
+                :class="
+                  scope.row.two[2] == '1'
+                    ? 'bh'
+                    : scope.row.two[2] == '0'
+                    ? 'bl'
+                    : ''
+                "
+              >
+                {{ scope.row.two[3] }}
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="three" :label="'星期三(' + dataTime[2] + ')'">
+        <template slot-scope="scope">
+          <div>
+            <span> {{ scope.row.three[0] }}</span>
+            <div class="dis">
+              <div
+                style="margin-right: 20px"
+                :class="
+                  scope.row.three[1] == '代课'
+                    ? 'dk'
+                    : scope.row.three[1] == '调课'
+                    ? 'tk'
+                    : ''
+                "
+              >
+                <span>{{ scope.row.three[1] }}</span>
+              </div>
+              <div
+                :class="
+                  scope.row.three[2] == '1'
+                    ? 'bh'
+                    : scope.row.three[2] == '0'
+                    ? 'bl'
+                    : ''
+                "
+              >
+                {{ scope.row.three[3] }}
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="four" :label="'星期四(' + dataTime[3] + ')'">
+        <template slot-scope="scope">
+          <div>
+            <span> {{ scope.row.four[0] }}</span>
+            <div class="dis">
+              <div
+                style="margin-right: 20px"
+                :class="
+                  scope.row.four[1] == '代课'
+                    ? 'dk'
+                    : scope.row.four[1] == '调课'
+                    ? 'tk'
+                    : ''
+                "
+              >
+                <span>{{ scope.row.four[1] }}</span>
+              </div>
+              <div
+                :class="
+                  scope.row.four[2] == '1'
+                    ? 'bh'
+                    : scope.row.four[2] == '0'
+                    ? 'bl'
+                    : ''
+                "
+              >
+                {{ scope.row.four[3] }}
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="five" :label="'星期五(' + dataTime[4] + ')'">
+        <template slot-scope="scope">
+          <div>
+            <span> {{ scope.row.five[0] }}</span>
+            <div class="dis">
+              <div
+                style="margin-right: 20px"
+                :class="
+                  scope.row.five[1] == '代课'
+                    ? 'dk'
+                    : scope.row.five[1] == '调课'
+                    ? 'tk'
+                    : ''
+                "
+              >
+                <span>{{ scope.row.five[1] }}</span>
+              </div>
+              <div
+                :class="
+                  scope.row.five[2] == '1'
+                    ? 'bh'
+                    : scope.row.five[2] == '0'
+                    ? 'bl'
+                    : ''
+                "
+              >
+                {{ scope.row.five[3] }}
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script>
 import main from "~/api/courseManagement";
+import main1 from "~/api/dtk";
 export default {
   props: {
     dtkId: {
@@ -38,6 +199,7 @@ export default {
   },
   data() {
     return {
+      dataTime: [],
       tableData: [
         { time: "上午", one: "", two: "", three: "", four: "", five: "" },
         { one: "", two: "", three: "", four: "", five: "" },
@@ -45,10 +207,45 @@ export default {
         { time: "下午", one: "", two: "", three: "", four: "", five: "" },
         { one: "", two: "", three: "", four: "", five: "" },
         { one: "", two: "", three: "", four: "", five: "" },
+        { one: "", two: "", three: "", four: "", five: "" },
       ],
+      ind: 0,
     };
   },
   methods: {
+    //!查询自定义课程并拼接
+    csOpt() {
+      main1
+        .selectSetTake({ cjlbId: this.dtkId })
+        .then((res) => {
+          let arr = [];
+          arr = res.data.changeTakes.filter((item) => {
+            return item.type == 0;
+          });
+
+          arr.map((item) => {
+            this.tableData.push({
+              ind: item.name,
+              one: ["", "", "", ""],
+              two: ["", "", "", ""],
+              three: ["", "", "", ""],
+              four: ["", "", "", ""],
+              five: ["", "", "", ""],
+            });
+          });
+        })
+        .catch((err) => {});
+    },
+    //!切换周
+    switchKb(val) {
+      if (val == 0) {
+        this.ind--;
+      } else {
+        this.ind++;
+      }
+      this.getTable();
+    },
+    //!合并表格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         if (rowIndex % 3 === 0) {
@@ -66,107 +263,19 @@ export default {
     },
     getTable() {
       main
-        .seeOwnerHour({ schoolId: this.schoolId, unionid: this.unionid })
+        .seeOwnerHour({
+          schoolId: this.schoolId,
+          unionid: this.unionid,
+          index: this.ind,
+        })
         .then((res) => {
-          res.data.stanzas.map((item) => {
-            if (item.weekName == "星期一" && item.sort == 1) {
-              this.tableData[0].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 1) {
-              this.tableData[0].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 1) {
-              this.tableData[0].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 1) {
-              this.tableData[0].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 1) {
-              this.tableData[0].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 2) {
-              this.tableData[1].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 2) {
-              this.tableData[1].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 2) {
-              this.tableData[1].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 2) {
-              this.tableData[1].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 2) {
-              this.tableData[1].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 3) {
-              this.tableData[2].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 3) {
-              this.tableData[2].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 3) {
-              this.tableData[2].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 3) {
-              this.tableData[2].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 3) {
-              this.tableData[2].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 4) {
-              this.tableData[3].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 4) {
-              this.tableData[3].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 4) {
-              this.tableData[3].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 4) {
-              this.tableData[3].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 4) {
-              this.tableData[3].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 5) {
-              this.tableData[4].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 5) {
-              this.tableData[4].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 5) {
-              this.tableData[4].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 5) {
-              this.tableData[4].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 5) {
-              this.tableData[4].five =
-                item.subjectName + "(" + item.className + ")";
-            }
-            if (item.weekName == "星期一" && item.sort == 6) {
-              this.tableData[5].one =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期二" && item.sort == 6) {
-              this.tableData[5].two =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期三" && item.sort == 6) {
-              this.tableData[5].three =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期四" && item.sort == 6) {
-              this.tableData[5].four =
-                item.subjectName + "(" + item.className + ")";
-            } else if (item.weekName == "星期五" && item.sort == 6) {
-              this.tableData[5].five =
-                item.subjectName + "(" + item.className + ")";
-            }
+          this.tableData = res.data;
+          this.dataTime = res.data2;
+          this.tableData = this.tableData.map((item, index) => {
+            item.ind = index + 1;
+            return item;
           });
-          console.log("tableData", this.tableData);
+          this.csOpt();
         })
         .catch((err) => {});
     },
@@ -177,4 +286,54 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tk {
+  width: 30px;
+  height: 24px;
+  background-color: #be4fff;
+  text-align: center;
+  line-height: 24px;
+  color: #ffffff;
+  border-radius: 5px;
+}
+.dk {
+  width: 30px;
+  height: 24px;
+  background-color: #298cf7;
+  text-align: center;
+  line-height: 24px;
+  color: #ffffff;
+  border-radius: 5px;
+}
+.bh {
+  width: 100px;
+  height: 24px;
+  background-color: #c8c8c8;
+  text-align: center;
+  line-height: 24px;
+  border-radius: 5px;
+  color: #ffffff;
+}
+.bl {
+  width: 100px;
+  height: 24px;
+  background-color: #298cf7;
+  text-align: center;
+  line-height: 24px;
+  border-radius: 5px;
+  color: #ffffff;
+}
+.dis {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.btn {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+</style>

@@ -40,20 +40,28 @@
           <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
         </div>
         <div style="width: 100%; padding-left: 15px">
-          <van-image
-            v-for="(item, index) in form.bxImg"
-            style="margin-right: 5px"
-            :key="index"
-            width="100"
-            height="100"
+          <!-- <van-uploader
+            disabled
+            :deletable="false"
+            style="margin-top: 15px; margin-left: 15px"
+            v-model="form.bxImg"
+            :after-read="uploadImg"
+            :max-count="9"
+            preview-size="80px"
+          /> -->
+          <img
             :src="item.url"
+            v-for="(item, index) in form.bxImg"
+            :key="index"
+            style="width: 100px; height: 100px; margin: 5px"
+            @click="getImg_Bx(index)"
           />
         </div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
         </div>
-        <van-field input-align="right" readonly v-model="userName" />
-        <div class="font-bold">
+        <van-field input-align="right" readonly v-model="form.bxTeaname" />
+        <!-- <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
         </div>
         <van-field
@@ -70,11 +78,15 @@
           "
           readonly
           @click="showStatus = true"
-        />
+        /> -->
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
         </div>
         <van-field input-align="right" readonly v-model="form.clTeaname" />
+        <div class="font-bold">
+          <span style="margin-left: 15px; font-size: 18px">开始处理:</span>
+        </div>
+        <van-field readonly input-align="right" v-model="form.ksclTime" />
       </van-cell-group>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">反馈信息:</span>
@@ -91,6 +103,7 @@
       </div>
       <div style="width: 100%; padding-left: 15px">
         <van-uploader
+          accept="image/*"
           multiple
           style="margin-top: 15px; margin-left: 15px"
           v-model="form.fkImg"
@@ -119,8 +132,7 @@
         border
         style="width: 100%"
       >
-        <el-table-column type="index" label="序号" width="50">
-        </el-table-column>
+        <el-table-column type="index" label="序" width="35"> </el-table-column>
         <el-table-column prop="name" label="名称">
           <template slot-scope="scope">
             <el-select
@@ -141,20 +153,61 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="sum" label="数量" width="80">
+        <el-table-column prop="sum" label="数量" width="70">
           <template slot-scope="scope">
             <el-input size="mini" v-model="scope.row.sum"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="dw" label="单位" width="80"> </el-table-column>
+        <el-table-column prop="dw" label="单位" width="50"> </el-table-column>
+        <el-table-column label="操作" width="50">
+          <template slot-scope="scope">
+            <el-button
+              type="danger"
+              size="mini"
+              icon="el-icon-delete"
+              circle
+              @click="delRow(form.pjqd, scope.$index)"
+            ></el-button>
+          </template>
+        </el-table-column>
       </el-table>
-      <el-button size="mini" style="width: 100%" @click="addRow">+</el-button>
-      <div class="topBtn">
+      <div class="button_add">
+        <el-button
+          size="mini"
+          style="width: 95%; background-color: #f0f0f0"
+          @click="addRow"
+          >+</el-button
+        >
+      </div>
+      <!-- 待处理 -->
+      <div class="topBtn" v-show="form.status == 0">
+        <van-button style="width: 32%" @click="submit(3)">保存</van-button>
+        <van-button type="info" style="width: 32%" @click="submit(1)"
+          >处理中</van-button
+        >
+        <van-button type="primary" style="width: 32%" @click="submit(2)"
+          >已处理</van-button
+        >
+      </div>
+      <!-- 处理中 -->
+      <div class="topBtn" v-show="form.status == 1">
+        <van-button style="width: 45%" @click="submit(3)">保存</van-button>
+        <van-button type="primary" style="width: 45%" @click="submit(2)"
+          >已处理</van-button
+        >
+      </div>
+      <!-- 已处理 -->
+      <div class="topBtn" v-show="form.status == 2">
+        <van-button style="width: 90%" type="primary" @click="submit(3)"
+          >保存</van-button
+        >
+      </div>
+      <!-- <div class="topBtn">
         <van-button style="width: 45%" @click="back">返回</van-button>
         <van-button type="primary" style="width: 45%" @click="submit"
           >确定</van-button
         >
-      </div>
+      </div> -->
 
       <!--报修大类弹出层 -->
       <van-popup v-model="showStatus" round position="bottom">
@@ -174,7 +227,14 @@
 import main1 from "~/api/baoxiu";
 import main from "~/api/baoxiuCs";
 import axios from "axios";
+import { ImagePreview } from "vant";
 export default {
+  head() {
+    return {
+      title: "报修管理",
+      meta: [],
+    };
+  },
   computed: {
     //学校id
     schoolId() {
@@ -198,12 +258,15 @@ export default {
       StatusOpt: [
         {
           name: "待处理",
+          disabled: true,
         },
         {
           name: "处理中",
+          disabled: false,
         },
         {
           name: "已处理",
+          disabled: false,
         },
       ],
       postData: [],
@@ -225,6 +288,18 @@ export default {
     };
   },
   methods: {
+    //!预览报修图片
+    getImg_Bx(index) {
+      let arr = this.form.bxImg.map((item) => {
+        return item.url;
+      });
+      ImagePreview({
+        images: arr, // 预览图片的那个数组
+        showIndex: true,
+        loop: false,
+        startPosition: index, // 指明预览第几张图
+      });
+    },
     //!配件清单改变名称，赋值单位
     changeName(row) {
       let data = "";
@@ -301,7 +376,11 @@ export default {
     },
     //!添加表格行
     addRow() {
-      this.form.pjqd.push({});
+      this.form.pjqd.push({ sum: 1 });
+    },
+    //!删除行
+    delRow(row, index) {
+      row.splice(index, 1);
     },
     //!确定状态
     confirmStatus(val) {
@@ -338,16 +417,24 @@ export default {
     },
 
     //!提交
-    submit() {
-      let val = this.form;
+    submit(type) {
+      let val = JSON.parse(JSON.stringify(this.form));
       val.bxTeaid = this.unionid;
       val.fkImg = this.fileIds;
-      console.log(val);
+      if (type == 1) {
+        //   ?处理中
+        val.status = 1;
+      } else if (type == 2) {
+        //   ?已处理
+        val.status = 2;
+      } else if (type == 3) {
+        //   ?保存
+      }
       main1
         .edit(val)
         .then((res) => {
-          this.$message.success("修改成功!");
-          this.$router.push("/Phone/bxPhone");
+          this.$message.success("保存成功!");
+          this.$router.push("/Phone/bxPhone/components/fzr");
         })
         .catch((err) => {});
     },
@@ -416,6 +503,9 @@ export default {
     this.getBxDl();
     console.log(this.$route.query.data, "路由信息");
     this.form = this.$route.query.data;
+    if (this.form.status == 2) {
+      this.StatusOpt[1].disabled = true;
+    }
     this.fileIds = this.form.fkImg;
   },
 };
@@ -437,7 +527,6 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  font-weight: bold;
 }
 .title {
   display: flex;
@@ -453,5 +542,12 @@ export default {
 /deep/.van-field__control,
 /deep/.van-field__control--right {
   font-size: 18px;
+}
+.button_add {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
 }
 </style>
