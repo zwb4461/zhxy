@@ -1,8 +1,13 @@
 <template>
   <div>
     <div class="btn">
-      <el-button type="primary" @click="switchKb(0)">上周</el-button>
-      <el-button type="primary" @click="switchKb(1)">下周</el-button>
+      <el-button icon="el-icon-caret-left" type="success" @click="switchKb(0)"
+        >上周</el-button
+      >
+      <el-button type="info" @click="switchKb(2)">本周</el-button>
+      <el-button type="primary" @click="switchKb(1)"
+        >下周<i class="el-icon-caret-right el-icon--right"></i
+      ></el-button>
     </div>
     <el-table
       :data="tableData"
@@ -17,10 +22,12 @@
       <el-table-column prop="one" :label="'星期一(' + dataTime[0] + ')'">
         <template slot-scope="scope">
           <div>
-            <span> {{ scope.row.one[0] }}</span>
+            <span :class="scope.row.one[4] == 1 ? 'cheng' : ''">
+              {{ scope.row.one[0] }}</span
+            >
             <div class="dis">
               <div
-                style="margin-right: 20px"
+                style="margin-right: 10px"
                 :class="
                   scope.row.one[1] == '代课'
                     ? 'dk'
@@ -49,10 +56,12 @@
       <el-table-column prop="two" :label="'星期二(' + dataTime[1] + ')'">
         <template slot-scope="scope">
           <div>
-            <span> {{ scope.row.two[0] }}</span>
+            <span :class="scope.row.two[4] == 1 ? 'cheng' : ''">
+              {{ scope.row.two[0] }}</span
+            >
             <div class="dis">
               <div
-                style="margin-right: 20px"
+                style="margin-right: 10px"
                 :class="
                   scope.row.two[1] == '代课'
                     ? 'dk'
@@ -81,10 +90,12 @@
       <el-table-column prop="three" :label="'星期三(' + dataTime[2] + ')'">
         <template slot-scope="scope">
           <div>
-            <span> {{ scope.row.three[0] }}</span>
+            <span :class="scope.row.three[4] == 1 ? 'cheng' : ''">
+              {{ scope.row.three[0] }}</span
+            >
             <div class="dis">
               <div
-                style="margin-right: 20px"
+                style="margin-right: 10px"
                 :class="
                   scope.row.three[1] == '代课'
                     ? 'dk'
@@ -113,10 +124,12 @@
       <el-table-column prop="four" :label="'星期四(' + dataTime[3] + ')'">
         <template slot-scope="scope">
           <div>
-            <span> {{ scope.row.four[0] }}</span>
+            <span :class="scope.row.four[4] == 1 ? 'cheng' : ''">
+              {{ scope.row.four[0] }}</span
+            >
             <div class="dis">
               <div
-                style="margin-right: 20px"
+                style="margin-right: 10px"
                 :class="
                   scope.row.four[1] == '代课'
                     ? 'dk'
@@ -145,10 +158,12 @@
       <el-table-column prop="five" :label="'星期五(' + dataTime[4] + ')'">
         <template slot-scope="scope">
           <div>
-            <span> {{ scope.row.five[0] }}</span>
+            <span :class="scope.row.five[4] == 1 ? 'cheng' : ''">
+              {{ scope.row.five[0] }}</span
+            >
             <div class="dis">
               <div
-                style="margin-right: 20px"
+                style="margin-right: 10px"
                 :class="
                   scope.row.five[1] == '代课'
                     ? 'dk'
@@ -240,6 +255,8 @@ export default {
     switchKb(val) {
       if (val == 0) {
         this.ind--;
+      } else if (val == 2) {
+        this.ind = 0;
       } else {
         this.ind++;
       }
@@ -248,16 +265,10 @@ export default {
     //!合并表格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        if (rowIndex % 3 === 0) {
-          return {
-            rowspan: 3,
-            colspan: 1,
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0,
-          };
+        if (rowIndex % 3 === 0 && rowIndex < 6) {
+          return [3, 1];
+        } else if (rowIndex < 6) {
+          return [0, 0];
         }
       }
     },
@@ -275,7 +286,7 @@ export default {
             item.ind = index + 1;
             return item;
           });
-          this.csOpt();
+          //   this.csOpt();
         })
         .catch((err) => {});
     },
@@ -329,11 +340,14 @@ export default {
   flex-direction: row;
 }
 .btn {
-  width: 100%;
+  width: 25%;
   height: 40px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+}
+.cheng {
+  color: #ff8b2f;
 }
 </style>

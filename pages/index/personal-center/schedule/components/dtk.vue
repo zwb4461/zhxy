@@ -75,13 +75,18 @@
       </el-table-column>
       <el-table-column label="操作" width="150" align="center">
         <template slot-scope="scope">
-          <a-button size="small" type="waring" @click="edit(scope.row)"
+          <a-button
+            size="small"
+            type="waring"
+            :disabled="scope.row.status == 2 || scope.row.status == 4"
+            @click="edit(scope.row)"
             >编辑</a-button
           >
           <a-button
             size="small"
             type="waring"
             style="color: #fff; background-color: #ff4d4f"
+            :disabled="scope.row.status == 2 || scope.row.status == 4"
             @click="del(scope.row)"
             >删除</a-button
           >
@@ -128,7 +133,6 @@
               @focus="getXqNj"
               v-model="showDiaData.form.classId"
               :options="xqNjOpt"
-              @change="chgang1"
             ></el-cascader>
           </el-form-item>
           <el-form-item label="代课日期:" prop="date">
@@ -150,6 +154,7 @@
               class="inp"
               v-model="showDiaData.form.stanza"
               @focus="getOpt(4)"
+              @change="setClass_Teacher"
             >
               <el-option
                 v-for="item in stanzaOpt"
@@ -162,7 +167,7 @@
           </el-form-item>
           <el-form-item label="代课学科:" prop="xkname">
             <el-select
-              @focus="getOpt(1)"
+              @focus="getOpt(6)"
               size="small"
               class="inp"
               v-model="showDiaData.form.xkname"
@@ -182,30 +187,32 @@
               @focus="getOpt(2)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.oldTeaname"
+              v-model="showDiaData.form.oldTeaId"
             >
               <el-option
                 v-for="item in oldTeanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherName"
+                :value="item.teacherUnionid"
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="现授课人:" prop="teaname">
+          <!--  prop="teaname" -->
+          <el-form-item label="现授课人:">
             <el-select
+              clearable
               filterable
-              @focus="getOpt(3)"
+              @focus="getOpt(5)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.teaname"
+              v-model="showDiaData.form.teaId"
             >
               <el-option
                 v-for="item in teanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherName"
+                :value="item.teacherUnionid"
               >
               </el-option>
             </el-select>
@@ -279,6 +286,7 @@
               class="inp"
               v-model="showDiaData.form.stanza"
               @focus="getOpt(4)"
+              @change="setClass_Teacher"
             >
               <el-option
                 v-for="item in stanzaOpt"
@@ -291,7 +299,7 @@
           </el-form-item>
           <el-form-item label="调课学科:" prop="xkname">
             <el-select
-              @focus="getOpt(1)"
+              @focus="getOpt(6)"
               size="small"
               class="inp"
               v-model="showDiaData.form.xkname"
@@ -311,32 +319,33 @@
               @focus="getOpt(2)"
               size="small"
               class="inp"
-              v-model="showDiaData.form.oldTeaname"
+              v-model="showDiaData.form.oldTeaId"
             >
               <el-option
                 v-for="item in oldTeanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherName"
+                :value="item.teacherUnionid"
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="现授课人:" prop="teaname">
+          <!--  prop="teaname" -->
+          <el-form-item label="现授课人:">
             <el-select
               clearable
               filterable
-              @focus="getOpt(3)"
+              @focus="getOpt(5)"
               @change="changeXskr"
               size="small"
               class="inp"
-              v-model="showDiaData.form.teaname"
+              v-model="showDiaData.form.teaId"
             >
               <el-option
                 v-for="item in teanameOpt"
                 :key="item.id"
                 :label="item.teacherName"
-                :value="item.teacherName"
+                :value="item.teacherUnionid"
               >
               </el-option>
             </el-select>
@@ -358,6 +367,7 @@
               format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
               v-model="showDiaData.form.olddate"
+              @change="setJc_Xk"
               type="date"
               placeholder="选择日期"
             >
@@ -369,12 +379,13 @@
               size="small"
               class="inp"
               v-model="showDiaData.form.oldStanza"
+              @change="confirmXk"
             >
               <el-option
                 v-for="item in stanzaOptHt"
                 :key="item.id"
-                :label="item.name"
-                :value="item.name"
+                :label="item.stanz"
+                :value="item.stanz"
               >
               </el-option>
             </el-select>
@@ -448,6 +459,9 @@ export default {
     },
     userName() {
       return this.$store.state.auth.userInfo.name;
+    },
+    schoolId() {
+      return this.$store.state.auth.schoolId;
     },
   },
   props: {
@@ -552,6 +566,7 @@ export default {
           reason: "",
           must: "",
           oldTeaname: "",
+          oldTeaId: "",
           teaname: "",
           oldclassId: [],
           olddate: "",
@@ -562,6 +577,55 @@ export default {
     };
   },
   methods: {
+    //!设置课程和老师
+    setClass_Teacher() {
+      let val = {
+        schoolId: this.schoolId,
+        classId: this.showDiaData.form.classId
+          ? this.showDiaData.form.classId[2]
+          : "",
+        stanz: this.showDiaData.form.stanza,
+        weekName: this.zj,
+        type: 4,
+      };
+      main
+        .selectTakeStanza(val)
+        .then((res) => {
+          let data = {};
+          data = res.data;
+          console.log(data, "获得的数据-------");
+          this.showDiaData.form.xkname = data[0].subjectName;
+          //   this.showDiaData.form.oldTeaId = data[0].teacherUnionid;
+        })
+        .catch((err) => {});
+    },
+    setJc_Xk() {
+      let val = {
+        schoolId: this.schoolId,
+        classId: this.showDiaData.form.oldclassId
+          ? this.showDiaData.form.oldclassId[2]
+          : "",
+        unionid: this.showDiaData.form.teaId,
+        weekName: this.zjHt,
+        type: 4,
+      };
+      main
+        .selectTakeStanza(val)
+        .then((res) => {
+          console.log(res.data, "获得的数据-------");
+          this.stanzaOptHt = res.data;
+          this.xkOptHt = res.data;
+        })
+        .catch((err) => {});
+    },
+    confirmXk() {
+      let data = {};
+      data = this.stanzaOptHt.filter((item) => {
+        return item.stanz == this.showDiaData.form.oldStanza;
+      });
+      console.log(data, "data");
+      this.showDiaData.form.oldxkname = data[0].subjectName;
+    },
     //!通用-调课打开必填项
     setRequire() {
       this.rules1.teaname[0].required = true;
@@ -669,10 +733,10 @@ export default {
     getOpt(data) {
       if (data == 1) {
         //?代课学科opt
+        //  unionid: this.unionid,
         let val = {
           classId: this.showDiaData.form.classId[2],
           type: 1,
-          unionid: this.unionid,
         };
         main
           .selectTakeStanza(val)
@@ -696,7 +760,7 @@ export default {
         //?现授课人opt
         let val = {
           classId: this.showDiaData.form.classId[2],
-          type: 3,
+          type: 5,
         };
         main
           .selectTakeStanza(val)
@@ -709,13 +773,44 @@ export default {
         let val = {
           classId: this.showDiaData.form.classId[2],
           type: 4,
+          weekName: this.zj,
           unionid: this.unionid,
+          data: this.showDiaData.form.date,
         };
+        console.log(this.showDiaData.form.date, "时间");
         main
           .selectTakeStanza(val)
           .then((res) => {
             this.stanzaOpt = res.data;
             this.stanzaOpt = this.stanzaOpt.concat(this.kcZdyArr);
+          })
+          .catch((err) => {});
+      } else if (data == 5) {
+        //?现授课人opt
+        let val = {
+          type: 5,
+          weekName: this.zj,
+          stanz: this.showDiaData.form.stanza,
+          unionid: this.unionid,
+        };
+        main
+          .selectTakeStanza(val)
+          .then((res) => {
+            this.teanameOpt = res.data;
+          })
+          .catch((err) => {});
+      } else if (data == 6) {
+        //?代课学科opt
+        let val = {
+          classId: this.showDiaData.form.classId[2],
+          type: 1,
+          stanz: this.showDiaData.form.stanza,
+          weekName: this.zj,
+        };
+        main
+          .selectTakeStanza(val)
+          .then((res) => {
+            this.xkOpt = res.data;
           })
           .catch((err) => {});
       }
@@ -735,9 +830,15 @@ export default {
         .catch((err) => {});
     },
     getXqNjHt() {
+      let teacher = [];
+      teacher = this.teanameOpt.filter((item) => {
+        return item.teacherName == this.showDiaData.form.teaname;
+      });
       let val = {
         cjlbId: this.dtkId,
         type: 1,
+        unionid: teacher.length > 0 ? teacher[0].teacherUnionid : "",
+        //
       };
       main1
         .seeSiji(val)
@@ -785,13 +886,14 @@ export default {
     add() {
       this.showDiaData.formType = 1;
       this.clearForm();
+      this.getOpt(2);
+      this.getOpt(3);
+      this.showDiaData.form.oldTeaId = this.unionid;
       this.breakRequire();
       this.showDiaData.form.oldTeaname = this.userName;
       this.showDiaData.showDia = true;
     },
-    chgang1(val) {
-      console.log(this.showDiaData.form.classId);
-    },
+
     edit(row) {
       console.log(row);
       this.getXqNj();
@@ -857,20 +959,20 @@ export default {
     getZj(data) {
       switch (data) {
         case 1:
-          return "周一";
+          return "星期一";
           break;
         case 2:
-          return "周二";
+          return "星期二";
         case 3:
-          return "周三";
+          return "星期三";
         case 4:
-          return "周四";
+          return "星期四";
         case 5:
-          return "周五";
+          return "星期五";
         case 6:
-          return "周六";
+          return "星期六";
         case 0:
-          return "周日";
+          return "星期日";
         default:
           return "";
       }
@@ -895,7 +997,7 @@ export default {
   created() {
     this.getTable(1, 20);
     this.getKcZdy();
-    this.showDiaData.form.oldTeaname = this.userName;
+    this.showDiaData.form.oldTeaId = this.unionid;
   },
 };
 </script>

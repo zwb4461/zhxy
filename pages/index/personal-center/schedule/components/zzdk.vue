@@ -381,7 +381,9 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showDiaData.showDia = false">取 消</el-button>
-        <el-button type="primary" @click="submitApply">申请</el-button>
+        <el-button type="primary" :disabled="canApply" @click="submitApply"
+          >申请</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -404,6 +406,12 @@ export default {
     unionid() {
       return this.$store.state.auth.userInfo.unionid;
     },
+    name() {
+      return this.$store.state.auth.userInfo.name;
+    },
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
   },
   props: {
     dtkId: {
@@ -413,6 +421,7 @@ export default {
   },
   data() {
     return {
+      canApply: false,
       // 分页相关
       pageNum: 1,
       totalDataNum: 0,
@@ -436,6 +445,7 @@ export default {
         { name: "数学", id: 2 },
       ],
       statusOpt: [
+        { name: "申请中", id: 0 },
         { name: "待审核", id: 1 },
         { name: "审核通过", id: 2 },
         { name: "审核未通过", id: 3 },
@@ -483,7 +493,26 @@ export default {
         .catch((err) => {});
     },
     apply(row) {
-      console.log(row);
+      let data = new Date(row.date).getDay();
+      let zjz = this.getZj(data);
+      this.canApply = false;
+      let val = {
+        schoolId: this.schoolId,
+        stanz: row.stanza,
+        unionid: this.unionid,
+        weekName: zjz,
+        type: 4,
+      };
+      main
+        .selectTakeStanza(val)
+        .then((res) => {
+          if (res.data.length > 0) {
+            this.canApply = true;
+          } else {
+            this.showDiaData.form.teaname = this.name;
+          }
+        })
+        .catch((err) => {});
       this.id = row.id;
       this.getXqNj();
       this.setFrom(row);
@@ -523,6 +552,7 @@ export default {
       main
         .find(val)
         .then((res) => {
+          console.log(res.data.list, "---------11111");
           this.tableData = res.data.list;
           this.totalDataNum = res.data.total;
         })
@@ -589,20 +619,20 @@ export default {
     getZj(data) {
       switch (data) {
         case 1:
-          return "周一";
+          return "星期一";
           break;
         case 2:
-          return "周二";
+          return "星期二";
         case 3:
-          return "周三";
+          return "星期三";
         case 4:
-          return "周四";
+          return "星期四";
         case 5:
-          return "周五";
+          return "星期五";
         case 6:
-          return "周六";
+          return "星期六";
         case 0:
-          return "周日";
+          return "星期日";
         default:
           return "";
       }
@@ -671,5 +701,8 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+/deep/.el-input.is-disabled .el-input__inner {
+  color: #000000;
 }
 </style>
