@@ -363,6 +363,7 @@ export default {
     getXqNj() {
       let val = {
         cjlbId: this.cjlbId,
+        unionid: this.unionid,
         type: 1,
       };
       main1

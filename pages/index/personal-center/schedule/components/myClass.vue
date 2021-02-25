@@ -18,7 +18,7 @@
     >
       <!-- 1变灰 -->
       <el-table-column prop="time" width="100"></el-table-column>
-      <el-table-column prop="ind" width="100"></el-table-column>
+      <el-table-column prop="px" width="100"></el-table-column>
       <el-table-column prop="one" :label="'星期一(' + dataTime[0] + ')'">
         <template slot-scope="scope">
           <div>
