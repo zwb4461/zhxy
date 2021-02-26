@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-tabs v-model="active">
+    <van-tabs v-model="bxActive" @click="clickTab" animated>
       <van-tab title="我的课表"><kb></kb></van-tab>
       <van-tab title="代调课"><dtk></dtk></van-tab>
       <van-tab title="自主代课"><zzdk></zzdk></van-tab>
@@ -15,6 +15,17 @@ import dtk from "./components/dtk";
 import zzdk from "./components/zzdk";
 import allDtk from "./components/allDtk";
 export default {
+  computed: {
+    //学校id
+    bxActive: {
+      get() {
+        return this.$store.state.auth.bxActive;
+      },
+      set(v) {
+        this.$store.commit("auth/setBxActive", v);
+      },
+    },
+  },
   components: {
     kb,
     dtk,
@@ -22,11 +33,13 @@ export default {
     allDtk,
   },
   data() {
-    return {
-      active: 0,
-    };
+    return {};
   },
-  methods: {},
+  methods: {
+    clickTab(name, title) {
+      this.$store.commit("auth/setDtkActive", name);
+    },
+  },
   created() {},
 };
 </script>

@@ -1,7 +1,11 @@
 <template>
-  <div>
+  <div class="contain">
     <div class="topBtn">
-      <van-button size="small" type="info" style="width: 60%" @click="add"
+      <van-button
+        size="small"
+        type="info"
+        style="width: 70%; height: 40px"
+        @click="add"
         >+新增</van-button
       >
     </div>
@@ -11,38 +15,42 @@
           {{ item.type == 1 ? "调课" : item.type == 0 ? "代课" : "" }}</span
         >
         <span class="marginL">{{ item.date }}</span>
+        <span class="marginL">({{ item.weekName }})</span>
         <span class="marginL">{{ item.className }}</span>
         <span class="marginL">{{ item.stanza }}</span>
       </div>
       <div class="table">
         <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
 
-        <el-table border :data="[...item]" style="width: 100%" size="mini">
-          <el-table-column prop="oldxkname" label="原授学科"> </el-table-column>
-          <el-table-column prop="oldTeaname" label="原授课人">
-          </el-table-column>
-          <el-table-column prop="xkname" label="现授学科"> </el-table-column>
-          <el-table-column prop="teaname" label="现授课人"> </el-table-column>
-          <el-table-column prop="status" label="状态">
-            <template slot-scope="scope">
-              <div>
-                <van-tag v-show="scope.row.status == 0" type="warning"
-                  >申请中</van-tag
-                >
-                <van-tag v-show="scope.row.status == 1">待审核</van-tag>
-                <van-tag type="success" v-show="scope.row.status == 2"
-                  >审核通过</van-tag
-                >
-                <van-tag type="danger" v-show="scope.row.status == 3"
-                  >审核未通过</van-tag
-                >
-                <van-tag type="success" v-show="scope.row.status == 4"
-                  >自动通过</van-tag
-                >
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div style="width: 95%">
+          <el-table border :data="[...item]" style="width: 100%" size="mini">
+            <el-table-column prop="oldxkname" label="原授学科">
+            </el-table-column>
+            <el-table-column prop="oldTeaname" label="原授课人">
+            </el-table-column>
+            <el-table-column prop="xkname" label="现授学科"> </el-table-column>
+            <el-table-column prop="teaname" label="现授课人"> </el-table-column>
+            <el-table-column prop="status" label="状态">
+              <template slot-scope="scope">
+                <div>
+                  <el-tag v-show="scope.row.status == 0" type="warning"
+                    >申请中</el-tag
+                  >
+                  <el-tag v-show="scope.row.status == 1">待审核</el-tag>
+                  <el-tag type="success" v-show="scope.row.status == 2"
+                    >审核通过</el-tag
+                  >
+                  <el-tag type="danger" v-show="scope.row.status == 3"
+                    >审核未通过</el-tag
+                  >
+                  <el-tag type="success" v-show="scope.row.status == 4"
+                    >自动通过</el-tag
+                  >
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </div>
   </div>
@@ -122,12 +130,14 @@ export default {
 }
 .item_contain {
   width: 100%;
+
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
 }
 .topTitle {
   width: 100%;
+  padding-left: 2.5%;
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
@@ -154,5 +164,13 @@ export default {
 }
 .marginL {
   margin-left: 5px;
+}
+.table {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.contain {
+  padding: 10px 0;
 }
 </style>

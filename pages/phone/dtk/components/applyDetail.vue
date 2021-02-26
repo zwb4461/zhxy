@@ -62,10 +62,14 @@ export default {
     userName() {
       return this.$store.state.auth.userInfo.name;
     },
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
   },
   data() {
     return {
       infoList: {},
+      canApply: true,
     };
   },
   methods: {
@@ -85,9 +89,57 @@ export default {
     back() {
       this.$router.back(-1);
     },
+    //!获取日期是周几
+    getZj(data) {
+      switch (data) {
+        case 1:
+          return "星期一";
+        case 2:
+          return "星期二";
+        case 3:
+          return "星期三";
+        case 4:
+          return "星期四";
+        case 5:
+          return "星期五";
+        case 6:
+          return "星期六";
+        case 0:
+          return "星期日";
+        default:
+          return "";
+      }
+    },
+    check() {
+      let data = new Date(this.infoList.date).getDay();
+      let zjz = this.getZj(data);
+      this.canApply = false;
+      let val = {
+        schoolId: this.schoolId,
+        stanz: this.infoList.stanza,
+        unionid: this.unionid,
+        weekName: zjz,
+        type: 4,
+      };
+      main
+        .selectTakeStanza(val)
+        .then((res) => {
+          if (res.data.length > 0) {
+            this.canApply = true;
+          } else {
+            this.infoList.teaname = this.name;
+          }
+        })
+        .catch((err) => {});
+      this.id = row.id;
+      this.getXqNj();
+      this.setFrom(row);
+      this.showDiaData.showDia = true;
+    },
   },
   created() {
     this.infoList = this.$route.query;
+    this.check();
   },
 };
 </script>

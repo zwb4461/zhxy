@@ -30,6 +30,7 @@ const state = () => ({
   },
   bxActive: 0,
   bxFzrActive: 0,
+  dtkActive: 0,
   //白名单地址
   notAuthPage: ["Login", "404", "403", "phone", "dd-login"]
 });
@@ -63,6 +64,9 @@ const mutations = {
   },
   setBxActive(state, val) {
     state.bxActive = val;
+  },
+  setDtkActive(state, val) {
+    state.dtkActive = val;
   },
   setBxFzrActive(state, val) {
     state.bxFzrActive = val;

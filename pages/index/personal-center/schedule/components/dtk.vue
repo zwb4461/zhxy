@@ -391,14 +391,15 @@
             </el-select>
           </el-form-item>
           <el-form-item label="互调学科:" prop="oldxkname">
+            <!--  @focus="getOpt(1)" -->
             <el-select
-              @focus="getOpt(1)"
               size="small"
               class="inp"
               v-model="showDiaData.form.oldxkname"
+              @focus="test1"
             >
               <el-option
-                v-for="item in xkOpt"
+                v-for="item in xkOptHt"
                 :key="item.id"
                 :label="item.subjectName"
                 :value="item.subjectName"
@@ -537,8 +538,8 @@ export default {
         { name: "第八节", id: 8 },
       ],
       xkOpt: [
-        { name: "语文", id: 1 },
-        { name: "数学", id: 2 },
+        // { name: "语文", id: 1 },
+        // { name: "数学", id: 2 },
       ],
       statusOpt: [
         { name: "申请中", id: 0, disabled: true },
@@ -593,9 +594,7 @@ export default {
         .then((res) => {
           let data = {};
           data = res.data;
-          console.log(data, "获得的数据-------");
           this.showDiaData.form.xkname = data[0].subjectName;
-          //   this.showDiaData.form.oldTeaId = data[0].teacherUnionid;
         })
         .catch((err) => {});
     },
@@ -647,6 +646,9 @@ export default {
       if (val) {
         this.setRequire();
       }
+    },
+    test1() {
+      console.log(this.xkOpt);
     },
     changePageSize(val) {
       console.log(`每页 ${val} 条`);
@@ -777,7 +779,6 @@ export default {
           unionid: this.unionid,
           data: this.showDiaData.form.date,
         };
-        console.log(this.showDiaData.form.date, "时间");
         main
           .selectTakeStanza(val)
           .then((res) => {
@@ -960,7 +961,6 @@ export default {
       switch (data) {
         case 1:
           return "星期一";
-          break;
         case 2:
           return "星期二";
         case 3:

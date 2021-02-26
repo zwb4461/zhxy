@@ -298,7 +298,8 @@ module.exports = {
     saveSetTake: baseUrl + "/saveSetTake",
     deleteSetTake: baseUrl + "/deleteSetTake",
     seeTakeTJ: baseUrl + "/seeTakeTJ",
-    selectMobileStanza: baseUrl + "/selectMobileStanza"
+    selectMobileStanza: baseUrl + "/selectMobileStanza",
+    seeH5All: baseUrl + "/seeH5All"
   },
   baoxiu: {
     find: baseUrl + "/repairList",

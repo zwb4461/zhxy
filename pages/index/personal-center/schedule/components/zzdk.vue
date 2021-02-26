@@ -620,7 +620,6 @@ export default {
       switch (data) {
         case 1:
           return "星期一";
-          break;
         case 2:
           return "星期二";
         case 3:

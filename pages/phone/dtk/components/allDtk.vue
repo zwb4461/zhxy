@@ -1,23 +1,32 @@
 <template>
-  <div>
+  <div class="contain">
     <div class="item_contain" v-for="(item, index) in tableData" :key="index">
       <div class="topTitle">
-        <span :class="item.type == 1 ? 'tk1' : item.type == 0 ? 'dk1' : ''">
-          {{ item.type == 1 ? "调课" : item.type == 0 ? "代课" : "" }}</span
-        >
-        <span class="marginL">{{ item.date }}</span>
-        <span class="marginL">{{ item.className }}</span>
-        <span class="marginL">{{ item.stanza }}</span>
+        <span class="marginL">{{ item.name }}</span>
       </div>
       <div class="table">
         <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
-
-        <el-table border :data="[...item]" style="width: 100%" size="mini">
-          <el-table-column prop="className" label="班级"> </el-table-column>
-          <el-table-column prop="stanza" label="课次"> </el-table-column>
-          <el-table-column prop="oldxkname" label="原学科"> </el-table-column>
-          <el-table-column prop="oldTeaname" label="原授课"> </el-table-column>
-          <el-table-column prop="status" label="状态">
+        <div style="width: 95%">
+          <el-table border :data="item.data" style="width: 100%" size="mini">
+            <el-table-column prop="className" label="班级"> </el-table-column>
+            <el-table-column prop="stanza" label="课次"> </el-table-column>
+            <el-table-column prop="oldxkname" label="原学科"> </el-table-column>
+            <el-table-column prop="oldTeaname" label="原授课">
+            </el-table-column>
+            <el-table-column prop="oldTeaname" label="代调">
+              <template slot-scope="scope">
+                <div>
+                  <el-tag effect="dark" v-if="scope.row.type == 0">代</el-tag>
+                  <el-tag
+                    effect="dark"
+                    type="warning"
+                    v-else-if="scope.row.type == 1"
+                    >调</el-tag
+                  >
+                </div>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
               <div>
                 <van-tag v-show="scope.row.status == 0" type="warning"
@@ -35,10 +44,11 @@
                 >
               </div>
             </template>
-          </el-table-column>
-          <el-table-column prop="xkname" label="现授学科"> </el-table-column>
-          <el-table-column prop="teaname" label="现授课人"> </el-table-column>
-        </el-table>
+          </el-table-column> -->
+            <el-table-column prop="xkname" label="现授学科"> </el-table-column>
+            <el-table-column prop="teaname" label="现授课人"> </el-table-column>
+          </el-table>
+        </div>
       </div>
     </div>
   </div>
@@ -64,15 +74,13 @@ export default {
     getTable() {
       let val = {
         cjlbId: this.cjlbId,
-        pageNum: 1,
-        pageSize: 10000,
         unionid: this.unionid,
         isowner: 3,
       };
       main
-        .find(val)
+        .seeH5All(val)
         .then((res) => {
-          this.tableData = res.data.list;
+          this.tableData = res.data;
         })
         .catch((err) => {});
     },
@@ -113,6 +121,7 @@ export default {
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
+  padding-left: 2.5%;
 }
 .tk1 {
   border-radius: 4px;
@@ -136,5 +145,13 @@ export default {
 }
 .marginL {
   margin-left: 5px;
+}
+.table {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.contain {
+  padding: 10px 0;
 }
 </style>

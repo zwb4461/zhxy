@@ -71,6 +71,13 @@ const saveSetTake = query => {
     data: query
   });
 };
+const seeH5All = query => {
+  return request({
+    url: Api.dtk.seeH5All,
+    method: "post-json",
+    data: query
+  });
+};
 
 export default {
   find,
@@ -82,5 +89,6 @@ export default {
   selectSetTake,
   deleteSetTake,
   seeTakeTJ,
-  selectMobileStanza
+  selectMobileStanza,
+  seeH5All
 };

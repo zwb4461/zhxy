@@ -1,32 +1,38 @@
 <template>
-  <div>
+  <div class="contain">
     <div class="item_contain" v-for="(item, index) in tableData" :key="index">
       <div class="topTitle">
         <span :class="item.type == 1 ? 'tk1' : item.type == 0 ? 'dk1' : ''">
           {{ item.type == 1 ? "调课" : item.type == 0 ? "代课" : "" }}</span
         >
         <span class="marginL">{{ item.date }}</span>
-        <span class="marginL">{{ item.className }}</span>
-        <span class="marginL">{{ item.stanza }}</span>
+        <span class="marginL">{{ item.weekName }}</span>
+        <!-- <span class="marginL">{{ item.stanza }}</span> -->
       </div>
       <div class="table">
         <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
 
-        <el-table border :data="[...item]" style="width: 100%" size="mini">
-          <el-table-column prop="className" label="班级"> </el-table-column>
-          <el-table-column prop="stanza" label="课次"> </el-table-column>
-          <el-table-column prop="oldxkname" label="原学科"> </el-table-column>
-          <el-table-column prop="oldTeaname" label="原授课"> </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <div>
-                <el-button type="primary" size="mini" @click="apply(scope.row)"
-                  >申请</el-button
-                >
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div style="width: 95%">
+          <el-table border :data="[...item]" style="width: 100%" size="mini">
+            <el-table-column prop="className" label="班级"> </el-table-column>
+            <el-table-column prop="stanza" label="课次"> </el-table-column>
+            <el-table-column prop="oldxkname" label="原学科"> </el-table-column>
+            <el-table-column prop="oldTeaname" label="原授课">
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <div>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    @click="apply(scope.row)"
+                    >申请</el-button
+                  >
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </div>
   </div>
@@ -62,6 +68,7 @@ export default {
         pageSize: 10000,
         unionid: this.unionid,
         isowner: 2,
+        isowner: 2,
       };
       main
         .find(val)
@@ -89,6 +96,9 @@ export default {
 </script>
 
 <style scoped>
+.contain {
+  padding: 10px 0;
+}
 .topBtn {
   height: 50px;
   width: 100%;
@@ -104,6 +114,7 @@ export default {
 }
 .topTitle {
   width: 100%;
+  padding-left: 2.5%;
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
@@ -130,5 +141,10 @@ export default {
 }
 .marginL {
   margin-left: 5px;
+}
+.table {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 </style>
