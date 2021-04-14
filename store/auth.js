@@ -28,9 +28,11 @@ const state = () => ({
     schoolId: null,
     avatar: ""
   },
-  bxActive: 0,
+  bxActive: 1,
   bxFzrActive: 0,
   dtkActive: 0,
+    bxActiveOne: 0,
+    editContent: {},
   //白名单地址
   notAuthPage: ["Login", "404", "403", "phone", "dd-login"]
 });
@@ -62,8 +64,14 @@ const mutations = {
   setEnrollId(state, id) {
     state.enrollId = id;
   },
+  setEditContent(state, val) {
+    state.editContent = val;
+  },
   setBxActive(state, val) {
     state.bxActive = val;
+  },
+  setBxActiveOne(state, val) {
+    state.bxActiveOne = val;
   },
   setDtkActive(state, val) {
     state.dtkActive = val;
@@ -123,13 +131,12 @@ const actions = {
   ddLogin(context, { unionid, auth, schoolId }) {
     //用户登录
     return new Promise((resolve, reject) => {
-      // alert(unionid);
       ddServer
         .user({ pagenum: 1, pagesize: 10, unionid, schoolId })
         .then(res => {
+          console.log("ddLogin------------", schoolId);
           let info = res.data.list[0];
           if (info) {
-            // alert(JSON.stringify(info))
             context.commit("Login", info);
             setToken(JSON.stringify(info));
             let power = [];
@@ -215,21 +222,27 @@ const actions = {
       school
         .list({
           pagenum: 1,
-          pagesize: 100
+          pagesize: 100,
+          schoolId: schoolId
         })
         .then(res => {
           let schoolList = res.data.schools.filter(j => j.valid === 0);
+          console.log("schoolList", schoolList);
           let mySchool;
           if (schoolId) {
             mySchool = schoolList.find(j => j.id == schoolId);
+            console.log("mySchool1", mySchool);
           } else {
             mySchool = schoolList.find(j => j.domainName == url);
+            console.log("mySchool2", mySchool);
           }
-
+          console.log("mySchool3", mySchool);
           if (mySchool) {
+            console.log("设置了schoolId");
             context.commit("setSchoolId", mySchool);
             resolve(mySchool);
           } else {
+            console.log("没设置");
             reject("无法读取学校信息");
             // reject('学校不存在或已禁用');
             // reject();

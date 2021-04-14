@@ -8,6 +8,12 @@
       <el-button type="primary" @click="switchKb(1)"
         >下周<i class="el-icon-caret-right el-icon--right"></i
       ></el-button>
+      <span style="font-weight: bold; margin-left: 15px"
+        >执行课表:{{ dataTime[7] == 1 ? "单双周课表" : "单周课表" }}</span
+      >
+      <span v-if="dataTime[7] == 1" style="font-weight: bold; margin-left: 15px"
+        >起始课表日期:{{ dataTime[8] }}</span
+      >
     </div>
     <el-table
       :data="tableData"
@@ -340,7 +346,7 @@ export default {
   flex-direction: row;
 }
 .btn {
-  width: 25%;
+  width: 55%;
   height: 40px;
   display: flex;
   flex-direction: row;

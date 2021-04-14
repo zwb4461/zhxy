@@ -23,7 +23,13 @@
         <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
 
         <div style="width: 95%">
-          <el-table border :data="[...item]" style="width: 100%" size="mini">
+          <el-table
+            border
+            :data="[...item]"
+            style="width: 100%"
+            size="mini"
+            @row-click="toEdit"
+          >
             <el-table-column prop="oldxkname" label="原授学科">
             </el-table-column>
             <el-table-column prop="oldTeaname" label="原授课人">
@@ -74,6 +80,11 @@ export default {
       return this.$store.state.auth.schoolId;
     },
   },
+  watch: {
+    schoolId() {
+      this.getXq();
+    },
+  },
   data() {
     return {
       tableData: [],
@@ -81,6 +92,15 @@ export default {
     };
   },
   methods: {
+    //!点击行跳转编辑
+    toEdit(row, column, event) {
+      console.log(row);
+      row.have = 1; //?判断是跳转过去编辑
+      this.$router.push({
+        path: "/phone/dtk/components/addDtk",
+        query: row,
+      });
+    },
     //!跳转新增代调课
     add() {
       this.$router.push("/phone/dtk/components/addDtk");

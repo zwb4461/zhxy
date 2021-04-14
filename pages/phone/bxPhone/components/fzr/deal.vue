@@ -6,6 +6,92 @@
       :key="index"
       @click="toEdit(item)"
     >
+      <div class="topTitleContain">
+        <div class="topTitle">
+          <span>{{ item.name }}</span>
+        </div>
+      </div>
+      <div class="img_text_contain">
+        <div class="left_img">
+          <img
+            v-if="item.bxImg[0]"
+            style="
+              width: 80px;
+              height: 80px;
+              border-radius: 10px;
+              border: 1px solid #bbbbbb;
+            "
+            :src="item.bxImg[0].url"
+          />
+          <img
+            v-else
+            src="../../../../../assets/img/noImg.jpg"
+            style="
+              width: 80px;
+              height: 80px;
+              border-radius: 10px;
+              border: 1px solid #bbbbbb;
+            "
+          />
+        </div>
+        <div class="right_text">
+          <span
+            style="
+              overflow: hidden;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              display: -webkit-box;
+            "
+            >{{ item.explaion }}</span
+          >
+        </div>
+      </div>
+      <div class="address_contain">
+        <img
+          src="../../../../../assets/img/address.svg"
+          style="width: 24px; height: 24px"
+        />
+        <span style="color: #0165ff">{{ item.address }}</span>
+      </div>
+      <van-divider
+        :style="{ margin: '3px 0', 'border-color': '#bbbbbb' }"
+      ></van-divider>
+      <div class="bottom_contain">
+        <span>报修教师:{{ item.bxTeaname }}</span>
+        <span>{{ item.bxTime }}</span>
+      </div>
+      <div class="bottom_contain">
+        <span>处理教师:{{ item.clTeaname }}</span>
+        <el-tag
+          size="small"
+          type="danger"
+          effect="dark"
+          class="tags"
+          style="background-color: #ff7100"
+          v-if="item.status == 0"
+        >
+          待处理
+        </el-tag>
+        <el-tag size="small" effect="dark" class="tags" v-if="item.status == 1">
+          处理中
+        </el-tag>
+        <el-tag
+          size="small"
+          type="success"
+          effect="dark"
+          class="tags"
+          v-if="item.status == 2"
+        >
+          已处理（{{ item.history }}）
+        </el-tag>
+      </div>
+    </div>
+    <!-- <div
+      class="item_contain"
+      v-for="(item, index) in tableData"
+      :key="index"
+      @click="toEdit(item)"
+    >
       <div class="time_contain">
         <span>{{ item.bxTime }}</span>
       </div>
@@ -23,7 +109,7 @@
         <span>报修教师:{{ item.bxTeaname }}</span>
         <span>处理教师:{{ item.clTeaname }}</span>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -90,6 +176,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.topTitleContain {
+  width: 100%;
+  min-height: 30px;
+  padding: 10px;
+}
+.topTitle {
+  width: 100%;
+  height: 100%;
+  background-color: #0064ff;
+  color: #f5f5f5;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 23px;
+}
+.img_text_contain {
+  width: 100%;
+  min-height: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+.left_img {
+  width: 28%;
+  height: 80px;
+}
+.right_text {
+  width: 68%;
+  height: 80px;
+}
 .contain {
   width: 100%;
   height: 100%;
@@ -100,10 +217,10 @@ export default {
 }
 .item_contain {
   width: 90%;
-  height: 130px;
+  min-height: 130px;
   border-radius: 10px;
   border: 1px solid #dbdbdb;
-  background-color: #e7f0ff;
+  background-color: #f5f5f5;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 8px 0 rgba(0, 0, 0, 0.19);
   display: inline-block;
   vertical-align: top;
@@ -129,12 +246,35 @@ export default {
   font-size: 18px;
 }
 .teacher_contain {
-  width: 100%;
-  height: 35px;
-  padding: 0 15px;
-  font-size: 14px;
+  width: 50%;
+  min-height: 35px;
+  font-size: 15px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+}
+.rightInfo {
+  width: 50%;
+  min-height: 35px;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+}
+.bottom_contain {
+  width: 100%;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  padding: 0 10px;
+  margin-bottom: 8px;
+}
+.tags {
+  min-width: 100px;
+  height: 30px;
+  border-radius: 20px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

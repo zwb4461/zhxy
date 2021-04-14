@@ -455,7 +455,8 @@ const state = () => ({
   //一些状态设置
   collapsed: false, //菜单收起状态(false:收起,true展开)
   logoShow: false, //是否显示logo
-  authInfo: true, //是否显示头部右上角内容
+    authInfo: true, //是否显示头部右上角内容
+  power:[],
   /**
    * 菜单数组(配置)
    * 参数说明
@@ -488,6 +489,9 @@ const mutations = {
     state.contentLeft = "66px";
     state.collapsed = true;
     state.logoShow = true;
+  },
+  setPower(state,arr) {
+      state.power = arr;
   },
   changeCollapsed(state, type) {
     //展开与关闭菜单

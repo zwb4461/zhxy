@@ -44,16 +44,16 @@ import main from "~/api/freshmenReport";
 export default {
   name: "list", //列表组件
   props: {
-    addPans: Function
+    addPans: Function,
   },
   data() {
     return {
       loading: {
-        spinning: false
+        spinning: false,
       },
       list: [],
       intoperpson: [],
-      noperson: []
+      noperson: [],
     };
   },
   computed: {
@@ -66,7 +66,7 @@ export default {
     //学校id
     schoolId() {
       return this.$store.state.auth.schoolId;
-    }
+    },
   },
   watch: {},
   methods: {
@@ -75,9 +75,9 @@ export default {
       if (type === 1) this.loading.spinning = true;
       main
         .list({ schoolId: this.schoolId })
-        .then(res => {
+        .then((res) => {
           let { enrollList, intoperpson, noperson } = res.data;
-          this.list = enrollList.map(item => {
+          this.list = enrollList.map((item) => {
             return { ...item, loading: false };
           }); //本校学生类别
 
@@ -85,14 +85,14 @@ export default {
           this.noperson = noperson; //未分班学生数量
           for (const item of this.list) {
             if (item.deptclass) {
-              item.deptclass = item.deptclass.split(",").map(i => i.trim());
+              item.deptclass = item.deptclass.split(",").map((i) => i.trim());
             } else {
               item.deptclass = [];
             }
           }
           this.loading.spinning = false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err);
           this.loading.spinning = false;
         });
@@ -104,7 +104,7 @@ export default {
       } else {
         this.$message.error("报名未关闭或分班已结束，无法进行分班");
       }
-    }
+    },
   },
   created() {
     //获取学校id
@@ -128,12 +128,12 @@ export default {
         }
       } else {
         for (const j of data) {
-          this.list.find(i => i.id === j.key).loading = true;
+          this.list.find((i) => i.id === j.key).loading = true;
         }
       }
       this.getList(2);
     });
-  }
+  },
 };
 </script>
 

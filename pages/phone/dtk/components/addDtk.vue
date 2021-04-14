@@ -1,138 +1,348 @@
 <template>
-  <div>
+  <div class="contain">
+    <!-- <van-radio-group v-model="form.type" direction="horizontal">
+      <van-radio name="0">代课</van-radio>
+      <van-radio name="1">调课</van-radio>
+    </van-radio-group> -->
     <van-tabs v-model="form.type">
       <van-tab title="代课">
-        <van-cell-group>
-          <van-field
-            readonly
-            clickable
-            label="学期年级:"
-            :value="form.className"
-            placeholder="选择学期年级"
-            @click="showXq = true"
-          />
-          <van-cell
-            title="代课日期"
-            :value="form.date"
-            @click="showDkrq = true"
-          />
-          <van-field
-            readonly
-            clickable
-            label="代课课次:"
-            :value="form.stanza"
-            placeholder="选择代课课次"
-            @click="dkkc"
-          />
-          <van-field
-            readonly
-            clickable
-            label="代课学科:"
-            :value="form.xkname"
-            placeholder="选择代课学科"
-            @click="dkxk(6)"
-          />
-          <van-field readonly clickable label="原授课人:" :value="userName" />
-          <van-field
-            readonly
-            clickable
-            label="现授课人:"
-            :value="form.teaname"
-            placeholder="选择现授课人"
-            @click="xskr()"
-          />
-          <van-field
-            label="授课要求:"
-            v-model="form.must"
-            placeholder="授课要求"
-          />
-          <van-field
-            label="代课原因:"
-            v-model="form.reason"
-            placeholder="代课原因"
-          />
+        <van-cell-group v-if="form.type == 0">
+          <div
+            style="
+              text-align: center;
+              color: #000000;
+              font-size: 17px;
+              padding: 5px 0;
+            "
+          >
+            <span>2020/2021学年 第二学期</span>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">代课日期:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner" style="height: 48px">
+              <van-cell
+                style="height: 100%"
+                :value="form.date"
+                @click="showDkrq = true"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">代课班级:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.className"
+                @click="showXq = true"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">代课课次:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.stanza"
+                placeholder="选择代课课次"
+                @click="dkkc"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">代课学科:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.xkname"
+                placeholder="选择代课学科"
+                @click="dkxk(6)"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">原授课人:</span>
+          </div>
+          <van-field readonly clickable :value="userName" />
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">现授课人:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <el-select
+                popper-class="modifyStyle"
+                filterable
+                v-model="form.teaId"
+                placeholder="请选择"
+                @focus="getOpt(5)"
+                @change="confirmXskr"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in XskrOpt"
+                  :key="item.teacherUnionid"
+                  :label="item.teacherName"
+                  :value="item.teacherUnionid"
+                >
+                </el-option>
+              </el-select>
+              <!-- <van-field
+                readonly
+                clickable
+                :value="form.teaname"
+                placeholder="选择现授课人"
+                @click="xskr()"
+              /> -->
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">授课要求:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field v-model="form.must" placeholder="授课要求" />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">代课原因:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field v-model="form.reason" placeholder="代课原因" />
+            </div>
+          </div>
+          <div class="moni"></div>
         </van-cell-group>
-        <div class="topBtn">
-          <van-button type="primary" style="width: 90%" @click="submit"
-            >确定</van-button
+        <div class="topBtn" v-if="form.type == 0">
+          <!-- <van-button
+            v-if="$route.query.have == 1"
+            type="warning"
+            style="width: 90%"
+            @click="del"
+            :disabled="formStatus"
+            >删除</van-button
+          > -->
+          <van-button
+            type="info"
+            style="width: 90%; margin-left: 10px"
+            @click="submit"
+            :disabled="formStatus"
+            >提交申请</van-button
           >
         </div>
       </van-tab>
       <van-tab title="调课">
-        <van-cell-group>
-          <van-field
-            readonly
-            clickable
-            label="学期年级:"
-            :value="form.className"
-            placeholder="选择学期年级"
-            @click="showXq = true"
-          />
-          <van-cell
-            title="调课日期"
-            :value="form.date"
-            @click="showDkrq = true"
-          />
-          <van-field
-            readonly
-            clickable
-            label="调课课次:"
-            :value="form.stanza"
-            placeholder="选择调课课次"
-            @click="tkkc"
-          />
-          <van-field
-            readonly
-            clickable
-            label="调课学科:"
-            :value="form.xkname"
-            placeholder="选择调课学科"
-            @click="dkxk"
-          />
-          <van-field readonly clickable label="原授课人:" :value="userName" />
-          <van-field
-            readonly
-            clickable
-            label="现授课人:"
-            :value="form.teaname"
-            placeholder="选择现授课人"
-            @click="xskr"
-          />
-          <van-field
-            readonly
-            clickable
-            label="互调年级:"
-            :value="form.oldCllassName"
-            placeholder="选择学期年级"
-            @click="hdnj"
-          />
-          <van-cell title="互调日期" :value="form.olddate" @click="htrq" />
-          <van-field
-            readonly
-            clickable
-            label="互调课次:"
-            :value="form.oldStanza"
-            placeholder="选择互调课次"
-            @click="showHdkc = true"
-          />
-          <van-field
-            readonly
-            clickable
-            label="互调学科:"
-            :value="form.oldxkname"
-            placeholder="选择互调学科"
-            @click="htxk1"
-          />
+        <van-cell-group v-if="form.type == 1">
+          <div
+            style="
+              text-align: center;
+              color: #000000;
+              font-size: 17px;
+              padding: 5px 0;
+            "
+          >
+            <span>2020/2021学年 第二学期</span>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">调课日期:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner" style="height: 48px">
+              <van-cell
+                style="height: 100%"
+                :value="form.date"
+                @click="showDkrq = true"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">调课班级:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.className"
+                placeholder="选择调课班级"
+                @click="showXq = true"
+              />
+            </div>
+          </div>
 
-          <van-field
-            label="调课原因:"
-            v-model="form.reason"
-            placeholder="调课原因"
-          />
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">调课课次:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.stanza"
+                placeholder="选择调课课次"
+                @click="tkkc"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">调课学科:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.xkname"
+                placeholder="选择调课学科"
+                @click="dkxk"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">原授课人:</span>
+          </div>
+          <van-field readonly clickable :value="userName" />
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">现授课人:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <el-select
+                popper-class="modifyStyle"
+                filterable
+                v-model="form.teaId"
+                placeholder="请选择"
+                @focus="getOpt(5)"
+                style="width: 100%"
+                @change="confirmXskr"
+              >
+                <el-option
+                  v-for="item in XskrOpt"
+                  :key="item.teacherUnionid"
+                  :label="item.teacherName"
+                  :value="item.teacherUnionid"
+                >
+                </el-option>
+              </el-select>
+              <!-- <van-field
+                readonly
+                clickable
+                :value="form.teaname"
+                placeholder="选择现授课人"
+                @click="xskr"
+              /> -->
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">互调日期:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner" style="height: 48px">
+              <van-cell
+                style="height: 100%"
+                :value="form.olddate"
+                @click="htrq"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">互调班级:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.oldclassName"
+                placeholder="选择学期年级"
+                @click="hdnj"
+              />
+            </div>
+          </div>
+
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">互调课次:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.oldStanza"
+                placeholder="选择互调课次"
+                @click="htkc"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">互调学科:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field
+                readonly
+                clickable
+                :value="form.oldxkname"
+                placeholder="选择互调学科"
+                @click="htxk1"
+              />
+            </div>
+          </div>
+          <div class="moni"></div>
+          <div class="font-bold">
+            <span style="margin-left: 15px; font-size: 17px">调课原因:</span>
+          </div>
+          <div class="inp_contain">
+            <div class="inp_contain_inner">
+              <van-field v-model="form.reason" placeholder="调课原因" />
+            </div>
+          </div>
+          <div class="moni"></div>
         </van-cell-group>
-        <div class="topBtn">
-          <van-button type="primary" style="width: 90%" @click="submit"
-            >确定</van-button
+
+        <div class="topBtn" v-if="form.type == 1">
+          <!-- <van-button
+            v-if="$route.query.have == 1"
+            type="warning"
+            style="width: 90%"
+            @click="del"
+            :disabled="formStatus"
+            >删除</van-button
+          > -->
+          <van-button
+            type="info"
+            style="width: 90%; margin-left: 10px"
+            @click="submit"
+            :disabled="formStatus"
+            >提交申请</van-button
           >
         </div>
       </van-tab>
@@ -144,7 +354,7 @@
         value-key="name"
         show-toolbar
         :columns="XqOpt"
-        @cancel="showDl = false"
+        @cancel="showXq = false"
         @confirm="confirmXq"
       />
     </van-popup>
@@ -234,14 +444,29 @@
 import main from "~/api/dtk";
 import main1 from "~/api/scoreEntry";
 import main2 from "~/api/baoxiuCs";
+import { Message } from "element-ui";
+import { Toast } from "vant";
 export default {
   computed: {
+    editContent() {
+      return this.$store.state.auth.editContent;
+    },
     //用户id
     unionid() {
       return this.$store.state.auth.userInfo.unionid;
     },
     userName() {
       return this.$store.state.auth.userInfo.name;
+    },
+    formStatus() {
+      if (this.$route.query.status == 2 || this.$route.query.status == 4) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    schoolId() {
+      return this.$store.state.auth.schoolId;
     },
   },
   data() {
@@ -263,18 +488,12 @@ export default {
       showHdrq: false,
       showHdkc: false,
       showHdxk: false,
+      formType: 0, //0新增1编辑
       XqOpt: [],
       xkOpt: [],
       XskrOpt: [],
       YskrOpt: [],
-      stanzaOpt: [
-        // { name: "第一节", id: 1 },
-        // { name: "第二节", id: 2 },
-        // { name: "第三节", id: 3 },
-        // { name: "第四节", id: 4 },
-        // { name: "第五节", id: 5 },
-        // { name: "第六节", id: 6 },
-      ],
+      stanzaOpt: [],
       form: {
         type: 0,
         classId: [],
@@ -295,9 +514,14 @@ export default {
       },
     };
   },
+
   methods: {
     dkkc() {
       this.showDkjc = true;
+      this.getOpt(4);
+    },
+    htkc() {
+      this.showHdkc = true;
       this.getOpt(4);
     },
     hdxk() {
@@ -308,10 +532,10 @@ export default {
       if (data == 1) {
         //?代课学科opt
         let val = {
-          classId: this.form.classId[2],
+          //   classId: this.form.classId[2],
           type: 1,
+          isdk: this.form.type == 1 ? 1 : "",
         };
-        console.log(val);
         main
           .selectTakeStanza(val)
           .then((res) => {
@@ -322,8 +546,9 @@ export default {
         //?原授课人opt
         this.showYskr = true;
         let val = {
-          classId: this.form.classId[2],
+          //   classId: this.form.classId[2],
           type: 2,
+          isdk: this.form.type == 1 ? 1 : "",
         };
         main
           .selectTakeStanza(val)
@@ -335,8 +560,9 @@ export default {
         //?现授课人opt
 
         let val = {
-          classId: this.form.classId[2],
+          //   classId: this.form.classId[2],
           type: 3,
+          isdk: this.form.type == 1 ? 1 : "",
         };
         main
           .selectTakeStanza(val)
@@ -349,11 +575,12 @@ export default {
         this.zj = this.getZj(data);
         //?代课学科opt
         let val = {
-          classId: this.form.classId[2],
+          //   classId: this.form.classId[2],
           type: 4,
-          weekName: this.zj,
-          unionid: this.unionid,
-          data: this.form.date,
+          //   weekName: this.zj,
+          //   unionid: this.unionid,
+          //   data: this.form.date,
+          isdk: this.form.type == 1 ? 1 : "",
         };
         main
           .selectTakeStanza(val)
@@ -366,9 +593,7 @@ export default {
         //?现授课人opt
         let val = {
           type: 5,
-          weekName: this.zj,
-          stanz: this.form.stanza,
-          unionid: this.unionid,
+          isdk: this.form.type == 1 ? 1 : "",
         };
         main
           .selectTakeStanza(val)
@@ -379,10 +604,11 @@ export default {
       } else if (data == 6) {
         //?代课学科opt
         let val = {
-          classId: this.form.classId[2],
+          //   classId: this.form.classId[2],
           type: 1,
-          stanz: this.form.stanza,
-          weekName: this.zj,
+          //   stanz: this.form.stanza,
+          //   weekName: this.zj,
+          isdk: this.form.type == 1 ? 1 : "",
         };
         main
           .selectTakeStanza(val)
@@ -401,7 +627,7 @@ export default {
       let val = {
         cjlbId: this.cjlbId,
         type: 1,
-        unionid: teacher.length > 0 ? teacher[0].teacherUnionid : "",
+        // unionid: teacher.length > 0 ? teacher[0].teacherUnionid : "",
         //
       };
       main1
@@ -411,8 +637,31 @@ export default {
         })
         .catch((err) => {});
     },
+    clearForm() {
+      console.log("清空");
+      this.formType = 0;
+      this.form = {
+        type: 0,
+        classId: [],
+        className: "",
+        date: "",
+        stanza: "",
+        xkname: "",
+        status: "",
+        reason: "",
+        must: "",
+        oldTeaname: "",
+        teaname: "",
+        teaId: "",
+        oldclassId: [],
+        olddate: "",
+        oldStanza: "",
+        oldxkname: "",
+      };
+    },
     htxk1() {
       this.showHdxk = true;
+      this.getOpt(6);
     },
     htrq() {
       this.showHdrq = true;
@@ -432,7 +681,7 @@ export default {
     getXqNj() {
       let val = {
         cjlbId: this.cjlbId,
-        unionid: this.unionid,
+        // unionid: this.unionid,
         type: 1,
       };
       main1
@@ -463,23 +712,150 @@ export default {
           return "";
       }
     },
+    del() {
+      this.$confirm({
+        title: "确认删除吗",
+        cancelText: "取消",
+        okText: "确定",
+        okType: "danger",
+        centered: true,
+        onOk: () => {
+          main
+            .del({ id: this.form.id })
+            .then((res) => {
+              this.$message.success("删除成功!");
+              this.$router.push("/Phone/dtk");
+            })
+            .catch((err) => {
+              Message({
+                message: err,
+                type: "error",
+                customClass: "mzindex",
+              });
+            });
+        },
+      });
+    },
     submit() {
-      let data = this.form;
-      data.cjlbId = this.cjlbId;
-      data.oldTeaId = this.unionid;
-      data.status = undefined;
-      console.log(data);
-      main
-        .add(data)
-        .then((res) => {
-          this.$message.success("提交成功!");
-          this.$router.push("/Phone/dtk");
-        })
-        .catch((err) => {});
+      if (this.form.type == 0) {
+        // ?代课
+        if (!this.form.date) {
+          Toast.fail("请填写日期");
+        } else if (!this.form.className) {
+          Toast.fail("请填写班级");
+        } else if (!this.form.stanza) {
+          Toast.fail("请填写课次");
+        } else if (!this.form.xkname) {
+          Toast.fail("请填写学科");
+        } else {
+          if (this.formType == 1) {
+            //?编辑
+            main
+              .edit(this.form)
+              .then((res) => {
+                this.$message.success("编辑成功!");
+                this.clearForm();
+                this.$store.commit("auth/setBxActiveOne", 1);
+              })
+              .catch((err) => {
+                Message({
+                  message: err,
+                  type: "error",
+                  customClass: "mzindex",
+                });
+              });
+          } else {
+            //  ?新增
+            let data = this.form;
+            data.cjlbId = this.cjlbId;
+            data.oldTeaId = this.unionid;
+            data.status = undefined;
+            console.log(data);
+            main
+              .add(data)
+              .then((res) => {
+                this.$message.success("提交成功!");
+                this.clearForm();
+                this.$store.commit("auth/setBxActiveOne", 1);
+              })
+              .catch((err) => {
+                Message({
+                  message: err,
+                  type: "error",
+                  customClass: "mzindex",
+                });
+              });
+          }
+        }
+      } else {
+        if (!this.form.date) {
+          Toast.fail("请填写日期");
+        } else if (!this.form.className) {
+          Toast.fail("请填写班级");
+        } else if (!this.form.stanza) {
+          Toast.fail("请填写课次");
+        } else if (!this.form.xkname) {
+          Toast.fail("请填写学科");
+        } else if (!this.form.teaId) {
+          Toast.fail("请填写授课人");
+        } else if (!this.form.olddate) {
+          Toast.fail("请填写日期");
+        } else if (!this.form.oldclassName) {
+          Toast.fail("请填写年级");
+        } else if (!this.form.oldStanza) {
+          Toast.fail("请填写课次");
+        } else if (!this.form.oldxkname) {
+          Toast.fail("请填写学科");
+        } else {
+          if (this.formType == 1) {
+            //?编辑
+            main
+              .edit(this.form)
+              .then((res) => {
+                this.$message.success("编辑成功!");
+                this.clearForm();
+                this.$store.commit("auth/setBxActiveOne", 1);
+              })
+              .catch((err) => {
+                Message({
+                  message: err,
+                  type: "error",
+                  customClass: "mzindex",
+                });
+              });
+          } else {
+            //  ?新增
+            let data = this.form;
+            data.cjlbId = this.cjlbId;
+            data.oldTeaId = this.unionid;
+            data.status = undefined;
+            console.log(data);
+            main
+              .add(data)
+              .then((res) => {
+                this.$message.success("提交成功!");
+                this.clearForm();
+                this.$store.commit("auth/setBxActiveOne", 1);
+              })
+              .catch((err) => {
+                Message({
+                  message: err,
+                  type: "error",
+                  customClass: "mzindex",
+                });
+              });
+          }
+        }
+      }
     },
     //!格式化日期
     formatDate(date) {
-      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      var d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      return y + "-" + m + "-" + d;
     },
     //!确定代课学科
     confirmDkxk(val) {
@@ -499,8 +875,35 @@ export default {
     //!确定现授课人
     confirmXskr(val) {
       this.showXskr = false;
-      this.form.teaname = val.teacherName;
-      this.form.teaId = val.teacherUnionid;
+      //   this.form.teaname = val.teacherName;
+      this.form.teaId = val;
+      this.getHl("授课人", 3);
+    },
+    //!是否合理效验
+    ifHl(res, data) {
+      console.log("0000");
+      switch (res) {
+        case 1:
+          Toast.fail(data + "不合理");
+          break;
+        case 2:
+          Toast.fail(data + "冲突");
+          break;
+      }
+    },
+
+    //!调接口获取是否合理
+    getHl(val, status) {
+      this.form.schoolId = this.schoolId;
+      this.form.ckzt = status;
+      this.form.oldTeaId = this.unionid;
+      main
+        .takeHl(this.form)
+        .then((res) => {
+          console.log(res.data, "是否冲突");
+          this.ifHl(res.data, val);
+        })
+        .catch((err) => {});
     },
     //!确定代课节次
     confirmDkjc(val) {
@@ -513,6 +916,7 @@ export default {
         weekName: this.zj,
         type: 4,
       };
+      this.getHl("课次", 2);
       main
         .selectTakeStanza(data)
         .then((res) => {
@@ -532,6 +936,7 @@ export default {
       });
       console.log(data, "data");
       this.form.oldxkname = data[0].subjectName;
+      this.getHl("课次", 5);
     },
     //!确定代课日期
     confirmDkrq(date) {
@@ -550,9 +955,9 @@ export default {
       console.log(this.zjHt);
       let val = {
         schoolId: this.schoolId,
-        classId: this.form.oldclassId ? this.form.oldclassId[2] : "",
-        unionid: tId[0].teacherUnionid,
-        weekName: this.zjHt,
+        // classId: this.form.oldclassId ? this.form.oldclassId[2] : "",
+        // unionid: tId[0].teacherUnionid,
+        // weekName: this.zjHt,
         type: 4,
       };
       main
@@ -567,12 +972,18 @@ export default {
     //!确定学期
     confirmXq(val) {
       let ind = this.$refs.picker.getIndexes();
-      let one = this.XqOpt[ind[0]].id;
-      let two = this.XqOpt[ind[0]].children[ind[1]].id;
-      let three = this.XqOpt[ind[0]].children[ind[1]].children[ind[2]].id;
+      console.log("this.XqOpt", this.XqOpt);
+      let one = this.XqOpt[ind[0]] ? this.XqOpt[ind[0]].id : "";
+      let two = this.XqOpt[ind[0]]
+        ? this.XqOpt[ind[0]].children[ind[1]].id
+        : "";
+      let three = this.XqOpt[ind[0]]
+        ? this.XqOpt[ind[0]].children[ind[1]].children[ind[2]].id
+        : "";
       this.form.classId = [one, two, three];
       this.form.className = val.join(",");
       this.showXq = false;
+      this.getHl("班级", 1);
     },
     //!确定互调学期
     confirmHdxq(val) {
@@ -581,8 +992,9 @@ export default {
       let two = this.XqOpt[ind[0]].children[ind[1]].id;
       let three = this.XqOpt[ind[0]].children[ind[1]].children[ind[2]].id;
       this.form.oldclassId = [one, two, three];
-      this.form.oldCllassName = val.join(",");
+      this.form.oldclassName = val.join(",");
       this.showHdxq = false;
+      this.getHl("班级", 4);
     },
     //!获取当前学期
     getXq() {
@@ -612,9 +1024,43 @@ export default {
         })
         .catch((err) => {});
     },
+    findEdit(id) {
+      main
+        .selectTakeTranById({ id: id })
+        .then((res) => {
+          this.form = res.data;
+          if (JSON.stringify(this.form) !== "{}") {
+            //   编辑
+            this.formType = 1;
+          } else {
+            //   新增
+            this.formType = 0;
+            //
+          }
+          console.log(this.formType, "this.formType");
+        })
+        .catch((err) => {});
+    },
+    setForm() {
+      if (this.editContent.id) {
+        this.findEdit(this.editContent.id);
+      }
+    },
   },
   created() {
+    this.clearForm();
     this.getXq();
+    this.getOpt(5);
+    // if (JSON.stringify(this.$route.query) !== "{}") {
+    //   main
+    //     .selectTakeTranById({ id: this.$route.query.id })
+    //     .then((res) => {
+    //       this.form = res.data;
+    //       console.log("已赋值");
+    //     })
+    //     .catch((err) => {});
+    // }
+    // this.setForm();
   },
 };
 </script>
@@ -622,8 +1068,39 @@ export default {
 <style scoped>
 .topBtn {
   width: 100%;
+  padding: 15px 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: sticky;
+  bottom: 0;
+  background-color: #ffffff;
+}
+.contain {
+  height: 100vh;
+}
+.inp_contain {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.inp_contain_inner {
+  width: 100%;
+  margin: 10px;
+  border: 1px solid #e4e4e4;
+  border-radius: 3px;
+}
+.moni {
+  background-color: #ebedf0;
+  width: 100%;
+  height: 20px;
+}
+.font-bold {
+  font-weight: bold;
+  padding-top: 10px;
+}
+/deep/.modifyStyle {
+  height: 87px !important;
 }
 </style>

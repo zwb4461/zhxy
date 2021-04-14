@@ -1,17 +1,19 @@
 <template>
   <div>
     <div class="topTitle">
-      <span>报修信息</span>
+      <span style="color: #0064ff">报修信息</span>
       <span style="font-size: 16px; margin-top: 5px"
         >2020/2021学年第一学期</span
       >
     </div>
     <div class="form">
       <van-cell-group>
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修时间:</span>
         </div>
         <van-field input-align="right" readonly :value="form.bxTime" />
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修物品:</span>
         </div>
@@ -21,21 +23,24 @@
           :value="form.maxCate + '-' + form.minCate + '-' + form.name"
           placeholder="选择报修物品"
         />
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修地点:</span>
         </div>
         <van-field input-align="right" readonly v-model="form.address" />
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
         </div>
         <van-field
-          input-align="right"
+          input-align="left"
           readonly
           v-model="form.explaion"
           rows="3"
           autosize
           type="textarea"
         />
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
         </div>
@@ -57,10 +62,12 @@
             @click="getImg_Bx(index)"
           />
         </div>
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
         </div>
         <van-field input-align="right" readonly v-model="form.bxTeaname" />
+
         <!-- <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
         </div>
@@ -79,25 +86,33 @@
           readonly
           @click="showStatus = true"
         /> -->
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
         </div>
         <van-field input-align="right" readonly v-model="form.clTeaname" />
+        <div class="moni"></div>
         <div class="font-bold">
           <span style="margin-left: 15px; font-size: 18px">开始处理:</span>
         </div>
         <van-field readonly input-align="right" v-model="form.ksclTime" />
       </van-cell-group>
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">反馈信息:</span>
       </div>
-      <van-field
-        input-align="right"
-        v-model="form.fkxx"
-        rows="3"
-        autosize
-        type="textarea"
-      />
+      <div class="inp_contain">
+        <div class="inp_contain_inner">
+          <van-field
+            input-align="left"
+            v-model="form.fkxx"
+            rows="3"
+            autosize
+            type="textarea"
+          />
+        </div>
+      </div>
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">反馈图片:</span>
       </div>
@@ -113,15 +128,17 @@
           @delete="delImg"
         />
       </div>
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">修复时间:</span>
       </div>
       <van-field input-align="right" readonly v-model="form.xfTime" />
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">故障历时:</span>
       </div>
       <van-field input-align="right" readonly v-model="form.history" />
-
+      <div class="moni"></div>
       <div class="title">
         <span>配件清单</span>
       </div>
@@ -142,6 +159,9 @@
               allow-create
               filterable
               @change="changeName(scope.row)"
+              ref="select"
+              @hook:mounted="cancalReadOnly"
+              @visible-change="cancalReadOnly"
             >
               <el-option
                 v-for="item in pjqdOpt"
@@ -181,34 +201,45 @@
       </div>
       <!-- 待处理 -->
       <div class="topBtn" v-show="form.status == 0">
-        <van-button style="width: 32%" @click="submit(3)">保存</van-button>
-        <van-button type="info" style="width: 32%" @click="submit(1)"
+        <van-button style="width: 25%; border-radius: 10px" @click="submit(3)"
+          >保存</van-button
+        >
+        <van-button
+          type="info"
+          style="width: 25%; border-radius: 10px"
+          @click="submit(1)"
           >处理中</van-button
         >
-        <van-button type="primary" style="width: 32%" @click="submit(2)"
+        <van-button
+          type="primary"
+          style="width: 25%; border-radius: 10px"
+          @click="submit(2)"
           >已处理</van-button
         >
       </div>
       <!-- 处理中 -->
       <div class="topBtn" v-show="form.status == 1">
-        <van-button style="width: 45%" @click="submit(3)">保存</van-button>
-        <van-button type="primary" style="width: 45%" @click="submit(2)"
+        <van-button style="width: 35%; border-radius: 10px" @click="submit(3)"
+          >保存</van-button
+        >
+        <van-button
+          type="primary"
+          style="width: 35%; border-radius: 10px"
+          @click="submit(2)"
           >已处理</van-button
         >
       </div>
       <!-- 已处理 -->
       <div class="topBtn" v-show="form.status == 2">
-        <van-button style="width: 90%" type="primary" @click="submit(3)"
-          >保存</van-button
+        <van-button
+          style="width: 70%; border-radius: 10px"
+          type="primary"
+          @click="submit(3)"
+          >{{
+            form.kxg == 0 ? "返回" : form.kxg == 1 ? "保存" : ""
+          }}</van-button
         >
       </div>
-      <!-- <div class="topBtn">
-        <van-button style="width: 45%" @click="back">返回</van-button>
-        <van-button type="primary" style="width: 45%" @click="submit"
-          >确定</van-button
-        >
-      </div> -->
-
       <!--报修大类弹出层 -->
       <van-popup v-model="showStatus" round position="bottom">
         <van-picker
@@ -228,6 +259,7 @@ import main1 from "~/api/baoxiu";
 import main from "~/api/baoxiuCs";
 import axios from "axios";
 import { ImagePreview } from "vant";
+import { Toast } from "vant";
 export default {
   head() {
     return {
@@ -288,6 +320,15 @@ export default {
     };
   },
   methods: {
+    cancalReadOnly(onOff) {
+      this.$nextTick(() => {
+        if (!onOff) {
+          const { select } = this.$refs;
+          const input = select.$el.querySelector(".el-input__inner");
+          input.removeAttribute("readonly");
+        }
+      });
+    },
     //!预览报修图片
     getImg_Bx(index) {
       let arr = this.form.bxImg.map((item) => {
@@ -322,7 +363,7 @@ export default {
       }
       this.postData = tmp;
       this.fileIds.splice(detail.index, 1);
-      console.log(" this.fileIds", this.fileIds);
+      console.log(this.fileIds);
     },
     //!上传图片
     uploadImg(file) {
@@ -376,7 +417,7 @@ export default {
     },
     //!添加表格行
     addRow() {
-      this.form.pjqd.push({ sum: 1 });
+      this.form.pjqd.push({ sum: 1, dw: "个" });
     },
     //!删除行
     delRow(row, index) {
@@ -406,7 +447,7 @@ export default {
           main1
             .del({ id: this.form.id })
             .then((res) => {
-              this.$message.success("删除成功!");
+              Toast.success("删除成功");
               this.$router.push("/Phone/bxPhone");
             })
             .catch((err) => {
@@ -427,14 +468,15 @@ export default {
       } else if (type == 2) {
         //   ?已处理
         val.status = 2;
-      } else if (type == 3) {
+      } else if (type == 3 && this.form.kxg == 0) {
         //   ?保存
+        this.$router.push("/Phone/bxPhone");
       }
       main1
         .edit(val)
         .then((res) => {
-          this.$message.success("保存成功!");
-          this.$router.push("/Phone/bxPhone/components/fzr");
+          Toast.success("保存成功");
+          this.$router.push("/Phone/bxPhone");
         })
         .catch((err) => {});
     },
@@ -507,6 +549,8 @@ export default {
       this.StatusOpt[1].disabled = true;
     }
     this.fileIds = this.form.fkImg;
+    this.postData = this.form.fkImg;
+    console.log(this.postData, "----");
   },
 };
 </script>
@@ -518,6 +562,10 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 999;
+  background-color: #ffffff;
 }
 .topTitle {
   width: 100%;
@@ -549,5 +597,31 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 5px;
+}
+.inp_contain {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.inp_contain_inner {
+  width: 100%;
+  margin: 15px;
+  border: 1px solid #e4e4e4;
+  border-radius: 3px;
+}
+.moni {
+  background-color: #ebedf0;
+  width: 100%;
+  height: 20px;
+}
+.btn_contain {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
 }
 </style>

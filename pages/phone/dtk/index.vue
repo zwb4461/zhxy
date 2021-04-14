@@ -1,19 +1,21 @@
 <template>
   <div>
-    <van-tabs v-model="bxActive" @click="clickTab" animated>
-      <van-tab title="我的课表"><kb></kb></van-tab>
-      <van-tab title="代调课"><dtk></dtk></van-tab>
+    <van-tabs v-model="bxActive" @click="clickTab" sticky>
+      <van-tab title="我的代调"><IndexOne></IndexOne></van-tab>
       <van-tab title="自主代课"><zzdk></zzdk></van-tab>
-      <van-tab title="所有代调"><allDtk></allDtk></van-tab>
+      <van-tab title="所有代调"><IndexTwo></IndexTwo></van-tab>
+      <van-tab title="代调统计"><tj></tj></van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script>
 import kb from "./components/kb";
-import dtk from "./components/dtk";
-import zzdk from "./components/zzdk";
+import IndexOne from "./components/IndexOne";
 import allDtk from "./components/allDtk";
+import zzdk from "./components/zzdk";
+import tj from "./components/tj";
+import IndexTwo from "./components/IndexTwo";
 export default {
   computed: {
     //学校id
@@ -28,9 +30,11 @@ export default {
   },
   components: {
     kb,
-    dtk,
-    zzdk,
     allDtk,
+    zzdk,
+    tj,
+    IndexOne,
+    IndexTwo,
   },
   data() {
     return {};
@@ -44,4 +48,14 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/deep/.van-tab,
+/deep/.van-tab--active,
+/deep/.van-ellipsis {
+  font-size: 18px;
+}
+/deep/.van-tabs__line {
+  background-color: #3b87ff;
+  width: 70px !important;
+}
+</style>

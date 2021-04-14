@@ -5,6 +5,7 @@
         <!-- <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" /> -->
         <div class="right-border">
           <a-tree
+            :multiple="false"
             checkable
             checkStrictly
             v-model="chooseClass"
@@ -14,7 +15,7 @@
           ></a-tree>
         </div>
       </a-col>
-      <a-col :span="15">
+      <!-- <a-col :span="15">
         <template v-for="(item, index) in this.list">
           <div v-if="item" :key="index" class="classInfo-main">
             <div class="classInfo">{{ item.name }}</div>
@@ -23,7 +24,7 @@
             </div>
           </div>
         </template>
-      </a-col>
+      </a-col> -->
     </a-row>
   </div>
 </template>
@@ -34,7 +35,7 @@ import DD from "~/api/dingding";
 export default {
   props: {
     //获取选中的班级
-    getClassList: Function
+    getClassList: Function,
   },
   data() {
     return {
@@ -44,7 +45,7 @@ export default {
       user: [],
       realDep: [], //原始数据的部门
       departmentId: "",
-      list: []
+      list: [],
     };
   },
   watch: {},
@@ -53,34 +54,34 @@ export default {
       // // console.log(this.departmentId);
 
       return this.user.filter(
-        item => item.departmentId.indexOf(this.departmentId) > -1
+        (item) => item.departmentId.indexOf(this.departmentId) > -1
       );
     },
     //学校id
     schoolId() {
       return this.$store.state.auth.schoolId;
-    }
+    },
   },
   methods: {
     getDDuser(id) {
       DD.user({ depmentId: id, schoolId: this.schoolId })
-        .then(res => {
+        .then((res) => {
           // // console.log("钉钉人员-----", res);
-          res.data.forEach(item => {
+          res.data.forEach((item) => {
             // item.check = false;
           });
           this.user = res.data;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     //获取钉钉部门
     getDDdep() {
       DD.dep({ schoolId: this.schoolId })
-        .then(res => {
+        .then((res) => {
           // // console.log("钉钉部门--23---", res);
           let tree = this.$deptTree(res.data, {});
           // // console.log("121212121-------", tree);
-          const changePower = list => {
+          const changePower = (list) => {
             for (let i = 0; i < list.length; i++) {
               if (list[i].name.indexOf("班") > -1) {
                 list[i].disabled = false;
@@ -95,15 +96,15 @@ export default {
           changePower(tree);
           this.treeData = tree;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     getDDdepReal() {
       DD.dep({ schoolId: this.schoolId })
-        .then(res => {
+        .then((res) => {
           // // console.log("真正的钉钉部门--23---", res);
           this.realDep = res.data;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     onSelect(selectedKeys, info) {
       this.departmentId = selectedKeys[0];
@@ -111,14 +112,14 @@ export default {
     },
     onCheck({ checked }) {
       // // console.log(checked);
-      let banList = checked.map(item => {
+      let banList = checked.map((item) => {
         return this.realDep.find(
-          j => j.deptId == item && j.name.indexOf("班") > -1
+          (j) => j.deptId == item && j.name.indexOf("班") > -1
         );
       });
       // // console.log(banList);
-      this.list = banList.filter(item => item);
-      this.chooseClass = this.list.map(item => {
+      this.list = banList.filter((item) => item);
+      this.chooseClass = this.list.map((item) => {
         return item.deptId;
       });
       // // console.log(this.list);
@@ -130,14 +131,14 @@ export default {
     },
     setSelect(data) {
       // // console.log("传过来的数据-----", data);
-      this.table.selectedRowKeys = data.map(item => {
+      this.table.selectedRowKeys = data.map((item) => {
         return item.id;
       });
     },
     delListItem(idx) {
       this.list.splice(idx, 1);
       // // console.log("this.list)---------------", this.list);
-      let info = this.list.map(item => {
+      let info = this.list.map((item) => {
         return item.deptId;
       });
       // // console.log(info);
@@ -145,18 +146,18 @@ export default {
     },
     setData(list) {
       // // console.log("-----------------------------------", list);
-      this.chooseClass = list.map(j => j.id);
-      this.list = list.map(i => this.realDep.find(j => j.deptId == i.id));
+      //   this.chooseClass = list.map((j) => j.id);
+      this.list = list.map((i) => this.realDep.find((j) => j.deptId == i.id));
     },
     getData() {
       this.getClassList(this.list);
-    }
+    },
   },
   created() {
     this.getDDuser();
     this.getDDdep();
     this.getDDdepReal();
-  }
+  },
 };
 </script>
 

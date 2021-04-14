@@ -32,7 +32,14 @@ const deleteSetTake = query => {
 const seeTakeTJ = query => {
   return request({
     url: Api.dtk.seeTakeTJ,
-    method: "post",
+    method: "post-json",
+    data: query
+  });
+};
+const takeHl = query => {
+  return request({
+    url: Api.dtk.takeHl,
+    method: "post-json",
     data: query
   });
 };
@@ -78,6 +85,13 @@ const seeH5All = query => {
     data: query
   });
 };
+const selectTakeTranById = query => {
+  return request({
+    url: Api.dtk.selectTakeTranById,
+    method: "post",
+    data: query
+  });
+};
 
 export default {
   find,
@@ -90,5 +104,7 @@ export default {
   deleteSetTake,
   seeTakeTJ,
   selectMobileStanza,
-  seeH5All
+  seeH5All,
+    selectTakeTranById,
+    takeHl
 };

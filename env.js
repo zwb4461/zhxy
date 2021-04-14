@@ -6,7 +6,8 @@ module.exports = {
     MY_BASE_URL: "http://192.168.3.102:",
     QR_URL: "http://192.168.0.104:9000",
     // BASE_URL: "http://115.238.154.91:9090",
-    BASE_URL: "http://103.219.33.112:10010",
+    // BASE_URL: "http://103.219.33.112:10010",
+    BASE_URL: "http://192.168.1.15:10013",
     // BASE_URL: "http://124.70.180.17:10013",
     BASE_URL_DD: "http://115.238.154.91:9090/dingtalk"
   },

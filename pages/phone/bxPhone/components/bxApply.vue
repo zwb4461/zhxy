@@ -1,70 +1,123 @@
 <template>
   <div class="contain">
-    <div class="topBtn" v-if="ifFzr == 1">
+    <!-- <div class="topBtn" v-if="ifFzr == 1">
       <van-button type="info" style="width: 90%" @click="toFzr"
         >报修负责人进入</van-button
       >
-    </div>
+    </div> -->
     <div class="topTitle">
-      <span>报修申请</span>
+      <span style="color: #0064ff">报修申请</span>
       <span style="font-size: 16px; margin-top: 5px">{{ xqName }}</span>
     </div>
     <div class="form">
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">报修时间:</span>
       </div>
       <van-field
+        style="margin-right: 15px"
         readonly
         v-model="form.bxTime"
         input-align="right"
         size="large"
       />
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px"
           ><span style="color: red">*</span>报修物品:</span
         >
       </div>
-      <van-field
-        readonly
-        clickable
-        input-align="right"
-        :value="form.maxCate + '-' + form.minCate + '-' + form.name"
-        placeholder="选择报修物品"
-        @click="showDl = true"
-      />
+      <div class="inp_contain">
+        <div class="inp_contain_inner">
+          <van-field
+            readonly
+            clickable
+            input-align="right"
+            :value="form.maxCate + '-' + form.minCate + '-' + form.name"
+            placeholder="选择报修物品"
+            @click="showDl = true"
+          />
+        </div>
+      </div>
+      <div class="moni"></div>
+      <div class="font-bold">
+        <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
+      </div>
+      <van-field input-align="right" readonly v-model="form.clTeaname" />
+      <div class="moni"></div>
       <div class="font-bold" v-show="!ZdyAddress">
         <span style="margin-left: 15px; font-size: 18px"
           ><span style="color: red">*</span>报修地点:</span
         >
       </div>
-      <van-field
-        v-show="!ZdyAddress"
-        readonly
-        input-align="right"
-        v-model="form.address"
-        @click="showAddress = true"
-      />
+      <div class="inp_contain">
+        <div class="inp_contain_inner" style="border: none">
+          <el-select
+            style="width: 100%; font-size: 18px"
+            v-model="form.address"
+            allow-create
+            filterable
+            ref="select"
+            @hook:mounted="cancalReadOnly"
+            @visible-change="cancalReadOnly"
+          >
+            <el-option
+              v-for="item in tableData_right"
+              :key="item.id"
+              :label="item.address"
+              :value="item.address"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <!-- <div class="inp_contain" v-show="!ZdyAddress">
+        <div class="inp_contain_inner">
+          <van-field
+            v-show="!ZdyAddress"
+            readonly
+            input-align="right"
+            placeholder="请选择报修地点"
+            v-model="form.address"
+            @click="showAddress = true"
+          />
+        </div>
+      </div>
+      <div class="moni" v-show="!ZdyAddress"></div>
       <div class="font-bold" v-show="ZdyAddress">
         <span style="margin-left: 15px; font-size: 18px"
           ><span style="color: red">*</span>自定义报修地点:</span
         >
       </div>
-      <van-field
-        v-show="ZdyAddress"
-        input-align="right"
-        v-model="form.address"
-      />
+      <div class="inp_contain" v-show="ZdyAddress">
+        <div class="inp_contain_inner">
+          <van-field
+            placeholder="请输入报修地点"
+            v-show="ZdyAddress"
+            input-align="right"
+            v-model="form.address"
+          />
+        </div>
+      </div> -->
+      <div class="moni" v-show="ZdyAddress"></div>
       <div class="font-bold">
-        <span style="margin-left: 15px; font-size: 18px">情况说明:</span>
+        <span style="margin-left: 15px; font-size: 18px"
+          ><span style="color: red">*</span>情况说明:</span
+        >
       </div>
-      <van-field
-        v-model="form.explaion"
-        rows="3"
-        input-align="right"
-        autosize
-        type="textarea"
-      />
-
+      <div class="inp_contain">
+        <div class="inp_contain_inner">
+          <van-field
+            placeholder="请输入情况说明"
+            v-model="form.explaion"
+            rows="3"
+            input-align="left"
+            autosize
+            type="textarea"
+          />
+        </div>
+      </div>
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">报修图片:</span>
       </div>
@@ -79,27 +132,26 @@
           @delete="delImg"
         />
       </div>
-
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">报修教师:</span>
       </div>
       <van-field input-align="right" readonly v-model="userName" />
+      <div class="moni"></div>
       <div class="font-bold">
         <span style="margin-left: 15px; font-size: 18px">处理状态:</span>
       </div>
       <van-field input-align="right" value="待处理" readonly />
-      <div class="font-bold">
-        <span style="margin-left: 15px; font-size: 18px">处理教师:</span>
-      </div>
-
-      <!--报修大类弹出层 -->
-
-      <van-field input-align="right" readonly v-model="form.clTeaname" />
-      <div class="topBtn">
-        <van-button type="primary" style="width: 90%" @click="submit"
-          >确定</van-button
+      <div class="moni"></div>
+      <div class="topBtn1" style="position: sticky; bottom: 37px">
+        <van-button
+          type="info"
+          style="width: 70%; border-radius: 10px"
+          @click="submit"
+          >申请报修</van-button
         >
       </div>
+      <!--报修大类弹出层 -->
       <van-popup v-model="showDl" round position="bottom">
         <van-picker
           value-key="name"
@@ -134,6 +186,7 @@ export default {
       meta: [],
     };
   },
+
   computed: {
     //学校id
     schoolId() {
@@ -187,7 +240,24 @@ export default {
       tableData_right: [],
     };
   },
+  watch: {
+    schoolId(val) {
+      this.getTime();
+      this.getBxDl();
+      this.getXq();
+      this.getFzr();
+    },
+  },
   methods: {
+    cancalReadOnly(onOff) {
+      this.$nextTick(() => {
+        if (!onOff) {
+          const { select } = this.$refs;
+          const input = select.$el.querySelector(".el-input__inner");
+          input.removeAttribute("readonly");
+        }
+      });
+    },
     //!判断是否是负责人
     getFzr() {
       main
@@ -290,14 +360,18 @@ export default {
       val.bxTeaid = this.unionid;
       val.bxImg = this.fileIds;
       val.schoolId = this.schoolId;
-      if (!this.form.name || !this.form.address) {
-        Toast.fail("请填写必填项");
+      if (!this.form.name) {
+        Toast.fail("请填写报修物品");
+      } else if (!this.form.address && !this.ZdyAddress) {
+        Toast.fail("请填写地址");
+      } else if (!this.form.explaion) {
+        Toast.fail("请填写情况说明");
       } else {
         main1
           .edit(val)
           .then((res) => {
-            this.$message.success("报修申请成功!");
-            document.documentElement.scrollTop = 0;
+            Toast.success("报修申请成功");
+            this.$store.commit("auth/setBxActive", 1);
             this.form = {
               bxTime: "",
               maxCate: "",
@@ -312,6 +386,7 @@ export default {
               status: 0,
             };
             this.getTime();
+            this.refresh();
           })
           .catch((err) => {});
       }
@@ -342,10 +417,6 @@ export default {
           console.log(this.bxOpt, "11111111111");
           this.tableData_center = res.data.setRepapjs;
           this.tableData_right = res.data.setAddrs;
-          this.tableData_right.unshift({
-            address: "自定义",
-            id: -1,
-          });
         })
         .catch((err) => {});
     },
@@ -395,7 +466,6 @@ export default {
     this.getBxDl();
     this.getXq();
     this.getFzr();
-    console.log(document.title, "111");
   },
 };
 </script>
@@ -404,9 +474,16 @@ export default {
 .contain {
   width: 100vw;
   height: 100vh;
-  overflow: auto;
+  overflow-y: scroll;
 }
 .topBtn {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.topBtn1 {
   width: 100%;
   height: 80px;
   display: flex;
@@ -434,5 +511,30 @@ export default {
 /deep/.van-popup--round,
 /deep/.van-popup--bottom {
   height: 350px;
+}
+.inp_contain {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.inp_contain_inner {
+  width: 100%;
+  margin: 15px;
+  border: 1px solid #e4e4e4;
+  border-radius: 3px;
+}
+.inp_contain_inner1 {
+  width: 100%;
+  margin: 15px;
+}
+.moni {
+  background-color: #ebedf0;
+  width: 100%;
+  height: 20px;
+}
+/deep/.el-input__inner {
+  font-size: 18px;
 }
 </style>

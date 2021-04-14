@@ -1,40 +1,39 @@
 <template>
   <div class="contain">
-    <div class="item_contain" v-for="(item, index) in tableData" :key="index">
-      <div class="topTitle">
-        <span :class="item.type == 1 ? 'tk1' : item.type == 0 ? 'dk1' : ''">
-          {{ item.type == 1 ? "调课" : item.type == 0 ? "代课" : "" }}</span
-        >
-        <span class="marginL">{{ item.date }}</span>
-        <span class="marginL">{{ item.weekName }}</span>
-        <!-- <span class="marginL">{{ item.stanza }}</span> -->
-      </div>
-      <div class="table">
-        <!-- 0：申请中，1：待审核，2：审核通过，3：审核未通过，4：自动通过 -->
-
-        <div style="width: 95%">
-          <el-table border :data="[...item]" style="width: 100%" size="mini">
-            <el-table-column prop="className" label="班级"> </el-table-column>
-            <el-table-column prop="stanza" label="课次"> </el-table-column>
-            <el-table-column prop="oldxkname" label="原学科"> </el-table-column>
-            <el-table-column prop="oldTeaname" label="原授课">
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <div>
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="apply(scope.row)"
-                    >申请</el-button
-                  >
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
+    <div v-show="isList">
+      <el-card
+        class="item_contain"
+        v-for="(item, index) in tableData"
+        :key="index"
+      >
+        <div class="one_contain">
+          <div class="one">
+            <div class="one_span"></div>
+            <div class="one_span" style="width: 50%">
+              <span>{{ item.date }}({{ item.weekName }})</span>
+              <span>{{ item.className }} {{ item.stanza }}</span>
+            </div>
+            <div class="one_span"></div>
+          </div>
+          <div class="two">
+            <div class="two_span">
+              <span>{{ item.oldxkname }}</span>
+              <span style="font-size: 18px; color: #0064ff">{{
+                item.oldTeaname
+              }}</span>
+            </div>
+            <div class="two_span" style="width: 20%">
+              <img v-if="item.type == 0" src="../../../../assets/img/dk.png" />
+              <img v-else src="../../../../assets/img/tk.png" />
+            </div>
+            <div class="two_span" @click="toApply(item)">
+              <div class="apply">申请</div>
+            </div>
+          </div>
         </div>
-      </div>
+      </el-card>
     </div>
+    <ApplyDetail v-show="!isList" :infoList="form" ref="applyDe" />
   </div>
 </template>
 
@@ -42,24 +41,50 @@
 import main from "~/api/dtk";
 import main1 from "~/api/scoreEntry";
 import main2 from "~/api/baoxiuCs";
+import ApplyDetail from "./applyDetail";
 export default {
   computed: {
     //用户id
     unionid() {
       return this.$store.state.auth.userInfo.unionid;
     },
+    username() {
+      return this.$store.state.auth.userInfo.name;
+    },
+    schoolId() {
+      return this.$store.state.auth.userInfo.schoolId;
+    },
+  },
+  components: {
+    ApplyDetail,
+  },
+  watch: {
+    schoolId() {
+      this.getXq();
+    },
   },
   data() {
     return {
       tableData: [],
+      isList: true,
+      form: {},
     };
   },
+
   methods: {
-    apply(data) {
-      this.$router.push({
-        path: "/phone/dtk/components/applyDetail",
-        query: data,
-      });
+    show() {
+      this.isList = true;
+    },
+    toApply(item) {
+      this.isList = false;
+      console.log(item);
+      this.form = item;
+      this.form.teaname = this.username;
+      setTimeout(this.$refs.applyDe.getHl("授课人", 2, item), 2000);
+      //   this.$router.push({
+      //     path: "/phone/dtk/components/applyDetail",
+      //     query: item,
+      //   });
     },
     getTable() {
       let val = {
@@ -97,54 +122,96 @@ export default {
 
 <style scoped>
 .contain {
-  padding: 10px 0;
-}
-.topBtn {
-  height: 50px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 15px;
 }
 .item_contain {
+  height: 140px;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
 }
-.topTitle {
+.one_contain {
   width: 100%;
-  padding-left: 2.5%;
+  height: 70px;
+  padding: 10px;
+}
+.one {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #bbbbbb;
+  background-color: #ececec;
+  border-radius: 50px;
   display: flex;
   flex-direction: row;
-  margin-bottom: 5px;
-}
-.tk1 {
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  width: 50px;
-  height: 25px;
-  color: #ffffff;
-  background-color: #be4fff;
+  justify-content: space-around;
 }
-.dk1 {
-  border-radius: 4px;
+/deep/.el-card__body {
+  padding: 0;
+}
+.one_span {
+  width: 25%;
+  height: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  width: 50px;
-  height: 25px;
+  justify-content: center;
+}
+.status {
+  width: 70px;
+  height: 30px;
+  border-radius: 20px;
   color: #ffffff;
-  background-color: #298cf7;
+  text-align: center;
+  line-height: 30px;
 }
-.marginL {
-  margin-left: 5px;
-}
-.table {
+.two {
   width: 100%;
+  height: 70px;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.two_span {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+}
+.bottomEdit {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 0.5px solid #bbbbbb;
+}
+.bottomEditLeft {
+  width: 50%;
+  text-align: center;
+  font-size: 14px;
+}
+.line {
+  height: 90%;
+  border-left: 1px solid #bbbbbb;
+  width: 1px;
+}
+.apply {
+  width: 50px;
+  height: 50px;
+  background-color: #ff7100;
+  color: #ffffff;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 50px;
+}
+/deep/.el-card.is-always-shadow,
+/deep/.el-card.is-hover-shadow:focus,
+/deep/.el-card.is-hover-shadow:hover {
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 30%);
 }
 </style>

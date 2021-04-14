@@ -28,10 +28,12 @@ const getSchoolId = req => {
   let data;
   if (isServer) {
     date = getCookieServe(req);
+    // console.log("获取学校id1:", date);
   }
   //在客户端判读是否需要登陆
   if (isClient) {
     data = getToken();
+    // console.log("获取学校id2:", date);
   }
 
   // sessionStorage.setItem("schoolId", data);
@@ -117,7 +119,7 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   response => {
-    // console.log("请求返回的状态吗-----", response.status);
+    console.log("请求返回的状态吗-----", response.status);
     if (response.status === 200) {
       if (response.data.code == 200 || response.data.code == 0) {
         return response.data;
@@ -133,8 +135,9 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log(error);
-    return Promise.reject(`网络错误${JSON.stringify(error)}`);
+    console.log(error, "111");
+    //   `网络错误${JSON.stringify(error)}`
+    return Promise.reject(error);
   }
 );
 

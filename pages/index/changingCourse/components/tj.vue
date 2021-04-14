@@ -21,7 +21,7 @@
         placeholder="教师姓名"
       ></el-input>
       <el-button size="small" icon="el-icon-setting" @click="tj" type="primary"
-        >统计</el-button
+        >查询</el-button
       >
       <el-button size="small" @click="sjdc">数据导出</el-button>
     </div>
@@ -72,7 +72,18 @@ export default {
     //数据导出
     sjdc() {},
     //统计
-    tj() {},
+    tj() {
+      let val = {
+        cjlbId: this.dtkId,
+        teaName: this.name,
+      };
+      main
+        .seeTakeTJ(val)
+        .then((res) => {
+          this.tableData = res.data;
+        })
+        .catch((err) => {});
+    },
   },
   created() {
     this.getTable();

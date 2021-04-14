@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-card hoverable class="students-box">
+    <a-card hoverable class="students-box" @click="clickCard">
       <a-row :gutter="16">
         <a-col :span="5">
           <div class="mark-title">A</div>
@@ -11,7 +11,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.A1"
                 :key="index"
@@ -26,7 +26,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.A2"
                 :key="index"
@@ -46,7 +46,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.B1"
                 :key="index"
@@ -61,7 +61,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.B2"
                 :key="index"
@@ -81,7 +81,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.C1"
                 :key="index"
@@ -96,7 +96,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.C2"
                 :key="index"
@@ -116,7 +116,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.D1"
                 :key="index"
@@ -131,7 +131,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.D2"
                 :key="index"
@@ -151,7 +151,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.E1"
                 :key="index"
@@ -166,7 +166,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.E2"
                 :key="index"
@@ -186,7 +186,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.F1"
                 :key="index"
@@ -201,7 +201,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.F2"
                 :key="index"
@@ -221,7 +221,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nan',
-                  item.isClick ? 'click-nan' : ''
+                  item.isClick ? 'click-nan' : '',
                 ]"
                 v-for="(item, index) in classInfo.H1"
                 :key="index"
@@ -236,7 +236,7 @@
                   'name-item',
                   'hvr-grow-rotate',
                   'border-nv',
-                  item.isClick ? 'click-nv' : ''
+                  item.isClick ? 'click-nv' : '',
                 ]"
                 v-for="(item, index) in classInfo.H2"
                 :key="index"
@@ -255,13 +255,16 @@
 <script>
 export default {
   props: {
-    classInfo: Object
+    classInfo: Object,
   },
   methods: {
+    clickCard() {
+      console.log(this.classInfo, "classInfo");
+    },
     changeClick(item) {
       item.isClick = !item.isClick;
-    }
-  }
+    },
+  },
 };
 </script>
 

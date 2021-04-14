@@ -65,6 +65,7 @@ export default {
     const _this = this;
     // this.testLogin();
     let type = this.$route.query.type; //进入的类型
+    let dtk = this.$route.query.dtk;
     let isBx = this.$route.query.bx; //是否是报修图标进入
     let enrollId = this.$route.query.enrollId; //类别id
     let formType = this.$route.query.formType; //表单类型
@@ -77,6 +78,7 @@ export default {
     // // console.log("enrollId-----", enrollId);
 
     let schoolId = this.$route.query.schoolId;
+    console.log("地址上的schoolId:", schoolId);
 
     // if (schoolId) {
     //如果有学校id
@@ -87,6 +89,7 @@ export default {
       dd.ready(() => {
         //获取当前域名
         let url = window.location.href;
+        console.log("当前地址:", url);
         // let obj = {
         //   url,
         // };
@@ -94,7 +97,6 @@ export default {
         _this.$store
           .dispatch("auth/setSchoolId", { url, schoolId })
           .then((schoolInfo) => {
-            // alert("成功");
             //获取学校corpId与钉钉登录接口
             dd.runtime.permission.requestAuthCode({
               corpId: schoolInfo.cropId,
@@ -102,10 +104,13 @@ export default {
                 let code = result.code;
                 // _this.code = code;
                 // _this.errLogin = code;
-                // alert(code);
+                console.log("runtime-schoolInfo------", schoolInfo);
+
                 main
                   .login({ code: code }, schoolInfo.port, schoolInfo.ip)
+                  //?1
                   .then((res) => {
+                    console.log("1111111");
                     // _this.form.ddunionid = res.data;
                     let ddUnionid = res.data;
                     // alert("获得了----" + ddUnionid);
@@ -118,10 +123,13 @@ export default {
                     info.unionid = ddUnionid;
                     info.auth = auth;
                     info.schoolId = schoolInfo.id;
+                    console.log("1-schoolInfo-------", info);
                     return _this.$store.dispatch("auth/ddLogin", info);
                   })
+                  //?2
                   .then((res) => {
                     let power = res.power;
+                    _this.$store.commit("layout/setPower", power);
                     // // console.log("获得到的权限是----", power);
                     if (isBx == 1) {
                       main1
@@ -143,6 +151,20 @@ export default {
                         })
                         .catch((err) => {});
                       //!报修PC端进入
+                    } else if (dtk == 1) {
+                      //   ?如果存在报修管理权限
+                      if (power.indexOf("m-9") > -1) {
+                        return _this.$store.dispatch("layout/getUserMenu", [
+                          "m-9",
+                          "m-m",
+                          "m-m-6",
+                        ]);
+                      } else {
+                        return _this.$store.dispatch("layout/getUserMenu", [
+                          "m-m",
+                          "m-m-6",
+                        ]);
+                      }
                     } else {
                       //!正常进入
                       //!个人中心始终显示
@@ -162,6 +184,7 @@ export default {
                       );
                     }
                   })
+                  //?3
                   .then((res) => {
                     //  // console.log(res);
                     if (type == 1) {

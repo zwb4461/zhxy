@@ -129,7 +129,8 @@
             :disabled="
               scope.row.status == 0 ||
               scope.row.status == 2 ||
-              scope.row.status == 4
+              scope.row.status == 4 ||
+              scope.row.id == null
             "
             size="small"
             type="waring"
@@ -137,13 +138,18 @@
             @click="pz(scope.row)"
             >批准</a-button
           >
-          <a-button size="small" type="waring" @click="edit(scope.row)"
+          <a-button
+            size="small"
+            type="waring"
+            @click="edit(scope.row)"
+            :disabled="scope.row.id == null"
             >编辑</a-button
           >
           <a-button
             size="small"
             type="waring"
             style="color: #fff; background-color: #ff4d4f"
+            :disabled="scope.row.id == null"
             @click="del(scope.row)"
             >删除</a-button
           >
@@ -193,17 +199,6 @@
           :rules="rules"
           ref="ruleForm"
         >
-          <el-form-item label="学期年级:" prop="classId">
-            <el-cascader
-              size="small"
-              class="inp"
-              :props="{ children: 'children', label: 'name', value: 'id' }"
-              @focus="getXqNj"
-              v-model="showDiaData.form.classId"
-              :options="xqNjOpt"
-              @change="getOpt(2)"
-            ></el-cascader>
-          </el-form-item>
           <el-form-item label="代课日期:" prop="classId">
             <el-date-picker
               size="small"
@@ -216,6 +211,38 @@
             >
             </el-date-picker>
             {{ zj }}
+          </el-form-item>
+          <el-form-item label="学期年级:" prop="classId">
+            <el-cascader
+              size="small"
+              class="inp"
+              :props="{ children: 'children', label: 'name', value: 'id' }"
+              @focus="getXqNj"
+              v-model="showDiaData.form.classId"
+              :options="xqNjOpt"
+              @change="getOpt(2, 1)"
+            ></el-cascader>
+          </el-form-item>
+
+          <!--   prop="oldTeaId"-->
+          <el-form-item label="原授课人:">
+            <el-select
+              filterable
+              clearable
+              @focus="getOpt(2)"
+              size="small"
+              class="inp"
+              v-model="showDiaData.form.oldTeaId"
+            >
+              <!-- showDiaData.form.oldTeaId -->
+              <el-option
+                v-for="item in oldTeanameOpt"
+                :key="item.id"
+                :label="item.teacherName"
+                :value="item.teacherUnionid"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="代课课次:" prop="stanza">
             <el-select
@@ -252,25 +279,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <!-- prop="oldTeaId" -->
-          <el-form-item label="原授课人:">
-            <el-select
-              filterable
-              clearable
-              @focus="getOpt(2)"
-              size="small"
-              class="inp"
-              v-model="showDiaData.form.oldTeaId"
-            >
-              <el-option
-                v-for="item in oldTeanameOpt"
-                :key="item.id"
-                :label="item.teacherName"
-                :value="item.teacherUnionid"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
+
           <el-form-item label="现授课人:">
             <el-select
               filterable
@@ -279,6 +288,7 @@
               size="small"
               class="inp"
               v-model="showDiaData.form.teaId"
+              @change="getHl('授课人', 3)"
             >
               <el-option
                 v-for="item in teanameOpt"
@@ -330,17 +340,6 @@
           :rules="rules1"
           ref="ruleForm1"
         >
-          <el-form-item label="学期年级:" prop="classId">
-            <el-cascader
-              size="small"
-              class="inp"
-              :props="{ children: 'children', label: 'name', value: 'id' }"
-              @focus="getXqNj"
-              @change="getOpt(2)"
-              v-model="showDiaData.form.classId"
-              :options="xqNjOpt"
-            ></el-cascader>
-          </el-form-item>
           <el-form-item label="调课日期:" prop="date">
             <el-date-picker
               size="small"
@@ -354,12 +353,42 @@
             </el-date-picker>
             {{ zj }}
           </el-form-item>
+          <el-form-item label="学期年级:" prop="classId">
+            <el-cascader
+              size="small"
+              class="inp"
+              :props="{ children: 'children', label: 'name', value: 'id' }"
+              @focus="getXqNj"
+              @change="getOpt(2, 1)"
+              v-model="showDiaData.form.classId"
+              :options="xqNjOpt"
+            ></el-cascader>
+          </el-form-item>
+
+          <!--  -->
+          <el-form-item label="原授课人:" prop="oldTeaId">
+            <el-select
+              clearable
+              @focus="getOpt(2, 1)"
+              size="small"
+              class="inp"
+              v-model="showDiaData.form.oldTeaId"
+            >
+              <el-option
+                v-for="item in oldTeanameOpt"
+                :key="item.id"
+                :label="item.teacherName"
+                :value="item.teacherUnionid"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="调课课次:" prop="stanza">
             <el-select
               clearable
               size="small"
               class="inp"
-              @focus="getOpt(4)"
+              @focus="getOpt(4, 1)"
               @change="setClass_Teacher"
               v-model="showDiaData.form.stanza"
             >
@@ -389,24 +418,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <!--  -->
-          <el-form-item label="原授课人:" prop="oldTeaId">
-            <el-select
-              clearable
-              @focus="getOpt(2)"
-              size="small"
-              class="inp"
-              v-model="showDiaData.form.oldTeaId"
-            >
-              <el-option
-                v-for="item in oldTeanameOpt"
-                :key="item.id"
-                :label="item.teacherName"
-                :value="item.teacherUnionid"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
+
           <el-form-item label="现授课人:" prop="teaId">
             <el-select
               clearable
@@ -433,6 +445,7 @@
               @focus="getXqNjHt"
               v-model="showDiaData.form.oldclassId"
               :options="xqNjOptHt"
+              @change="getHl('班级', 4)"
             ></el-cascader>
           </el-form-item>
           <el-form-item label="互调日期:" prop="olddate">
@@ -456,6 +469,7 @@
               class="inp"
               v-model="showDiaData.form.oldStanza"
               @change="confirmXk"
+              @focus="getOpt(4)"
             >
               <el-option
                 v-for="item in stanzaOptHt"
@@ -474,6 +488,7 @@
               size="small"
               class="inp"
               v-model="showDiaData.form.oldxkname"
+              @focus="getOpt(6)"
             >
               <el-option
                 v-for="item in xkOptHt"
@@ -634,6 +649,7 @@
 <script>
 import main from "~/api/dtk";
 import main1 from "~/api/scoreEntry";
+import { Message } from "element-ui";
 export default {
   computed: {
     zj() {
@@ -647,6 +663,9 @@ export default {
     schoolId() {
       return this.$store.state.auth.schoolId;
     },
+    unionid() {
+      return this.$store.state.auth.unionid;
+    },
   },
   props: {
     dtkId: {
@@ -656,6 +675,8 @@ export default {
   },
   data() {
     return {
+      testName: "",
+      isResouceShow: 1,
       stanzaOptHt: [],
       xkOptHt: [],
       rules: {
@@ -763,7 +784,7 @@ export default {
           must: "",
           oldTeaId: "",
           teaId: "",
-          oldclassId: "",
+          oldclassId: [],
           olddate: "",
           oldStanza: "",
           oldxkname: "",
@@ -782,11 +803,43 @@ export default {
     };
   },
   methods: {
+    //!是否合理效验
+    ifHl(res, data) {
+      switch (res) {
+        case 1:
+          Message({
+            message: data + "不合理",
+            type: "warning",
+            customClass: "new_z_index",
+          });
+
+          break;
+        case 2:
+          Message({
+            message: data + "冲突",
+            type: "error",
+            customClass: "new_z_index",
+          });
+
+          break;
+      }
+    },
+    //!调接口获取是否合理
+    getHl(val, status) {
+      this.showDiaData.form.schoolId = this.schoolId;
+      this.showDiaData.form.ckzt = status;
+      //   this.showDiaData.form.oldTeaId = this.unionid;
+      main
+        .takeHl(this.showDiaData.form)
+        .then((res) => {
+          console.log(res.data, "是否冲突");
+          this.ifHl(res.data, val);
+        })
+        .catch((err) => {});
+    },
+
     //!设置课程和老师
     setClass_Teacher() {
-      //   console.log(this.showDiaData.form.stanza, "课次");
-      //   console.log(this.zj, "日期");
-      //   console.log(this.showDiaData.form.classId, "班级");
       let val = {
         schoolId: this.schoolId,
         classId: this.showDiaData.form.classId
@@ -803,10 +856,12 @@ export default {
           data = res.data;
           console.log(data, "获得的数据-------");
           this.showDiaData.form.xkname = data[0].subjectName;
-          this.showDiaData.form.oldTeaId = data[0].teacherUnionid;
+          this.testName = data[0].teacherUnionid;
         })
         .catch((err) => {});
+      this.getHl("课次", 2);
     },
+
     setJc_Xk() {
       let val = {
         schoolId: this.schoolId,
@@ -816,6 +871,7 @@ export default {
         unionid: this.showDiaData.form.teaId,
         weekName: this.zjHt,
         type: 4,
+        isdk: 1,
       };
       main
         .selectTakeStanza(val)
@@ -833,6 +889,7 @@ export default {
       });
       console.log(data, "data");
       this.showDiaData.form.oldxkname = data[0].subjectName;
+      this.getHl("课次", 5);
     },
     //!通用-调课打开必填项
     setRequire() {
@@ -905,6 +962,7 @@ export default {
     submit() {
       //! 0：申请中，1：待审核，2：审核通过，3：审核不通过，4：自动通过
       let data = this.showDiaData.form;
+      console.log(data, "data----");
       data.cjlbId = this.dtkId;
       //?不选状态就是申请中
       if (!data.status) {
@@ -917,6 +975,7 @@ export default {
       if (!data.teaId) {
         data.teaname = "";
       }
+      data.oldTeaId = this.showDiaData.form.oldTeaId;
       //?如果选了现授课人则审核通过(针对管理员的提交)
       //?否则就待审核
       if (data.teaId) {
@@ -937,7 +996,13 @@ export default {
                   this.showDiaData.showDia = false;
                   this.$message.success("提交成功!");
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                  Message({
+                    message: err,
+                    type: "error",
+                    customClass: "mzindex",
+                  });
+                });
             } else if (this.showDiaData.formType == 2) {
               //?编辑代课时--删了现授课人-则变成申请中
               if (!data.teaId) {
@@ -951,7 +1016,13 @@ export default {
                   this.showDiaData.showDia = false;
                   this.$message.success("编辑成功!");
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                  Message({
+                    message: err,
+                    type: "error",
+                    customClass: "mzindex",
+                  });
+                });
             }
           } else {
             return false;
@@ -970,7 +1041,13 @@ export default {
                   this.showDiaData.showDia = false;
                   this.$message.success("提交成功!");
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                  Message({
+                    message: err,
+                    type: "error",
+                    customClass: "mzindex",
+                  });
+                });
             } else if (this.showDiaData.formType == 2) {
               main
                 .edit(data)
@@ -980,7 +1057,13 @@ export default {
                   this.showDiaData.showDia = false;
                   this.$message.success("编辑成功!");
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                  Message({
+                    message: err,
+                    type: "error",
+                    customClass: "mzindex",
+                  });
+                });
             }
           } else {
             return false;
@@ -988,11 +1071,11 @@ export default {
         });
       }
     },
-    getOpt(data) {
+    getOpt(data, data2) {
       if (data == 1) {
         //?代课学科opt
         let val = {
-          classId: this.showDiaData.form.classId[2],
+          //   classId: this.showDiaData.form.classId[2],
           type: 1,
         };
         console.log(val);
@@ -1003,22 +1086,25 @@ export default {
           })
           .catch((err) => {});
       } else if (data == 2) {
+        if (data2 == 1) {
+          this.getHl("班级", 1);
+        }
         //?原授课人opt
         let val = {
-          classId: this.showDiaData.form.classId[2],
+          //   classId: this.showDiaData.form.classId[2],
           type: 2,
+          isdk: this.showDiaData.form.type == 1 ? 1 : null,
         };
         main
           .selectTakeStanza(val)
           .then((res) => {
             this.oldTeanameOpt = res.data;
-            console.log(this.oldTeanameOpt, "原授课人选项-------");
           })
           .catch((err) => {});
       } else if (data == 3) {
         //?现授课人opt
         let val = {
-          classId: this.showDiaData.form.classId[2],
+          //   classId: this.showDiaData.form.classId[2],
           type: 5,
         };
         main
@@ -1030,15 +1116,17 @@ export default {
       } else if (data == 4) {
         //?节次opt
         let val = {
-          classId: this.showDiaData.form.classId[2],
-          weekName: this.zj,
+          //   classId: this.showDiaData.form.classId[2],
+          //   weekName: this.zj,
           type: 4,
-          data: this.showDiaData.form.date,
+          //   data: this.showDiaData.form.date,
+          isdk: this.showDiaData.form.type == 1 ? 1 : null,
         };
         main
           .selectTakeStanza(val)
           .then((res) => {
             this.stanzaOpt = res.data;
+            this.stanzaOptHt = res.data;
             this.getKcZdy();
           })
           .catch((err) => {});
@@ -1046,8 +1134,9 @@ export default {
         //?现授课人opt
         let val = {
           type: 5,
-          weekName: this.zj,
-          stanz: this.showDiaData.form.stanza,
+          //   weekName: this.zj,
+          //   stanz: this.showDiaData.form.stanza,
+          isdk: this.showDiaData.form.type == 1 ? 1 : null,
         };
         main
           .selectTakeStanza(val)
@@ -1059,19 +1148,22 @@ export default {
       } else if (data == 6) {
         //?代课学科opt
         let val = {
-          classId: this.showDiaData.form.classId[2],
+          //   classId: this.showDiaData.form.classId[2],
           type: 1,
-          stanz: this.showDiaData.form.stanza,
-          weekName: this.zj,
+          //   stanz: this.showDiaData.form.stanza,
+          //   weekName: this.zj,
+          isdk: this.showDiaData.form.type == 1 ? 1 : null,
         };
         main
           .selectTakeStanza(val)
           .then((res) => {
             this.xkOpt = res.data;
+            this.xkOptHt = res.data;
           })
           .catch((err) => {});
       }
     },
+
     //dia-点击下拉-获取三级菜单
     getXqNj() {
       let val = {
@@ -1088,7 +1180,7 @@ export default {
     getXqNjHt() {
       let val = {
         cjlbId: this.dtkId,
-        unionid: this.showDiaData.form.teaId,
+        // unionid: this.showDiaData.form.teaId,
         type: 1,
       };
       main1
@@ -1122,6 +1214,12 @@ export default {
         status: "",
         reason: "",
         must: "",
+        oldTeaId: "",
+        teaId: "",
+        oldclassId: [],
+        olddate: "",
+        oldStanza: "",
+        oldxkname: "",
       };
     },
     setFrom(row) {
@@ -1131,10 +1229,20 @@ export default {
       this.showRadio = 1;
       this.showDiaData.formType = 1;
       this.clearForm();
+      this.getXqNj();
+      this.getOpt(2);
+      this.getOpt(3);
+      this.getOpt(5);
       this.showDiaData.showDia = true;
     },
     pz(row) {
-      console.log(row);
+      let data = {};
+      main
+        .selectTakeTranById({ id: row.id })
+        .then((res) => {
+          data = res.data;
+        })
+        .catch((err) => {});
       this.$confirm({
         title: "确认批准吗",
         cancelText: "取消",
@@ -1142,7 +1250,6 @@ export default {
         okType: "danger",
         centered: true,
         onOk: () => {
-          let data = row;
           data.cjlbId = this.dtkId;
           data.status = 2;
           main
@@ -1159,10 +1266,19 @@ export default {
     },
 
     edit(row) {
-      console.log(row, "row");
       this.showRadio = 0;
-      this.setFrom(row);
+      //   let data = JSON.parse(JSON.stringify(row));
+      //   this.setFrom(data);
+      main
+        .selectTakeTranById({ id: row.id })
+        .then((res) => {
+          console.log(res.data, "获得的数据-----------");
+          this.showDiaData.form = res.data;
+          console.log("已赋值----------");
+        })
+        .catch((err) => {});
       this.getXqNj();
+      this.getXqNjHt();
       this.getOpt(2);
       this.getOpt(3);
       this.getOpt(5);
@@ -1257,6 +1373,7 @@ export default {
             return item;
           });
           this.stanzaOpt = this.stanzaOpt.concat(arr);
+          this.stanzaOptHt = this.stanzaOptHt.concat(arr);
         })
         .catch((err) => {});
     },
@@ -1330,4 +1447,7 @@ export default {
   width: 180px;
   margin-right: 15px;
 }
+/* .new_z_index {
+  z-index: 9000 !important;
+} */
 </style>

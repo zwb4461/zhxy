@@ -373,6 +373,34 @@
               </div>
             </div>
           </el-form-item>
+
+          <el-form-item label="执行课表:" label-width="100px">
+            <!-- 0:单周，1:单双周 -->
+            <el-select size="small" v-model="form.stanza1">
+              <el-option
+                v-for="item in stanzaOpt"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-show="form.stanza1 == 1"
+            label="起始课表日期:"
+            label-width="100px"
+          >
+            <!-- 选择单双周时显示 -->
+            <el-date-picker
+              size="small"
+              value-format="yyyy-MM-dd"
+              v-model="form.stanzaDate"
+              type="date"
+              placeholder="选择日期"
+            >
+            </el-date-picker>
+          </el-form-item>
           <el-divider content-position="center">第二学期</el-divider>
           <el-form-item label="学生报到时间:" label-width="100px">
             <el-date-picker
@@ -533,6 +561,33 @@
                 >
               </div>
             </div>
+          </el-form-item>
+          <el-form-item label="执行课表:" label-width="100px">
+            <!-- 0:单周，1:单双周 -->
+            <el-select size="small" v-model="form.stanza2">
+              <el-option
+                v-for="item in stanzaOpt"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-show="form.stanza2 == 1"
+            label="起始课表日期:"
+            label-width="100px"
+          >
+            <!-- 选择单双周时显示 -->
+            <el-date-picker
+              size="small"
+              value-format="yyyy-MM-dd"
+              v-model="form.stanzaDate2"
+              type="date"
+              placeholder="选择日期"
+            >
+            </el-date-picker>
           </el-form-item>
           <el-divider content-position="center">钉钉年级绑定</el-divider>
           <div class="njbd">
@@ -820,11 +875,25 @@ export default {
       formType: 0, //0--新增，1--编辑
       activeName: "first",
       gradeList: [],
-
       showAddClassDia: false,
+      stanzaOpt: [
+        {
+          name: "单周课表",
+          id: 0,
+        },
+        {
+          name: "单双周课表",
+          id: 1,
+        },
+      ],
       //添加学期字段
       form: {
+        stanza1: 0,
+        stanzaDate: "",
+        stanza2: 0,
+        stanzaDate2: "",
         term: "",
+
         xsbdsj: "",
         kxqzrq: "",
         gzqzrq: "",
@@ -1089,6 +1158,7 @@ export default {
       main
         .find({ schoolId: this.schoolId })
         .then((res) => {
+          console.log(res.data, "--------");
           this.gradeList = res.data.list;
         })
         .catch((err) => {});
@@ -1154,6 +1224,10 @@ export default {
           xsarrive1: this.form.xsbdsj,
           xsarrive2: this.form.xsbdsj_two,
           year: this.form.term,
+          stanza1: this.form.stanza1,
+          stanzaDate: this.form.stanzaDate,
+          stanza2: this.form.stanza2,
+          stanzaDate2: this.form.stanzaDate2,
         };
         main
           .add(val)
@@ -1226,6 +1300,10 @@ export default {
           xsarrive1: this.form.xsbdsj,
           xsarrive2: this.form.xsbdsj_two,
           year: this.form.term,
+          stanza1: this.form.stanza1,
+          stanzaDate: this.form.stanzaDate,
+          stanza2: this.form.stanza2,
+          stanzaDate2: this.form.stanzaDate2,
         };
         if (this.isLock == 0) {
           main
@@ -1295,6 +1373,10 @@ export default {
     clearFrom() {
       this.showAddClassDia = true;
       this.form.gzqzrq = "";
+      this.form.stanza1 = 0;
+      this.form.stanzaDate = "";
+      this.form.stanza2 = 0;
+      this.form.stanzaDate2 = "";
       this.form.gzqzrq_two = "";
       this.form.swks = "3节";
       this.form.xwks = "3节";
@@ -1337,6 +1419,10 @@ export default {
     },
     edit(item) {
       this.isLock = item.islock;
+      this.form.stanza1 = item.stanza1;
+      this.form.stanzaDate = item.stanzaDate;
+      this.form.stanza2 = item.stanza2;
+      this.form.stanzaDate2 = item.stanzaDate2;
       this.itemId = item.id;
       this.formType = 1;
       console.log("item", item);

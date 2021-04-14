@@ -56,6 +56,7 @@ export default {
   methods: {
     submitForm() {
       let isBx = this.$route.query.bx;
+      let dtk = this.$route.query.dtk;
       let type = this.$route.query.type; //进入的类型
       let schoolId = this.$route.query.id;
       this.$refs.login.validate((valid) => {
@@ -71,6 +72,7 @@ export default {
             })
             .then((res) => {
               let power = res.power;
+              this.$store.commit("layout/setPower", power);
               console.log("获得到的权限是----", power);
               if (isBx == 1) {
                 main
@@ -92,6 +94,20 @@ export default {
                   })
                   .catch((err) => {});
                 //!报修PC端进入
+              } else if (dtk == 1) {
+                //   ?如果存在报修管理权限
+                if (power.indexOf("m-9") > -1) {
+                  return this.$store.dispatch("layout/getUserMenu", [
+                    "m-9",
+                    "m-m",
+                    "m-m-6",
+                  ]);
+                } else {
+                  return this.$store.dispatch("layout/getUserMenu", [
+                    "m-m",
+                    "m-m-6",
+                  ]);
+                }
               } else {
                 //!正常进入
                 //!个人中心始终显示
