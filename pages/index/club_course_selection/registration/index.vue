@@ -56,13 +56,6 @@
                 format="HH:mm"
               >
               </el-time-picker>
-              <!-- <a-range-picker
-                :show-time="{ format: 'HH:mm' }"
-                format=" HH:mm"
-                :placeholder="['Start Time', 'End Time']"
-                @change="onChange"
-                @ok="onOk"
-              /> -->
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -110,70 +103,6 @@
           </a-col>
         </a-row>
       </section>
-
-      <!-- <a-row :gutter="16">
-        <a-col :span="12">
-          <a-form-model-item
-            :labelCol="{ span: 6 }"
-            :wrapperCol="{ span: 18 }"
-            label="报名时间段"
-          >
-            <a-date-picker
-              v-model="form.startTime"
-              :showTime="{ format: 'YYYY-MM-DD' }"
-              format="YYYY-MM-DD"
-            />
-            <el-time-picker
-              v-model="form.endTime_val"
-              style="margin-left: 5px"
-              size="small "
-              is-range
-              range-separator="~"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              placeholder="选择时间范围"
-              value-format="HH:mm"
-              format="HH:mm"
-            >
-            </el-time-picker>
-          </a-form-model-item>
-        </a-col>
-      </a-row>
-      <a-row :gutter="16">
-        <a-col :span="12">
-          <a-form-model-item
-            :labelCol="{ span: 6 }"
-            :wrapperCol="{ span: 18 }"
-            label="允许报名课程"
-          >
-            <a-select
-              mode="multiple"
-              show-search
-              option-filter-prop="children"
-              style="width: 600px"
-              :filter-option="filterOption"
-              v-model="form.eleCouId_val"
-            >
-              <a-select-option
-                v-for="list in options"
-                :key="list.id"
-                :value="list.id"
-              >
-                {{ list.name }}
-              </a-select-option>
-            </a-select>
-          </a-form-model-item>
-        </a-col>
-      </a-row>
-
-      <section class="class_box">
-        <div class="box_two" v-for="(item, index) in dataForm" :key="index">
-          <span>{{ item.classId }} : </span>
-          <a-input v-model="item.classNum" />
-          <span> &nbsp;&nbsp;课</span>
-        </div>
-      </section> -->
-
       <a-button class="baocun" type="primary" @click="onSubmit">
         保 存
       </a-button>
@@ -226,7 +155,12 @@ import http from "~/api/personalCenter";
 import moment from "moment";
 export default {
   components: {},
-  props: {},
+  props: {
+    cjlbId: {
+      type: Number,
+      default: -1
+    },
+  },
   data() {
     return {
       a_drawer: {
@@ -265,7 +199,8 @@ export default {
         .teacherSeeCou({
           className: str,
           unionid: this.unionid,
-          schoolId: this.schoolId
+          schoolId: this.schoolId,
+          eleSchoolId:this.cjlbId
         })
         .then(result => {
           this.a_drawer.data = result.data;
@@ -278,25 +213,12 @@ export default {
       this.a_drawer.visible = false;
     },
     onSubmit() {
-      //   let query = {
-      //     id: this.form.id,
-      //     isOpen: this.form.isOpen === true ? 1 : 0,
-      //     startTime: this.moment(this.form.startTime).format("YYYY-MM-DD"),
-      //     endTime: this.form.endTime_val ? this.form.endTime_val.join(",") : null,
-      //     eleCouId: JSON.stringify(this.form.eleCouId_val),
-      //     nianji: JSON.stringify(this.dataForm),
-      //     schoolId: this.schoolId,
-      //     createUnionid: this.unionid
-      //   };
-
       let array = JSON.parse(JSON.stringify(this.tableData));
-
       array.forEach(element => {
         element.startTime = this.moment(element.startTime).format("YYYY-MM-DD");
         element.endTime = element.endTime ? element.endTime.join(",") : null;
         element.eleCouId = JSON.stringify(element.eleCouId);
       });
-
       let array2 = JSON.parse(JSON.stringify(this.tableData2));
       array2.isOpen = array2.isOpen === true ? 1 : 0;
 
@@ -304,7 +226,6 @@ export default {
         categoryList: array,
         eleSchool: array2
       };
-
       http
         .setEleSchool(query)
         .then(result => {
@@ -315,7 +236,6 @@ export default {
           this.$message.error(err);
         });
     },
-
     filterOption(input, option) {
       return (
         option.componentOptions.children[0].text
@@ -325,13 +245,12 @@ export default {
     },
     dataInit() {
       http
-        .selectEleCou({ status: 2, grade: 1 })
+        .selectEleCou({ status: 2, grade: 1 ,eleSchoolId:this.cjlbId})
         .then(result => {
           this.options = result.data.list;
         })
         .catch(err => {
           console.log(err);
-          // this.$message.error(err);
         });
 
       http
@@ -351,25 +270,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          // this.$message.error(err);
         });
-
-      // http
-      //   .selectEleCate({ schoolId: this.schoolId })
-      //   .then(res => {
-      //     let val = res.data[0];
-      //     // console.log(val);
-      //     this.form.isOpen = val.isOpen === 1 ? true : false;
-      //     this.form.startTime = this.moment(val.startTime);
-      //     this.form.endTime_val = val.endTime.split(",");
-      //     this.form.eleCouId_val = JSON.parse(val.eleCouId);
-      //     this.dataForm = JSON.parse(val.nianji);
-      //     this.form.id = val.id;
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //     this.$message.error(err);
-      //   });
     }
   },
   computed: {

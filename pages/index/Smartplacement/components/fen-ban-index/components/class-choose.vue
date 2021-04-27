@@ -31,11 +31,12 @@
 
 <script>
 import DD from "~/api/dingding";
-
+import main from "~/api/Smartplacement"; //智能分班主接口
 export default {
   props: {
     //获取选中的班级
     getClassList: Function,
+    onSubmit: Function,
   },
   data() {
     return {
@@ -111,6 +112,40 @@ export default {
       // // console.log("获取的部门id是-----", this.departmentId);
     },
     onCheck({ checked }) {
+      console.log(this.treeData, "this.treeData");
+      console.log(this.chooseClass.checked.length, "this.chooseClass");
+      console.log(checked, "this.checked");
+      if (this.chooseClass.checked.length > 0) {
+        this.treeData[0].children.map((item1) => {
+          item1.children.map((item2) => {
+            item2.children.map((item3) => {
+              item3.children.map((item4) => {
+                item4.children.map((item5) => {
+                  console.log(item5, "item5");
+                  if (item5.deptId == checked) {
+                    item5.disabled = false;
+                  } else {
+                    item5.disabled = true;
+                  }
+                });
+              });
+            });
+          });
+        });
+      } else {
+        this.treeData[0].children.map((item1) => {
+          item1.children.map((item2) => {
+            item2.children.map((item3) => {
+              item3.children.map((item4) => {
+                item4.children.map((item5) => {
+                  console.log(item5, "item5");
+                  item5.disabled = false;
+                });
+              });
+            });
+          });
+        });
+      }
       // // console.log(checked);
       let banList = checked.map((item) => {
         return this.realDep.find(
@@ -149,8 +184,21 @@ export default {
       //   this.chooseClass = list.map((j) => j.id);
       this.list = list.map((i) => this.realDep.find((j) => j.deptId == i.id));
     },
-    getData() {
+    getData(oldId, enrollId) {
+        
       this.getClassList(this.list);
+      let val = {
+        oldClassId: oldId,
+        classId: this.list[0].deptId,
+        enrollId: enrollId,
+      };
+      console.log(val, "val新接口");
+      main
+        .updateClass(val)
+        .then((res) => {
+        //   this.onSubmit();
+        })
+        .catch((err) => {});
     },
   },
   created() {

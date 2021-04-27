@@ -5,7 +5,11 @@
         <div style="width: 100%; min-height: 286px; overflow: hidden; zoom: 1">
           <div class="main-box">
             <div class="button-box">
-              <a-button class="button-item" icon="project" @click="toShowClass"
+              <a-button
+                v-if="isconfirm == 0"
+                class="button-item"
+                icon="project"
+                @click="toShowClass"
                 >选择班级数量</a-button
               >
             </div>
@@ -182,6 +186,7 @@
 
             <div class="btn">
               <a-button
+                v-if="isconfirm == 0"
                 @click="addClass(item.id)"
                 size="small"
                 class="upload-student"
@@ -201,6 +206,101 @@
         </div>
 
         <a-card hoverable class="students-box">
+          <div class="search_contain">
+            <el-input
+              clearable
+              class="inp"
+              size="small"
+              v-model="search.name"
+              placeholder="姓名"
+            ></el-input>
+            <el-select
+              clearable
+              class="inp"
+              size="small"
+              v-model="search.sex"
+              placeholder="请选择性别"
+            >
+              <el-option
+                v-for="item in sexOpt"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              clearable
+              class="inp"
+              size="small"
+              v-model="search.rank"
+              placeholder="请选择评定"
+            >
+              <el-option
+                v-for="item in pdOpt"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              clearable
+              class="inp"
+              size="small"
+              v-model="search.sourcetype"
+              placeholder="请选择生源类型"
+            >
+              <el-option
+                v-for="item in syOpt"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              clearable
+              class="inp"
+              size="small"
+              v-model="search.fatherdegree"
+              placeholder="请选择父亲学历"
+            >
+              <el-option
+                v-for="item in degree"
+                :key="item.v"
+                :label="item.text"
+                :value="item.v"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              clearable
+              class="inp"
+              size="small"
+              v-model="search.motherdegree"
+              placeholder="请选择母亲学历"
+            >
+              <el-option
+                v-for="item in degree"
+                :key="item.v"
+                :label="item.text"
+                :value="item.v"
+              >
+              </el-option>
+            </el-select>
+
+            <el-button
+              size="small"
+              icon="el-icon-search"
+              type="primary"
+              @click="getStudents"
+              >查询</el-button
+            >
+            <span style="margin-left: 10px; font-size: 18px"
+              >总数:{{ total }}</span
+            >
+          </div>
           <el-table
             border
             :data="studentTable"
@@ -234,8 +334,54 @@
               </template>
             </el-table-column>
             <el-table-column prop="fatherdegree" label="父亲学历">
+              <template slot-scope="scope">
+                {{
+                  scope.row.fatherdegree == 1
+                    ? "博士"
+                    : scope.row.fatherdegree == 2
+                    ? "硕士"
+                    : scope.row.fatherdegree == 3
+                    ? "本科"
+                    : scope.row.fatherdegree == 4
+                    ? "大专"
+                    : scope.row.fatherdegree == 5
+                    ? "中专和中技"
+                    : scope.row.fatherdegree == 6
+                    ? "技工学校"
+                    : scope.row.fatherdegree == 7
+                    ? "高中"
+                    : scope.row.fatherdegree == 8
+                    ? "初中"
+                    : scope.row.fatherdegree == 9
+                    ? "小学"
+                    : ""
+                }}
+              </template>
             </el-table-column>
             <el-table-column prop="motherdegree" label="母亲学历">
+              <template slot-scope="scope">
+                {{
+                  scope.row.motherdegree == 1
+                    ? "博士"
+                    : scope.row.motherdegree == 2
+                    ? "硕士"
+                    : scope.row.motherdegree == 3
+                    ? "本科"
+                    : scope.row.motherdegree == 4
+                    ? "大专"
+                    : scope.row.motherdegree == 5
+                    ? "中专和中技"
+                    : scope.row.motherdegree == 6
+                    ? "技工学校"
+                    : scope.row.motherdegree == 7
+                    ? "高中"
+                    : scope.row.motherdegree == 8
+                    ? "初中"
+                    : scope.row.motherdegree == 9
+                    ? "小学"
+                    : ""
+                }}
+              </template>
             </el-table-column>
           </el-table>
           <!-- <a-row :gutter="16">
@@ -527,7 +673,6 @@
             <a-button v-if="isconfirm == 0" @click="closeClassInfo"
               >取消</a-button
             >
-
             <a-button
               v-if="isconfirm == 0"
               @click="outClickStudents"
@@ -548,6 +693,7 @@
           <class-choose
             ref="classChoose"
             :getClassList="getClassList1"
+            :onSubmit="onSubmit"
           ></class-choose>
           <div class="class-info-button" slot="footer">
             <a-button
@@ -563,7 +709,6 @@
             >
           </div>
         </a-modal>
-
         <a-modal title="提示" :visible="pop.importStudent" :footer="null">
           <a-icon type="sync" spin />正在导入学籍库请稍后。。。
         </a-modal>
@@ -598,7 +743,15 @@ import freshmenReport from "~/api/freshmenReport"; //学生类型
 //组件
 import classStudents from "./components/class-students.vue";
 import classChoose from "./components/class-choose.vue";
-
+import {
+  foreigntype,
+  nation,
+  country as getCountry,
+  degree,
+  special,
+  sourcetype,
+  houseType,
+} from "~/utils/data";
 export default {
   components: {
     classStudents,
@@ -612,8 +765,72 @@ export default {
   },
   data() {
     return {
+      total: 0,
+      degree,
+      sexOpt: [
+        {
+          id: 1,
+          name: "男",
+        },
+        {
+          id: 2,
+          name: "女",
+        },
+      ],
+      syOpt: [
+        {
+          id: 0,
+          name: "户籍生",
+        },
+        {
+          id: 1,
+          name: "房产生",
+        },
+        {
+          id: 2,
+          name: "积分生",
+        },
+      ],
+      pdOpt: [
+        {
+          id: 1,
+          name: "A",
+        },
+        {
+          id: 2,
+          name: "B",
+        },
+        {
+          id: 3,
+          name: "C",
+        },
+        {
+          id: 4,
+          name: "D",
+        },
+        {
+          id: 5,
+          name: "E",
+        },
+        {
+          id: 6,
+          name: "F",
+        },
+        {
+          id: 7,
+          name: "未评定",
+        },
+      ],
       studentTable: [],
       itemId: 0,
+      search: {
+        name: "",
+        sex: "",
+        rank: "",
+        sourcetype: "",
+        fatherdegree: "",
+        motherdegree: "",
+      },
       classNum: 0,
       enrollId: "",
       studenttype: "",
@@ -700,20 +917,62 @@ export default {
         });
     },
     //添加学生到对应的班级
+    // async
     uploadStudent(id) {
       let clickStudent = this.studentsList.filter((item) => item.isClick);
       let arr = [];
       this.multipleSelection.map((item) => {
         arr.push(item);
       });
+      //1男2女
+      console.log(arr, "arr");
       this.classList = this.classList.map((item) => {
         if (item.id == id) {
-          item.A1 = arr;
+          arr.map((item1) => {
+            if (item1.sex == 1) {
+              item.A1.push(item1);
+            } else {
+              item.A2.push(item1);
+            }
+          });
+          //   item.A1 = arr;
         }
         return item;
       });
-      this.getStudents();
-      console.log(this.classList, "/添加学生到对应的班级");
+      this.onSubmit();
+      //   console.log(this.classList, "/添加学生到对应的班级");
+      //   //获取钉钉部门
+      //   let { data: dep } = await DD.dep({ schoolId: this.schoolId });
+      //   //获取分班信息
+      //   let { data: classInfo } = await main.find({ enrollId: this.enrollId });
+      //   //   debugger;
+      //   //获取班级信息
+      //   let cList = list.map((i) => dep.find((j) => j.deptId == i));
+      //   cList = cList.map((item, index) => {
+      //     if (!item) {
+      //       item = {
+      //         deptId: 110 + index,
+      //         depts: null,
+      //         id: 110 + index,
+      //         ifdelete: 0,
+      //         name: "待选定",
+      //         parent: 210 + index,
+      //         schoolId: this.schoolId,
+      //       };
+      //     }
+      //     return item;
+      //   });
+      //   //赋值班级
+      //   this.getClassList(cList);
+      //   //赋值选中的班级
+      //   // this.$refs.classChoose.setData(cList);
+      //   //   setTimeout(() => {
+      //   //   }, 1000);
+      //   //赋值班级人员
+
+      //      setTimeout(() => {
+      //       this.getOkInfo(classInfo);
+      //     }, 1000);
       //   if (clickStudent && clickStudent.length > 0) {
       //     let info = this.classList.find((item) => item.id === id);
       //     info.A1 = [
@@ -789,10 +1048,11 @@ export default {
     //!获取未分班的学生
     getStudents() {
       main
-        .student({ enrollId: this.enrollId })
+        .student({ enrollId: this.enrollId, ...this.search })
         .then((res) => {
           // // console.log("获取的学生是------", res.data);
           let info = res.data;
+          this.total = res.data2;
           this.studentTable = res.data;
           console.log(this.studentTable, "未分班的学生列表");
 
@@ -838,7 +1098,7 @@ export default {
               this.studentsLength.classW++;
             }
           });
-
+          this.onSubmit();
           //   // console.log(this.studentsList, "0000000000");
         })
         .catch((err) => {
@@ -894,16 +1154,17 @@ export default {
     },
     //得到班级
     getClassList(list) {
+      //?list是进入初始化后格式化的item
       //   debugger;
       // // console.log("获得的班级数组是----", list);
       let bb = [];
 
       for (const item of list) {
         // console.log(item, "1.item");
-        // console.log(this.classList, "1--1.this.classList");
         let aa = this.classList.findIndex((j) => j.id == item.deptId) > -1;
-        // console.log(aa, "2.aa");
+        console.log(aa, "2.aa");
         if (!aa) {
+          console.log("走了aa");
           this.classList.push({
             id: item.deptId,
             name: item.name,
@@ -925,13 +1186,19 @@ export default {
         }
         // console.log(this.classList, "3.this.classList");
         if (this.classList.length > 0) {
+          console.log("走了this.classList.length > 0");
           bb.push(this.classList.find((i) => i.id == item.deptId));
         }
         // console.log(bb, "4.bb");
       }
-      //   console.log(this.classList, "最后.this.classList");
+
       this.classList = bb;
+      console.log(this.classList, "最后.this.classList");
       this.pop.class = false;
+    },
+    //点击获取班级
+    toGetClass() {
+      this.$refs.classChoose.getData(this.itemId, this.enrollId);
     },
     getClassList1(list) {
       //   debugger;
@@ -976,9 +1243,6 @@ export default {
     toShowClass() {
       //   this.pop.class = true;
       this.pop.chooseClassNum = true;
-      //   this.$nextTick(() => {
-      //     this.toSetClass(this.classList);
-      //   });
     },
     //再次进入取得分班成功后的数据
     async getOkDataInfo(list) {
@@ -989,13 +1253,27 @@ export default {
       let { data: classInfo } = await main.find({ enrollId: this.enrollId });
       //   debugger;
       //获取班级信息
-      let cList = list.map((i) => dep.find((j) => j.deptId == i));
+      console.log(list, "班级信息1");
+      //返回第一个元素
+      let cList = list.map((i) => {
+        let a = dep.find((j) => {
+          return j.deptId == parseInt(i);
+        });
+        if (a) {
+          console.log("走了aaaaaaaaaaaaaa");
+          return a;
+        } else {
+          console.log("走了iiiiiiiiiiii");
+          return i;
+        }
+      });
+      console.log(cList, "班级信息2");
       cList = cList.map((item, index) => {
-        if (!item) {
+        if (typeof item == "string") {
           item = {
-            deptId: 110 + index,
+            deptId: item,
             depts: null,
-            id: 110 + index,
+            id: item + index,
             ifdelete: 0,
             name: "待选定",
             parent: 210 + index,
@@ -1004,15 +1282,13 @@ export default {
         }
         return item;
       });
+      console.log(cList, "这里开始格式化item");
       //赋值班级
       this.getClassList(cList);
       //赋值选中的班级
       // this.$refs.classChoose.setData(cList);
-      //   setTimeout(() => {
-      //     this.toSetClass();
-      //   }, 1000);
+
       //赋值班级人员
-      console.log(classInfo, "班级成员classInfo");
       this.getOkInfo(classInfo);
       this.loading.spinning = false;
     },
@@ -1026,17 +1302,24 @@ export default {
     },
     //初始化数据（ isClick =false,,, hide =false）
     dataInit(list) {
-      return list.map((item) => {
-        let obj = { ...item };
-        obj.isClick = false;
-        obj.hide = false;
-        return obj;
-      });
+      console.log(list, "开始初始化数据");
+      if (list) {
+        return list.map((item) => {
+          let obj = { ...item };
+          obj.isClick = false;
+          obj.hide = false;
+          return obj;
+        });
+      } else {
+        return [];
+      }
     },
     //分班结束后返回处理
     getOkInfo(data) {
       //转换返回的数据，将学生存入班级中
       for (const item of this.classList) {
+        console.log(data, "开始处理data");
+        console.log(item.id, "开始处理item.id");
         item.A1 = this.dataInit(data[`${item.id}A1`]);
         item.A2 = this.dataInit(data[`${item.id}A2`]);
         item.B1 = this.dataInit(data[`${item.id}B1`]);
@@ -1062,6 +1345,7 @@ export default {
     autoClass(type = 1) {
       if (this.classList.length > 0) {
         this.loading.spinning = true;
+        console.log(this.classList, "this.classList--智能分班");
         let list = this.classList.map((item) => item.id);
         let ids = [];
         this.multipleSelection.map((item) => {
@@ -1156,7 +1440,7 @@ export default {
             })
             .catch((err) => {
               this.pop.importStudent = false;
-              this.$message.error(err);
+            //   this.$message.error(err);
             });
         },
         onCancel() {},
@@ -1322,14 +1606,12 @@ export default {
 
       this.$nextTick(() => {
         this.getStudents();
+        this.onSubmit();
       });
+      this.onSubmit();
       setTimeout(this.getStudents(), 1000);
     },
 
-    //点击获取班级
-    toGetClass() {
-      this.$refs.classChoose.getData();
-    },
     toSetClass(list) {
       this.$refs.classChoose.setData(list);
     },
@@ -1440,5 +1722,17 @@ export default {
 .btn {
   display: flex;
   flex-direction: column;
+}
+.search_contain {
+  width: 100%;
+  padding: 0 5px 10px 5px;
+  display: flex;
+  flex-direction: row;
+  // justify-content: center;
+  align-items: center;
+}
+.inp {
+  width: 150px;
+  margin-right: 10px;
 }
 </style>

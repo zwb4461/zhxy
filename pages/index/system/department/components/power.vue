@@ -218,6 +218,11 @@ export default {
               key: "m-2-2",
               children: [],
             },
+            {
+              title: "权限组",
+              key: "m-2-6",
+              children: [],
+            },
             // {
             //   title: "类别管理",
             //   key: "m-2-3",
@@ -315,9 +320,13 @@ export default {
     //添加权限
     onSubmit() {
       let formData = { ...this.form };
-      //   // console.log(this.checkedKeys);
-      formData.jurisdiction = this.checkedKeys.checked.join(",");
-
+      console.log(formData, "formData");
+      console.log(this.checkedKeys, "this.checkedKeys");
+      if (this.checkedKeys.checked) {
+        formData.jurisdiction = this.checkedKeys.checked.join(",");
+      } else {
+        formData.jurisdiction = this.checkedKeys.join(",");
+      }
       DD.userPower(formData)
         .then((res) => {
           this.$message.success("该人员权限保存成功");

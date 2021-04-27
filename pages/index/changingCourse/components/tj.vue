@@ -76,6 +76,7 @@ export default {
       let val = {
         cjlbId: this.dtkId,
         teaName: this.name,
+        createTime:this.dataTime
       };
       main
         .seeTakeTJ(val)

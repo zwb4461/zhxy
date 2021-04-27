@@ -30,7 +30,7 @@
               </a-button>
             </div>
             <a-form-model
-              style="margin-bottom:10px;"
+              style="margin-bottom: 10px"
               layout="inline"
               :model="table.select"
             >
@@ -50,7 +50,7 @@
               :rowSelection="{
                 type: 'radio',
                 selectedRowKeys: table.selectedRowKeys,
-                onChange: tableChange
+                onChange: tableChange,
               }"
               :customRow="customRow"
               :pagination="table.pagination"
@@ -61,9 +61,9 @@
             >
               <template slot="idx" slot-scope="text, record, index">{{
                 table.pagination.current * table.pagination.pageSize -
-                  table.pagination.pageSize +
-                  index +
-                  1
+                table.pagination.pageSize +
+                index +
+                1
               }}</template>
               <template slot="avatar" slot-scope="text, record">
                 <template v-if="text">
@@ -73,7 +73,7 @@
                   <a-avatar
                     size="large"
                     class="avatarImg"
-                    style="backgroundColor:#2983f7"
+                    style="backgroundcolor: #2983f7"
                     >{{ record.name | lastName }}</a-avatar
                   >
                 </template>
@@ -94,6 +94,32 @@
       >
         <power-vue ref="power" :reload="reloadData"></power-vue>
       </a-drawer>
+      <el-dialog
+        title="选择权限组"
+        :visible.sync="showPowerList"
+        width="30%"
+        :close-on-click-modal="false"
+      >
+        <el-select
+          size="small"
+          style="width: 90%"
+          v-model="powerGroup"
+          multiple
+          placeholder="请选择权限组"
+        >
+          <el-option
+            v-for="item in powerOpt"
+            :key="item.id"
+            :label="item.name"
+            :value="item.role"
+          >
+          </el-option>
+        </el-select>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showPowerList = false">取 消</el-button>
+          <el-button type="primary" @click="submit">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -101,51 +127,54 @@
 <script>
 //组件
 import powerVue from "./components/power.vue";
-
+import main from "~/api/school";
 import DD from "~/api/dingding";
 
 export default {
   components: {
-    powerVue
+    powerVue,
   },
   props: {
     //表格数据源类型
     dataType: {
       type: Number,
-      default: 1
-    }
+      default: 1,
+    },
   },
   filters: {
     lastName(value) {
       let list = value.split("");
       let length = list.length;
       return list[length - 2] + list[length - 1];
-    }
+    },
   },
   data() {
     return {
+      powerGroup: [],
+      powerOpt: [],
+      showPowerList: false,
       pop: {
-        power: false
+        power: false,
       },
       loading: {
         asyncDep: false,
-        asyncUser: false
+        asyncUser: false,
       },
       treeData: [],
       user: [],
       table: {
         select: {
-          name: ""
+          name: "",
         },
         pagination: {
           current: 1,
           pageSize: 20,
           total: 0,
-          showTotal: total => `共有 ${total} 条数据`,
+          showTotal: (total) => `共有 ${total} 条数据`,
           showLessItems: true,
           showQuickJumper: true,
           showSizeChanger: true, //是否可以改变 pageSize
-          pageSizeOptions: ["10", "20", "40", "60", "80", "100", "500", "3000"]
+          pageSizeOptions: ["10", "20", "40", "60", "80", "100", "500", "3000"],
         },
         selectedRowKeys: [],
         columns: [
@@ -153,33 +182,36 @@ export default {
             title: "序号",
             dataIndex: "idx",
             scopedSlots: { customRender: "idx" },
-            width: 60
+            width: 60,
           },
           {
             title: "头像",
             dataIndex: "avatar",
-            scopedSlots: { customRender: "avatar" }
+            scopedSlots: { customRender: "avatar" },
           },
           {
             title: "姓名",
-            dataIndex: "name"
-          }
+            dataIndex: "name",
+          },
         ],
-        data: []
+        data: [],
       },
-      departmentId: ""
+      departmentId: "",
     };
   },
   watch: {
     departmentId(newValue, oldValue) {
       this.reloadData();
-    }
+    },
+    schoolId() {
+      this.getPower();
+    },
   },
   computed: {
     userList() {
       // console.log(this.departmentId);
       return this.user.filter(
-        item => item.departmentId.indexOf(this.departmentId) > -1
+        (item) => item.departmentId.indexOf(this.departmentId) > -1
       );
     },
     port() {
@@ -188,20 +220,61 @@ export default {
     //学校id
     schoolId() {
       return this.$store.state.auth.schoolId;
-    }
+    },
   },
   methods: {
+    //!提交权限组
+    submit() {
+      console.log(this.powerGroup, "powerGroup");
+      console.log(this.table.selectedRowKeys, "this.table.selectedRowKeys");
+      let arr = [];
+      this.powerOpt.map((item) => {
+        this.powerGroup.map((item1) => {
+          if (item.role == item1) {
+            arr.push(item.id);
+          }
+        });
+      });
+      console.log(arr, "拿到的权限组id");
+      let val = {
+        id: this.table.selectedRowKeys[0],
+        schoolId: this.schoolId,
+        jurisdiction: this.powerGroup.join(","),
+        roleIds: arr.join(","),
+      };
+      DD.userPower(val)
+        .then((res) => {
+          this.$message.success("该人员权限保存成功");
+          this.showPowerList = false;
+          this.getDDuser();
+          this.getDDdep();
+          this.getPower();
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
+    },
+    //!查询权限组
+    getPower() {
+      main
+        .seeRole({ schoolId: this.schoolId })
+        .then((res) => {
+          console.log(res, "查询到的权限组");
+          this.powerOpt = res.data;
+        })
+        .catch((err) => {});
+    },
     //同步钉钉用户
     asyncDDUser() {
       this.loading.asyncUser = true;
       DD.asyncUser({ port: this.port, schoolId: this.schoolId })
-        .then(res => {
+        .then((res) => {
           this.$message.success("人员同步成功");
           this.loading.asyncUser = false;
           //刷新人员
           this.reloadData();
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error("人员同步失败");
           this.loading.asyncUser = false;
         });
@@ -212,27 +285,27 @@ export default {
         pagenum: this.table.pagination.current,
         pagesize: this.table.pagination.pageSize,
         departmentId: this.departmentId,
-        ...this.table.select
+        ...this.table.select,
       })
-        .then(res => {
+        .then((res) => {
           // console.log("钉钉人员-----", res);
 
           this.table.data = res.data.list;
           this.table.pagination.total = res.data.total;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     //同步钉钉部门
     asyncDDdep() {
       this.loading.asyncDep = true;
       DD.asyncDep({ port: this.port })
-        .then(res => {
+        .then((res) => {
           this.$message.success("部门同步成功");
           this.loading.asyncDep = false;
           //刷新部门
           this.getDDdep();
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error("部门同步失败");
           this.loading.asyncDep = false;
         });
@@ -240,13 +313,13 @@ export default {
     //获取钉钉部门
     getDDdep() {
       DD.dep()
-        .then(res => {
+        .then((res) => {
           // console.log("钉钉部门--23---", res);
           let tree = this.$deptTree(res.data, {});
           // console.log("121212121-------", tree);
           this.treeData = tree;
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     onSelect(selectedKeys, info) {
       this.departmentId = selectedKeys[0];
@@ -273,18 +346,32 @@ export default {
       return {
         on: {
           click(event) {
-            // console.log("表格行数据---------", record);
+            console.log("表格行数据---------", record);
             _this.formChange(record);
-          }
-        }
+          },
+        },
       };
     },
     formChange(record) {
       this.table.selectedRowKeys = [record.id];
-      this.pop.power = true;
+      this.showPowerList = true;
+      let arr = [];
+      if(!record.roleIds){
+          record.roleIds = ""
+      }
+      let roleIdsArr = record.roleIds.split(",");
+      this.powerOpt.map((item) => {
+        roleIdsArr.map((item1) => {
+          if (item1 == item.id) {
+            arr.push(item.role);
+          }
+        });
+      });
+      this.powerGroup = arr;
+      console.log(this.powerGroup, "转换后的权限组绑定值");
       this.$nextTick(() => {
-        this.$refs.power.clearForm();
-        this.$refs.power.setForm(record);
+        // this.$refs.power.clearForm();
+        // this.$refs.power.setForm(record);
       });
     },
     closePower() {
@@ -294,12 +381,13 @@ export default {
       // console.log("keys-----", keys);
       // console.log("rows-----", rows);
       this.formChange(rows[0]);
-    }
+    },
   },
   created() {
     this.getDDuser();
     this.getDDdep();
-  }
+    this.getPower();
+  },
 };
 </script>
 

@@ -70,7 +70,8 @@ module.exports = {
     initStudent: baseUrl + "/moveFenBan", //重置学生的分班信息
     find: baseUrl + "/returnStudent", //重置学生的分班信息
     submit: baseUrl + "/manuaShift", //手动分班
-    confirm: baseUrl + "/confirmFenBan" //分班确认
+    confirm: baseUrl + "/confirmFenBan", //分班确认
+    updateClass: baseUrl + "/updateClass"
   },
   //##插入位置
   NoteSend: {
@@ -86,7 +87,10 @@ module.exports = {
     add: baseUrl + "/insertSchool", //添加
     del: baseUrl + "/deleteSchool", //删除
     edit: baseUrl + "/updateSchool", //删除
-    upload: baseUrl + "/upload" //删除
+    upload: baseUrl + "/upload", //删除
+    seeRole: baseUrl + "/seeRole",
+    saveRole: baseUrl + "/saveRole",
+    delRole: baseUrl + "/delRole"
   },
   //报名新生
   reportStudent: {
@@ -301,7 +305,7 @@ module.exports = {
     selectMobileStanza: baseUrl + "/selectMobileStanza",
     seeH5All: baseUrl + "/seeH5All",
     selectTakeTranById: baseUrl + "/selectTakeTranById",
-    takeHl: baseUrl + "/takeHl",
+    takeHl: baseUrl + "/takeHl"
   },
   baoxiu: {
     find: baseUrl + "/repairList",

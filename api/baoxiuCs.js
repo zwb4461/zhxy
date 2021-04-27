@@ -39,7 +39,7 @@ const seeMobileScore = query => {
 const repairTj = query => {
   return request({
     url: Api.baoxiuCs.repairTj,
-    method: "post",
+    method: "post-json",
     data: query
   });
 };

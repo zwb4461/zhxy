@@ -373,6 +373,17 @@ const getNewMenu = power => {
             affix: false
           }
         },
+        {
+          key: "system/powerGroup",
+          title: "权限组",
+          hide: true,
+          power: "m-2-6",
+          alwaysShow: false,
+          meta: {
+            title: "权限组",
+            affix: false
+          }
+        },
         // {
         //     key: "23",
         //     title: "类别管理",

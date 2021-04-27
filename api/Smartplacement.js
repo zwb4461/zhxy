@@ -63,16 +63,24 @@ const confirm = query => {
         data: query
     });
 };
+const updateClass = query => {
+  return request({
+    url: Api.Smartplacement.updateClass,
+    method: "post",
+    data: query
+  });
+};
 
 
 
 
 export default {
-    student,
-    autoSmart,
-    autoRandom,
-    submit,
-    initStudent,
-    find,
-    confirm
-}
+  student,
+  autoSmart,
+  autoRandom,
+  submit,
+  initStudent,
+  find,
+  confirm,
+  updateClass
+};

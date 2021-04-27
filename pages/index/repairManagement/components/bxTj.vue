@@ -162,9 +162,16 @@ import main from "~/api/baoxiuCs";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
+  computed: {
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
+  },
   data() {
     return {
       tableData_left: [],
+
+      
       tableData_right: [],
       xqlOpt: [
         {
@@ -263,6 +270,7 @@ export default {
         .catch((err) => {});
     },
     getTable() {
+      console.log(this.schoolId, "this.schoolId11111");
       main
         .repairTj({ schoolId: this.schoolId })
         .then((res) => {

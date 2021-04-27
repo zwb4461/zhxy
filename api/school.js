@@ -40,11 +40,35 @@ const upload = query => {
     data: query
   });
 };
+const saveRole = query => {
+  return request({
+    url: Api.school.saveRole,
+    method: "post-json",
+    data: query
+  });
+};
+const seeRole = query => {
+  return request({
+    url: Api.school.seeRole,
+    method: "post-json",
+    data: query
+  });
+};
+const delRole = query => {
+  return request({
+    url: Api.school.delRole,
+    method: "post",
+    data: query
+  });
+};
 
 export default {
   list,
   add,
   edit,
   del,
-  upload
+  upload,
+  saveRole,
+  seeRole,
+  delRole
 };

@@ -111,10 +111,7 @@ export default {
                   //?1
                   .then((res) => {
                     console.log("1111111");
-                    // _this.form.ddunionid = res.data;
                     let ddUnionid = res.data;
-                    // alert("获得了----" + ddUnionid);
-                    // _this.errLogin =  ddUnionid;
                     let info = {};
                     let auth = -1;
                     if (ddUnionid === schoolInfo.managerId) {
@@ -123,7 +120,6 @@ export default {
                     info.unionid = ddUnionid;
                     info.auth = auth;
                     info.schoolId = schoolInfo.id;
-                    console.log("1-schoolInfo-------", info);
                     return _this.$store.dispatch("auth/ddLogin", info);
                   })
                   //?2

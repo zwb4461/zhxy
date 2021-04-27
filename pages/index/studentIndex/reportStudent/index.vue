@@ -69,17 +69,17 @@
           <a-dropdown>
             <a-menu slot="overlay">
               <a-menu-item key="1">
-                <a href="/报名审核记录导出(非户籍生).xlsx">
-                  （非户籍生）模板下载
+                <a href="/报名新生导入模板.xlsx">
+                 模板下载
                   <a-icon type="cloud-download" />
                 </a>
               </a-menu-item>
-              <a-menu-item key="2">
+              <!-- <a-menu-item key="2">
                 <a href="/报名审核记录导出(户籍生).xlsx">
                   （户籍生）模板下载
                   <a-icon type="cloud-download" />
                 </a>
-              </a-menu-item>
+              </a-menu-item> -->
             </a-menu>
             <a-button type="primary">
               模板下载 <a-icon type="down" />
@@ -267,6 +267,7 @@
     <my-drawer-vue
       title="新生报名"
       :showOkbtn="activing"
+      :btnShow2="false"
       :width="800"
       :loading="loading.form"
       :visible="pop.form"

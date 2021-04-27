@@ -479,7 +479,12 @@
 import http from "~/api/personalCenter";
 export default {
   components: {},
-  props: {},
+  props: {
+    cjlbId: {
+      type: Number,
+      default: -1
+    },
+  },
   data() {
     return {
       select_data: {},
@@ -537,7 +542,7 @@ export default {
     importLoad2() {
       window.location.href =
         "http://103.219.33.112:10010/importStatisExcel?schoolId=" +
-        this.schoolId;
+        this.schoolId+"&eleSchoolId="+this.cjlbId;
       // http
       //   .importStatisExcel({ schoolId: this.schoolId })
       //   .then(result => {
@@ -553,7 +558,8 @@ export default {
       let data = {
         eleName: val.name,
         isdaochu: 1,
-        schoolId: this.schoolId
+        schoolId: this.schoolId,
+        eleSchoolId:this.cjlbId
       };
 
       http
@@ -639,7 +645,8 @@ export default {
       let query = {
         eleName: val.name,
         unionid: this.unionid,
-        schoolId: val.schoolId
+        schoolId: val.schoolId,
+        eleSchoolId:this.cjlbId
       };
 
       http
@@ -687,7 +694,8 @@ export default {
         elecateId: 1,
         ...a,
         teacherUnionid: this.unionid,
-        schoolId: this.schoolId
+        schoolId: this.schoolId,
+        eleSchoolId:this.cjlbId
       };
 
       // this.$refs.form.validate(valid => {
@@ -731,7 +739,8 @@ export default {
           teacherUnionid: this.unionid,
           isLock: 1,
           ismanager: 1,
-          schoolId: this.schoolId
+          schoolId: this.schoolId,
+          eleSchoolId:this.cjlbId
         };
       } else {
         params = {
@@ -740,7 +749,8 @@ export default {
           teacherUnionid: this.unionid,
           status: index,
           ismanager: 1,
-          schoolId: this.schoolId
+          schoolId: this.schoolId,
+          eleSchoolId:this.cjlbId
         };
       }
 
@@ -761,7 +771,8 @@ export default {
         unionid: this.unionid,
         ismanager: 1,
         pagesize: this.table_page.pagesize,
-        pagenum: this.table_page.pagenum
+        pagenum: this.table_page.pagenum,
+        eleSchoolId:this.cjlbId
       };
 
       http
