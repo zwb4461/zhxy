@@ -65,9 +65,6 @@ export default {
           this.$store
             .dispatch("auth/setSchoolIdAuth", schoolId)
             .then((res) => {
-              // // console.log("res------", res);
-              // // console.log("企业id是----", res.cropId);
-              // // console.log("钉钉服务端口是----", res.port);
               return this.$store.dispatch("auth/Login", this.param);
             })
             .then((res) => {

@@ -24,6 +24,9 @@ export default {
     };
   },
   computed: {
+    schoolId() {
+      return this.$store.state.auth.schoolId;
+    },
     bxFzrActive: {
       get() {
         return this.$store.state.auth.bxFzrActive;
